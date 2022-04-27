@@ -42,7 +42,7 @@ sample_portfolio <- init_portfolio(
   cores = 1,
   verbose = TRUE
 )
-plot(sample_portfolio[".assetid"])
+plot(sample_portfolio["assetid"])
 
 ## ----query_indicator----------------------------------------------------------
 names(available_indicators())
@@ -76,14 +76,14 @@ sample_portfolio <- calc_indicators(sample_portfolio,
 )
 
 ## ----select_cols--------------------------------------------------------------
-(sample_portfolio <- sample_portfolio %>% select(.assetid, WDPAID, chirpsprec))
+(sample_portfolio <- sample_portfolio %>% select(assetid, WDPAID, chirpsprec))
 
 ## ----investigate_indicator----------------------------------------------------
 sample_portfolio$chirpsprec[10]
 
 ## ----plot_precipitation, echo = FALSE, warning=FALSE, dpi = 50----------------
 sample_portfolio %>%
-  filter(.assetid == 10) %>%
+  filter(assetid == 10) %>%
   st_drop_geometry() %>%
   tidyr::unnest(chirpsprec) %>%
   mutate(sign = ifelse(anomaly < 0, "lower than average", "higher than average")) %>%
@@ -98,7 +98,7 @@ sample_portfolio %>%
   theme(legend.position = "bottom")
 
 sample_portfolio %>%
-  filter(.assetid == 10) %>%
+  filter(assetid == 10) %>%
   st_drop_geometry() %>%
   tidyr::unnest(chirpsprec) %>%
   mutate(
@@ -116,7 +116,7 @@ sample_portfolio %>%
   theme(legend.position = "bottom")
 
 sample_portfolio %>%
-  filter(.assetid == 10) %>%
+  filter(assetid == 10) %>%
   st_drop_geometry() %>%
   tidyr::unnest(chirpsprec) %>%
   ggplot() +
@@ -125,11 +125,11 @@ sample_portfolio %>%
   theme_classic()
 
 ## ----unnest-------------------------------------------------------------------
-geometries <- select(sample_portfolio, .assetid)
+geometries <- select(sample_portfolio, assetid)
 sample_portfolio %>%
   st_drop_geometry() %>%
   tidyr::unnest(chirpsprec) %>%
-  filter(.assetid == 3)
+  filter(assetid == 3)
 
 ## ----portfolio_io-------------------------------------------------------------
 tmp_output <- tempfile(fileext = ".gpkg")
