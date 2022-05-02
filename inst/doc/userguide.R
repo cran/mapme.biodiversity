@@ -33,11 +33,17 @@ metanames <- names(st_drop_geometry(aoi))
 aoi_gridded[metanames] <- st_drop_geometry(aoi)
 
 ## ----init_portfolio, dpi = 50, out.width="120%", out.height="120%"------------
+# copying package internal resource to tempdir
+outdir <- file.path(tempdir(), "mapme.biodiversity")
+dir.create(outdir)
+resource_dir <- system.file("res", package = "mapme.biodiversity")
+file.copy(resource_dir, outdir, recursive = TRUE)
+
 sample_portfolio <- init_portfolio(
   x = aoi_gridded,
   years = 2010,
-  outdir = system.file("res", package = "mapme.biodiversity"),
-  tmpdir = system.file("tmp", package = "mapme.biodiversity"),
+  outdir = file.path(outdir, "res"),
+  tmpdir = outdir,
   add_resources = FALSE,
   cores = 1,
   verbose = TRUE
@@ -62,10 +68,11 @@ names(available_resources())
 sample_portfolio <- get_resources(x = sample_portfolio, resources = "chirps")
 
 ## ----get_multi_resources, eval = FALSE----------------------------------------
-#  sample_portfolio <- get_resources(x = sample_portfolio,
-#                                    resources = c("chirps", "treecover2000"),
-#                                    vers_treecover = "GFC-2020-v1.8")
-#  
+#  sample_portfolio <- get_resources(
+#    x = sample_portfolio,
+#    resources = c("chirps", "treecover2000"),
+#    vers_treecover = "GFC-2020-v1.8"
+#  )
 
 ## ----calc_indicator-----------------------------------------------------------
 sample_portfolio <- calc_indicators(sample_portfolio,
