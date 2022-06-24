@@ -14,7 +14,19 @@
 
 <title>Quickstart</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -126,7 +138,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -144,19 +336,40 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>In the following we will demonstrate an idealized workflow based on a subset of the CHIRPS dataset that is delivered together with this package. You can follow along the code snippets below to reproduce the results. Please note, that to reduce the time it takes to process this vignette, we will not download any resources from the internet. In a real use case, thus processing time might substantially increase because resources have to be downloaded and real portfolios might be larger than the one created in this example.</p>
-<p>This vignette assumes that you have already followed the steps in <a href="https://mapme-initiative.github.io/mapme.biodiversity/articles/installation.html">Installation</a> and have familiarized yourself with the terminology used in the package. If you are unfamiliar with the terminology used here, please head over to the <a href="https://mapme-initiative.github.io/mapme.biodiversity/articles/terminology.html">Terminology</a> article to learn about the most important concepts.</p>
-<p>The idealized workflow for using <code>{mapme.biodiversity}</code> consists of the following steps:</p>
+<p>In the following we will demonstrate an idealized workflow based on a
+subset of the CHIRPS dataset that is delivered together with this
+package. You can follow along the code snippets below to reproduce the
+results. Please note, that to reduce the time it takes to process this
+vignette, we will not download any resources from the internet. In a
+real use case, thus processing time might substantially increase because
+resources have to be downloaded and real portfolios might be larger than
+the one created in this example.</p>
+<p>This vignette assumes that you have already followed the steps in <a href="https://mapme-initiative.github.io/mapme.biodiversity/articles/installation.html">Installation</a>
+and have familiarized yourself with the terminology used in the package.
+If you are unfamiliar with the terminology used here, please head over
+to the <a href="https://mapme-initiative.github.io/mapme.biodiversity/articles/terminology.html">Terminology</a>
+article to learn about the most important concepts.</p>
+<p>The idealized workflow for using <code>{mapme.biodiversity}</code>
+consists of the following steps:</p>
 <ul>
-<li>initialize your portfolio using an sf-object containing only geometries of type POLYGON</li>
-<li>decide which indicator(s) you wish to calculate and download the required resource(s)</li>
-<li>conduct your indicator calculation, which adds a nested list column to your portfolio object</li>
-<li>continue your analysis in R or decide to export your results to a GeoPackage to use it with other geospatial software</li>
+<li>initialize your portfolio using an sf-object containing only
+geometries of type POLYGON</li>
+<li>decide which indicator(s) you wish to calculate and download the
+required resource(s)</li>
+<li>conduct your indicator calculation, which adds a nested list column
+to your portfolio object</li>
+<li>continue your analysis in R or decide to export your results to a
+GeoPackage to use it with other geospatial software</li>
 </ul>
 </div>
 <div id="getting-started" class="section level1">
 <h1>Getting started</h1>
-<p>First, we will load the <code>{mapme.biodiversity}</code> and the <code>{sf}</code> package for handling spatial vector data. For tabular data handling and the creation of a plot, we will also load the <code>{dplyr}</code> and <code>{ggplot2}</code> packages. Then, we will read an package internal GeoPackage which includes the geometry of a protected area in the Dominican Republic from the WDPA database.</p>
+<p>First, we will load the <code>{mapme.biodiversity}</code> and the
+<code>{sf}</code> package for handling spatial vector data. For tabular
+data handling and the creation of a plot, we will also load the
+<code>{dplyr}</code> and <code>{ggplot2}</code> packages. Then, we will
+read an package internal GeoPackage which includes the geometry of a
+protected area in the Dominican Republic from the WDPA database.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mapme.biodiversity)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
@@ -173,7 +386,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   WDPAID NAME            DESIG_ENG     ISO3                                 geom</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;         &lt;chr&gt;                  &lt;MULTIPOLYGON [°]&gt;</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 478140 Sierra de Neiba National Park DOM   (((-71.76134 18.66333, -71.76067 1…</span></span></code></pre></div>
-<p>The sf-object contains a single object of geometry type <code>MULTIPOLYGON</code>. The <code>{mapme.biodiversity}</code> package, however, only supports geometries of type <code>POLYGON</code>, thus we need to cast the geometry before we advance. The resulting sf object also contains some metadata, that will be retained throughout the complete workflow. Because some of the casted geometries represent artifacts of the digitization process, in this example we will subset to only the largest polygon.</p>
+<p>The sf-object contains a single object of geometry type
+<code>MULTIPOLYGON</code>. The <code>{mapme.biodiversity}</code>
+package, however, only supports geometries of type <code>POLYGON</code>,
+thus we need to cast the geometry before we advance. The resulting sf
+object also contains some metadata, that will be retained throughout the
+complete workflow. Because some of the casted geometries represent
+artifacts of the digitization process, in this example we will subset to
+only the largest polygon.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(aoi <span class="ot">&lt;-</span> <span class="fu">st_cast</span>(aoi, <span class="at">to =</span> <span class="st">&quot;POLYGON&quot;</span>)[<span class="dv">1</span>, ])</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in st_cast.sf(aoi, to = &quot;POLYGON&quot;): repeating attributes for all sub-</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; geometries for which they may not be constant</span></span>
@@ -186,7 +406,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   WDPAID NAME            DESIG_ENG     ISO3                                 geom</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;         &lt;chr&gt;                       &lt;POLYGON [°]&gt;</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 478140 Sierra de Neiba National Park DOM   ((-71.76134 18.66333, -71.76067 18…</span></span></code></pre></div>
-<p>In the following, we will simulate a portfolio consisting of several polygons (assets, in the jargon of this package). To this end, we create smaller polygons within the original extent of the main polygon. This way, we can showcase the behavior of the <code>{mapme.biodiversity}</code> package for portfolios that contain multiple assets. We will only select single assets with geometry type <code>POLYGON</code> that lie within the original boundary of the protected area.</p>
+<p>In the following, we will simulate a portfolio consisting of several
+polygons (assets, in the jargon of this package). To this end, we create
+smaller polygons within the original extent of the main polygon. This
+way, we can showcase the behavior of the
+<code>{mapme.biodiversity}</code> package for portfolios that contain
+multiple assets. We will only select single assets with geometry type
+<code>POLYGON</code> that lie within the original boundary of the
+protected area.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>aoi_gridded <span class="ot">&lt;-</span> <span class="fu">st_make_grid</span>(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">st_bbox</span>(aoi),</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">10</span>),</span>
@@ -204,7 +431,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="initialization-of-a-portfolio" class="section level1">
 <h1>Initialization of a portfolio</h1>
-<p>Now, we are ready to initiate a portfolio object containing multiple assets. We use the <code>init_portfolio()</code> function and set some attributes that are important for the subsequent processing. The function will add a unique identifier column called ‘assetid’ that is used to uniquely identify each asset in the portfolio.</p>
+<p>Now, we are ready to initiate a portfolio object containing multiple
+assets. We use the <code>init_portfolio()</code> function and set some
+attributes that are important for the subsequent processing. The
+function will add a unique identifier column called ‘assetid’ that is
+used to uniquely identify each asset in the portfolio.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># copying package internal resource to tempdir</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>outdir <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&quot;mapme.biodiversity&quot;</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(outdir)</span>
@@ -223,14 +454,52 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_portfolio[<span class="st">&quot;assetid&quot;</span>])</span></code></pre></div>
 <p><img src="data:image/png;base64,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" width="120%" height="120%" /></p>
-<p>The first argument, <code>x</code>, is the sf-object that we want to turn into a portfolio. The argument <code>years</code> allows us to restrict our analysis to certain years only. Certain resources with a temporal dimension are only processed for the portfolio’s temporal extent. All resource and indicator functions will inform the user if the portfolio’s temporal extents do not intersect. The <code>outdir</code> and <code>tmpdir</code> arguments point towards directories on the local file system of your machine. If these directories do not exist, the package attempts to create them. The <code>outdir</code> cannot be equal to the <code>tmpdir</code> argument. All downloaded resources will be written to their respective directories within <code>outdir</code>. We will set the <code>{terra}</code>’s package temporal directory to directory within <code>tmpdir</code> and also any intermediate files during the calculation of an indicator will be written there. Thus, please ensure that you have write access to these directories and that there is sufficient free disk space to support the analysis of your portfolio.</p>
-<p>In case your share a common <code>outdir</code> across different portfolios, with the <code>add_resources</code> arguments controls the behavior of the portfolio initialization. If set to <code>TRUE</code>, the function will automatically search for all available resources and add these as attributes to the portfolio, without further checking if these resources actually match its spatio-temporal extent. Only use this if you are sure that for your current portfolio, all resources have been previously downloaded. If set to <code>FALSE</code>, no pre-existing resources will be added to the portfolio. Once you request a specific portfolio for your resources, only those files will be downloaded that are missing in <code>outdir</code>. This behavior is beneficial if you share the <code>outdir</code> between different projects to ensure that only matching resources are returned.</p>
-<p>The argument <code>cores</code> specifies the number of CPU cores available to the indicator routines for parallel processing. Parallel processing is deactivated on Windows by default. If you use another operating system you may set to a value greater 1 if you wish to activate parallel processing.</p>
-<p>Finally, the <code>verbose</code> logical controls whether or not the package will print informative messages during the calculations. Note, that even if set to <code>FALSE</code>, the package will inform users about any potential error in specifying of arguments in the form of warnings and errors.</p>
+<p>The first argument, <code>x</code>, is the sf-object that we want to
+turn into a portfolio. The argument <code>years</code> allows us to
+restrict our analysis to certain years only. Certain resources with a
+temporal dimension are only processed for the portfolio’s temporal
+extent. All resource and indicator functions will inform the user if the
+portfolio’s temporal extents do not intersect. The <code>outdir</code>
+and <code>tmpdir</code> arguments point towards directories on the local
+file system of your machine. If these directories do not exist, the
+package attempts to create them. The <code>outdir</code> cannot be equal
+to the <code>tmpdir</code> argument. All downloaded resources will be
+written to their respective directories within <code>outdir</code>. We
+will set the <code>{terra}</code>’s package temporal directory to
+directory within <code>tmpdir</code> and also any intermediate files
+during the calculation of an indicator will be written there. Thus,
+please ensure that you have write access to these directories and that
+there is sufficient free disk space to support the analysis of your
+portfolio.</p>
+<p>In case your share a common <code>outdir</code> across different
+portfolios, with the <code>add_resources</code> arguments controls the
+behavior of the portfolio initialization. If set to <code>TRUE</code>,
+the function will automatically search for all available resources and
+add these as attributes to the portfolio, without further checking if
+these resources actually match its spatio-temporal extent. Only use this
+if you are sure that for your current portfolio, all resources have been
+previously downloaded. If set to <code>FALSE</code>, no pre-existing
+resources will be added to the portfolio. Once you request a specific
+portfolio for your resources, only those files will be downloaded that
+are missing in <code>outdir</code>. This behavior is beneficial if you
+share the <code>outdir</code> between different projects to ensure that
+only matching resources are returned.</p>
+<p>The argument <code>cores</code> specifies the number of CPU cores
+available to the indicator routines for parallel processing. Parallel
+processing is deactivated on Windows by default. If you use another
+operating system you may set to a value greater 1 if you wish to
+activate parallel processing.</p>
+<p>Finally, the <code>verbose</code> logical controls whether or not the
+package will print informative messages during the calculations. Note,
+that even if set to <code>FALSE</code>, the package will inform users
+about any potential error in specifying of arguments in the form of
+warnings and errors.</p>
 </div>
 <div id="getting-the-right-resources" class="section level1">
 <h1>Getting the right resources</h1>
-<p>You can check which indicators are available via the <code>available_indicators()</code> function. For this, we inspect the names of the returned object:</p>
+<p>You can check which indicators are available via the
+<code>available_indicators()</code> function. For this, we inspect the
+names of the returned object:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(<span class="fu">available_indicators</span>())</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;accessibility&quot;     &quot;biome&quot;             &quot;chirpsprec&quot;       </span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [4] &quot;drought_indicator&quot; &quot;elevation&quot;         &quot;emissions&quot;        </span></span>
@@ -238,24 +507,52 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [10] &quot;soilproperties&quot;    &quot;teow&quot;              &quot;treecover&quot;        </span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] &quot;treeloss&quot;          &quot;tri&quot;               &quot;wcprec&quot;           </span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [16] &quot;wctmax&quot;            &quot;wctmin&quot;</span></span></code></pre></div>
-<p>Say, we are interested in the precipitation indicator based on the CHIRPS dataset. We can learn more about this indicator and its required resources by using either of the commands below or, if you are viewing the online version, head over to the <a href="https://mapme-initiative.github.io/mapme.biodiversity/reference/chirpsprec.html">chirpsprec</a> documentation.</p>
+<p>Say, we are interested in the precipitation indicator based on the
+CHIRPS dataset. We can learn more about this indicator and its required
+resources by using either of the commands below or, if you are viewing
+the online version, head over to the <a href="https://mapme-initiative.github.io/mapme.biodiversity/reference/chirpsprec.html">chirpsprec</a>
+documentation.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>?chirpsprec</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(chirpsprec)</span></code></pre></div>
-<p>By inspecting the help page we learned that this indicator requires the <code>chirps</code> resource and it accepts three arguments, namely the <code>scales_spi</code>, <code>spi_prev_years</code> and <code>engine</code> arguments. <code>scales_spi</code> determines the time-scale for the calculation of the Standardized-Precipitation-Index (SPI), while <code>spi_prev_years</code> indicates how many previous years are included in the fitting process. The <code>engine</code> argument controls how zonal statistics for each asset in the portfolio is extracted.</p>
-<p>With that information at hand, we can start to retrieve the required resource. We can learn about all available resources using the <code>available_resources()</code> function:</p>
+<p>By inspecting the help page we learned that this indicator requires
+the <code>chirps</code> resource and it accepts three arguments, namely
+the <code>scales_spi</code>, <code>spi_prev_years</code> and
+<code>engine</code> arguments. <code>scales_spi</code> determines the
+time-scale for the calculation of the Standardized-Precipitation-Index
+(SPI), while <code>spi_prev_years</code> indicates how many previous
+years are included in the fitting process. The <code>engine</code>
+argument controls how zonal statistics for each asset in the portfolio
+is extracted.</p>
+<p>With that information at hand, we can start to retrieve the required
+resource. We can learn about all available resources using the
+<code>available_resources()</code> function:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(<span class="fu">available_resources</span>())</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;chirps&quot;         &quot;ecoregions&quot;     &quot;esalandcover&quot;   &quot;greenhouse&quot;    </span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] &quot;lossyear&quot;       &quot;mangrove&quot;       &quot;maxtemperature&quot; &quot;mintemperature&quot;</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] &quot;nasagrace&quot;      &quot;precipitation&quot;  &quot;soilgrids&quot;      &quot;srtmdem&quot;       </span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] &quot;traveltime&quot;     &quot;treecover2000&quot;  &quot;worldpop&quot;</span></span></code></pre></div>
-<p>For the purpose of this vignette, we are going to download the <code>chirps</code> resource. We can get more detailed information about a given resource, by using either of the commands below to open up the help page. If you are viewing the online version of this documentation, you can simply head over to the <a href="https://mapme-initiative.github.io/mapme.biodiversity/reference/chirps.html">chirps</a> resource documentation.</p>
+<p>For the purpose of this vignette, we are going to download the
+<code>chirps</code> resource. We can get more detailed information about
+a given resource, by using either of the commands below to open up the
+help page. If you are viewing the online version of this documentation,
+you can simply head over to the <a href="https://mapme-initiative.github.io/mapme.biodiversity/reference/chirps.html">chirps</a>
+resource documentation.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>?chirps</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(chirps)</span></code></pre></div>
-<p>We can now make the <code>chirps</code> resource available for our portfolio. We will use a common interface that is used for all resources, called <code>get_resources()</code>. We have to specify our portfolio object and the names of the resource(s) we wish to download. Additional arguments for the specific resource can be specified. The output of the function is the portfolio object with its attributes appended for the new resource, thus we simply can overwrite the <code>sample_portfolio</code> variable.</p>
+<p>We can now make the <code>chirps</code> resource available for our
+portfolio. We will use a common interface that is used for all
+resources, called <code>get_resources()</code>. We have to specify our
+portfolio object and the names of the resource(s) we wish to download.
+Additional arguments for the specific resource can be specified. The
+output of the function is the portfolio object with its attributes
+appended for the new resource, thus we simply can overwrite the
+<code>sample_portfolio</code> variable.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>sample_portfolio <span class="ot">&lt;-</span> <span class="fu">get_resources</span>(<span class="at">x =</span> sample_portfolio, <span class="at">resources =</span> <span class="st">&quot;chirps&quot;</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Starting process to download resource &#39;chirps&#39;........</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Skipping existing files in output directory.</span></span></code></pre></div>
-<p>In case you want to download more than one resource, you can use the same interface and the resources will be made available sequentially. Required arguments for a resource are simply added as usual:</p>
+<p>In case you want to download more than one resource, you can use the
+same interface and the resources will be made available sequentially.
+Required arguments for a resource are simply added as usual:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sample_portfolio <span class="ot">&lt;-</span> <span class="fu">get_resources</span>(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> sample_portfolio,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">resources =</span> <span class="fu">c</span>(<span class="st">&quot;chirps&quot;</span>, <span class="st">&quot;treecover2000&quot;</span>),</span>
@@ -264,15 +561,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="calculate-specific-indicators" class="section level1">
 <h1>Calculate specific indicators</h1>
-<p>The next step consists of calculating specific indicators. Note, that each indicator requires one or more resources that were made available via the <code>get_resources()</code> function explained above. Here, we are going to calculate the <code>chirpsprec</code> indicator which is based on the <code>chirps</code> resource. Since the resource has been made available in the previous step, we can continue requesting the calculation of our desired indicator. Note, the below command would issue an error in case a required resource has not been made available via <code>get_resources()</code> beforehand.</p>
+<p>The next step consists of calculating specific indicators. Note, that
+each indicator requires one or more resources that were made available
+via the <code>get_resources()</code> function explained above. Here, we
+are going to calculate the <code>chirpsprec</code> indicator which is
+based on the <code>chirps</code> resource. Since the resource has been
+made available in the previous step, we can continue requesting the
+calculation of our desired indicator. Note, the below command would
+issue an error in case a required resource has not been made available
+via <code>get_resources()</code> beforehand.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sample_portfolio <span class="ot">&lt;-</span> <span class="fu">calc_indicators</span>(sample_portfolio,</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicators =</span> <span class="st">&quot;chirpsprec&quot;</span>,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">scales_spi =</span> <span class="dv">3</span>,</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">spi_prev_years =</span> <span class="dv">8</span>,</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">engine =</span> <span class="st">&quot;extract&quot;</span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<p>The function call will inform us that we have not specified the two required arguments but that the default values have been inserted. If you get such a message for other indicators and you do not know what they mean, head over to the indicator help-page to learn about the available arguments.</p>
-<p>Now let’s take a look at the results. We will select only some of the metadata and the output indicator column to get a clearer picture of what has happened.</p>
+<p>The function call will inform us that we have not specified the two
+required arguments but that the default values have been inserted. If
+you get such a message for other indicators and you do not know what
+they mean, head over to the indicator help-page to learn about the
+available arguments.</p>
+<p>Now let’s take a look at the results. We will select only some of the
+metadata and the output indicator column to get a clearer picture of
+what has happened.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>(sample_portfolio <span class="ot">&lt;-</span> sample_portfolio <span class="sc">%&gt;%</span> <span class="fu">select</span>(assetid, WDPAID, chirpsprec))</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 20 features and 3 fields</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Geometry type: POLYGON</span></span>
@@ -302,7 +613,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18      18 478140 &lt;tibble [12 × 4]&gt; ((-71.35587 18.582, -71.35587 18.59046, -71…</span></span>
 <span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 19      19 478140 &lt;tibble [12 × 4]&gt; ((-71.37974 18.61442, -71.37974 18.60424, -…</span></span>
 <span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20      20 478140 &lt;tibble [12 × 4]&gt; ((-71.34017 18.59953, -71.35587 18.59046, -…</span></span></code></pre></div>
-<p>We obtained a new listed column in our sf object that is called like the requested indicator. For each asset in our portfolio, this column contains a tibble with 12 rows and 4 columns. Let’s have a closer look at these objects.</p>
+<p>We obtained a new listed column in our sf object that is called like
+the requested indicator. For each asset in our portfolio, this column
+contains a tibble with 12 rows and 4 columns. Let’s have a closer look
+at these objects.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sample_portfolio<span class="sc">$</span>chirpsprec[<span class="dv">10</span>]</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 12 × 4</span></span>
@@ -320,9 +634,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 2010-10-01      105 -53.4   -1.05  </span></span>
 <span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 2010-11-01      130  32.9   -0.309 </span></span>
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 2010-12-01        8  -2.1    0.287</span></span></code></pre></div>
-<p>For each asset, the result is a tibble in long format for 12 months in the year 2010. The precipitation indicator with the default setting delivered the absolute rainfall sum as well as the rainfall anomaly compared to the 1981-2010 climate normal period (make sure to read the detailed indicator documentation via <code>?chirpsprec</code>). Let’s quickly visualize the results for a single asset:</p>
+<p>For each asset, the result is a tibble in long format for 12 months
+in the year 2010. The precipitation indicator with the default setting
+delivered the absolute rainfall sum as well as the rainfall anomaly
+compared to the 1981-2010 climate normal period (make sure to read the
+detailed indicator documentation via <code>?chirpsprec</code>). Let’s
+quickly visualize the results for a single asset:</p>
 <p><img src="data:image/png;base64,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" /><!-- --><img src="data:image/png;base64,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" /><!-- --><img src="data:image/png;base64,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" /><!-- --></p>
-<p>If you wish to conduct your statistical analysis in R, you can use <code>{tidyr}</code> functionality to unnest one or multiple columns. Especially for large portfolios, it is usually a good idea to keep the geometry information in a separated variable to keep the size of the data object relatively small.</p>
+<p>If you wish to conduct your statistical analysis in R, you can use
+<code>{tidyr}</code> functionality to unnest one or multiple columns.
+Especially for large portfolios, it is usually a good idea to keep the
+geometry information in a separated variable to keep the size of the
+data object relatively small.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>geometries <span class="ot">&lt;-</span> <span class="fu">select</span>(sample_portfolio, assetid)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>sample_portfolio <span class="sc">%&gt;%</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
@@ -346,16 +669,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="exporting-an-portfolio-object" class="section level1">
 <h1>Exporting an portfolio object</h1>
-<p>You can use the <code>write_portfolio()</code> function to save a processed portfolio object to disk as a GeoPackage. This allows sharing your data with others who might not be using R, but any other geospatial software. Simply point towards a non-existing file on your local disk to write the portfolio. The function will create an individual table for all processed indicators. Via the <code>read_portfolio()</code> function, a portfolio which has been written to disk in such a way can be read back into R. However, users should note that the portfolio-wide arguments that were set during the portfolio initialization are <strong>not</strong> reconstructed (e.g. the temporal extent, <code>outdir</code> and <code>tmpdir</code>, etc.). Thus if you wish to continue to use <code>{mapme.biodiversity}</code> functionality on such a portfolio object, make sure to re-run <code>init_portfolio()</code> on it.</p>
+<p>You can use the <code>write_portfolio()</code> function to save a
+processed portfolio object to disk as a GeoPackage. This allows sharing
+your data with others who might not be using R, but any other geospatial
+software. Simply point towards a non-existing file on your local disk to
+write the portfolio. The function will create an individual table for
+all processed indicators. Via the <code>read_portfolio()</code>
+function, a portfolio which has been written to disk in such a way can
+be read back into R. However, users should note that the portfolio-wide
+arguments that were set during the portfolio initialization are
+<strong>not</strong> reconstructed (e.g. the temporal extent,
+<code>outdir</code> and <code>tmpdir</code>, etc.). Thus if you wish to
+continue to use <code>{mapme.biodiversity}</code> functionality on such
+a portfolio object, make sure to re-run <code>init_portfolio()</code> on
+it.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tmp_output <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">&quot;.gpkg&quot;</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_portfolio</span>(</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> sample_portfolio,</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dsn =</span> tmp_output</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Writing layer `metadata&#39; to data source </span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   `/tmp/RtmpU7aTgZ/file359d505e6628.gpkg&#39; using driver `GPKG&#39;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   `/tmp/Rtmp5UCsE9/file5f6a9970f02.gpkg&#39; using driver `GPKG&#39;</span></span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Writing 20 features with 2 fields and geometry type Polygon.</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Updating layer `chirpsprec&#39; to data source `/tmp/RtmpU7aTgZ/file359d505e6628.gpkg&#39; using driver `GPKG&#39;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Updating layer `chirpsprec&#39; to data source `/tmp/Rtmp5UCsE9/file5f6a9970f02.gpkg&#39; using driver `GPKG&#39;</span></span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Writing 240 features with 5 fields without geometries.</span></span>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>(portfolio_from_disk <span class="ot">&lt;-</span> <span class="fu">read_portfolio</span>(tmp_output))</span>
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 20 features and 3 fields</span></span>

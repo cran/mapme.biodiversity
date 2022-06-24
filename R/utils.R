@@ -198,9 +198,10 @@
 #' @noRd
 .check_available_years <- function(target_years, available_years, indicator) {
   if (any(!target_years %in% available_years)) {
-    message(sprintf("Some target years are not available for %s.", indicator))
     target_years <- target_years[target_years %in% available_years]
-    if (length(target_years) == 0) {
+    if(length(target_years) > 0 ){
+    message(sprintf("Some target years are not available for %s.", indicator))
+    } else {
       stop(
         sprintf(
           "The target years do not intersect with the availability of %s.",
@@ -323,6 +324,8 @@
     }
   } else { # use aria_bin
 
+    outdir <- dirname(missing_filenames[1])
+    missing_filenames <- basename(missing_filenames)
     lines <- lapply(1:length(missing_urls), function(i) {
       c(missing_urls[i], paste0("  out=", missing_filenames[i]))
     })
@@ -331,13 +334,13 @@
     writeLines(lines, tmpfile)
     if (verbose) {
       args <- sprintf(
-        "--show-console-readout=false --console-log-level=warn -c -j 8 -i %s",
-        tmpfile
+        "--show-console-readout=false --console-log-level=warn -c -j 8 -i %s -d %s",
+        tmpfile, outdir
       )
     } else {
       args <- sprintf(
-        "--quiet -c -j 8 -i %s",
-        tmpfile
+        "--quiet -c -j 8 -i %s -d %s",
+        tmpfile, outdir
       )
     }
     out <- system2("/bin/aria2c", args = args)
