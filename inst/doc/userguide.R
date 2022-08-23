@@ -54,8 +54,8 @@ plot(sample_portfolio["assetid"])
 names(available_indicators())
 
 ## ----helppage_indicator, eval = FALSE-----------------------------------------
-#  ?chirpsprec
-#  help(chirpsprec)
+#  ?precipitation_chirps
+#  help(precipitation_chirps)
 
 ## ----query_resources----------------------------------------------------------
 names(available_resources())
@@ -76,23 +76,23 @@ sample_portfolio <- get_resources(x = sample_portfolio, resources = "chirps")
 
 ## ----calc_indicator-----------------------------------------------------------
 sample_portfolio <- calc_indicators(sample_portfolio,
-  indicators = "chirpsprec",
+  indicators = "precipitation_chirps",
   scales_spi = 3,
   spi_prev_years = 8,
   engine = "extract"
 )
 
 ## ----select_cols--------------------------------------------------------------
-(sample_portfolio <- sample_portfolio %>% select(assetid, WDPAID, chirpsprec))
+(sample_portfolio <- sample_portfolio %>% select(assetid, WDPAID, precipitation_chirps))
 
 ## ----investigate_indicator----------------------------------------------------
-sample_portfolio$chirpsprec[10]
+sample_portfolio$precipitation_chirps[10]
 
 ## ----plot_precipitation, echo = FALSE, warning=FALSE, dpi = 50----------------
 sample_portfolio %>%
   filter(assetid == 10) %>%
   st_drop_geometry() %>%
-  tidyr::unnest(chirpsprec) %>%
+  tidyr::unnest(precipitation_chirps) %>%
   mutate(sign = ifelse(anomaly < 0, "lower than average", "higher than average")) %>%
   ggplot() +
   geom_bar(aes(x = dates, y = anomaly, fill = sign), stat = "identity") +
@@ -107,7 +107,7 @@ sample_portfolio %>%
 sample_portfolio %>%
   filter(assetid == 10) %>%
   st_drop_geometry() %>%
-  tidyr::unnest(chirpsprec) %>%
+  tidyr::unnest(precipitation_chirps) %>%
   mutate(
     spi_3 = ifelse(is.na(spi_3), 0, spi_3),
     sign = ifelse(spi_3 < 0, "lower than average", "higher than average")
@@ -125,7 +125,7 @@ sample_portfolio %>%
 sample_portfolio %>%
   filter(assetid == 10) %>%
   st_drop_geometry() %>%
-  tidyr::unnest(chirpsprec) %>%
+  tidyr::unnest(precipitation_chirps) %>%
   ggplot() +
   geom_bar(aes(x = dates, y = absolute), stat = "identity", fill = "darkblue") +
   labs(title = "Sum of monthly precipitation 2010", x = "", y = "Precipitation sum [mm]") +
@@ -135,7 +135,7 @@ sample_portfolio %>%
 geometries <- select(sample_portfolio, assetid)
 sample_portfolio %>%
   st_drop_geometry() %>%
-  tidyr::unnest(chirpsprec) %>%
+  tidyr::unnest(precipitation_chirps) %>%
   filter(assetid == 3)
 
 ## ----portfolio_io-------------------------------------------------------------

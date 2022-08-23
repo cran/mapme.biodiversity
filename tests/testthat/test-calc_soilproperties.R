@@ -12,7 +12,6 @@ test_that("soilpoperties works", {
 
   soilgrids <- rast(soilgrids)
 
-
   expect_equal(
     .calc_soilproperties(shp, NULL),
     NA

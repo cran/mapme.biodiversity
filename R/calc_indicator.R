@@ -21,6 +21,9 @@
 #' @keywords function
 #' @export
 calc_indicators <- function(x, indicators, ...) {
+
+  # depreciation warining for old indicator names
+  indicators <- .depreciation_warning(indicators, resource = FALSE)
   # check if the requested resource is supported
   required_resources <- .check_requested_indicator(indicators)
   # check if any of the requested resources is already locally available
@@ -41,7 +44,6 @@ calc_indicators <- function(x, indicators, ...) {
     suppressMessages(sf_use_s2(FALSE))
     on.exit(suppressMessages(sf_use_s2(s2_org)))
   }
-
   for (indicator in indicators) x <- .get_single_indicator(x, indicator, ...)
   x
 }
@@ -59,7 +61,6 @@ calc_indicators <- function(x, indicators, ...) {
 #' @keywords internal
 #' @importFrom dplyr relocate last_col
 #' @importFrom tidyr nest
-#' @importFrom data.table rbindlist
 .get_single_indicator <- function(x, indicator, ...) {
   i <- NULL
   # get arguments from function call and portfolio object
@@ -108,7 +109,18 @@ calc_indicators <- function(x, indicators, ...) {
   unlink(file.path(tmpdir, "terra"), recursive = TRUE, force = TRUE)
   terra::terraOptions(tempdir = terra_org)
   # bind results to data.frame
-  results <- tibble(data.table::rbindlist(results, fill = TRUE, idcol = ".id"))
+  index_tbl <- purrr::map_lgl(results, function(x) inherits(x, "tbl_df"))
+  if(any(index_tbl) & any(!index_tbl)){
+    colnames <- names(results[[which(index_tbl)[1]]])
+    fill <- rep(NA, length(colnames))
+    names(fill) <- colnames
+    for (i in which(!index_tbl)) results[[i]] <- fill
+    results <- tibble(dplyr::bind_rows(results, .id = ".id"))
+  } else if (any(!index_tbl)) {
+    results <- tibble(.id = x$assetid, value = rep(NA, nrow(x)))
+  } else {
+    results <- tibble(dplyr::bind_rows(results, .id = ".id"))
+  }
   # nest the results
   results <- nest(results, !!indicator := !.id)
   # attach results

@@ -257,7 +257,7 @@ indicators. The package will add a unique asset identifier called
 <code>assetid</code> and add <em>nested list columns</em> for each
 indicator. Portfolio-wide arguments are set as attributes during the
 call of <code>init_portfolio()</code>. Except from these additional
-arguments, an portfolio object actually is and will behave as a familiar
+arguments, a portfolio object actually is and will behave as a familiar
 <code>{sf}</code> object in any important regard.</p></li>
 <li><p><strong>Resources</strong>: A resource is a supported dataset
 that can be downloaded via the <code>get_resources()</code> function. A
@@ -266,7 +266,7 @@ datasets from are saved to disk as GeoPackages. Raster datasets can be
 tiled so that only tiles that cover the spatial extent of the portfolio
 will be downloaded. Global raster resources will be downloaded
 completely. Additionally, some raster resources are time-invariant
-(e.g. a <code>?srtmdem</code>), others contain a temporal dimension
+(e.g. a <code>?nasa_srtm</code>), others contain a temporal dimension
 (e.g. <code>?esalandcover</code>). If a raster resource contains a
 temporal dimension, usually only the time-frame intersecting with the
 time-frame of the portfolio will be downloaded. Some resources might
@@ -293,8 +293,8 @@ engines are based on either <code>terra::zonal()</code>,
 <code>terra::extract()</code>, or
 <code>exactextractr::exact_extract()</code>. We took great care to set
 these engines to sensible defaults. However, to customize your workflow
-you can chose to use a different engine instead.</p></li>
-<li><p><strong>Processing Modes</strong>: The processing mode is is an
+you can choose to use a different engine instead.</p></li>
+<li><p><strong>Processing Modes</strong>: The processing mode is an
 important concept if you wish to extend the package with a new
 indicator, but not so much if you simply want to use for your
 statistical analysis. For most indicators the default processing mode is

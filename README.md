@@ -30,7 +30,7 @@ Engine. It provides the possibility to e.g. analyze the World Database
 of Protected Areas (WDPA) for a number of relevant indicators. The
 primary use case of this package is to support scientific analysis and
 data science for individuals and organizations who seek to preserve the
-planets biodiversity. It’s development is funded by the German
+planet biodiversity. It’s development is funded by the German
 Development Bank KfW.
 
 ## Installation
@@ -62,7 +62,7 @@ library(mapme.biodiversity)
 library(sf)
 ```
 
-    ## Linking to GEOS 3.10.1, GDAL 3.4.0, PROJ 8.2.0; sf_use_s2() is TRUE
+    ## Linking to GEOS 3.10.2, GDAL 3.4.1, PROJ 8.2.1; sf_use_s2() is TRUE
 
 ``` r
 resources <- names(available_resources())
@@ -74,46 +74,49 @@ cat(sprintf("Supported resources:\n- %s\n\nSupported indicators:\n- %s",
 
     ## Supported resources:
     ## - chirps
-    ## - ecoregions
     ## - esalandcover
-    ## - greenhouse
-    ## - lossyear
-    ## - mangrove
-    ## - maxtemperature
-    ## - mintemperature
-    ## - nasagrace
-    ## - precipitation
+    ## - gfw_emissions
+    ## - gfw_lossyear
+    ## - gfw_treecover
+    ## - gmw
+    ## - nasa_firms
+    ## - nasa_grace
+    ## - nasa_srtm
+    ## - nelson_et_al
     ## - soilgrids
-    ## - srtmdem
-    ## - traveltime
-    ## - treecover2000
+    ## - teow
+    ## - worldclim_max_temperature
+    ## - worldclim_min_temperature
+    ## - worldclim_precipitation
     ## - worldpop
     ## 
     ## Supported indicators:
-    ## - accessibility
+    ## - active_fire_counts
+    ## - active_fire_properties
     ## - biome
-    ## - chirpsprec
     ## - drought_indicator
+    ## - ecoregion
     ## - elevation
-    ## - emissions
-    ## - gmw
     ## - landcover
-    ## - popcount
+    ## - mangroves_area
+    ## - population_count
+    ## - precipitation_chirps
+    ## - precipitation_wc
     ## - soilproperties
-    ## - teow
-    ## - treecover
-    ## - treeloss
+    ## - temperature_max_wc
+    ## - temperature_min_wc
+    ## - traveltime
+    ## - treecover_area
+    ## - treecover_area_and_emissions
+    ## - treecoverloss_emissions
     ## - tri
-    ## - wcprec
-    ## - wctmax
-    ## - wctmin
 
 Once you have decided on an indicator you are interested in, you can
 initialize a biodiversity portfolio by using an sf-object that only
 contains geometries of type `POLYGON` via the `init_portfolio()`
 function call. This will set some important information that is needed
 further down the processing chain. We can then request the download of a
-resources that is required to calculate specific indicators. Once the
+resource that is required to calculate specific indicators. Once the
 indicator has been calculated for individually for all assets in a
 portfolio, the data is returned as a nested list column to the original
 object.
@@ -130,11 +133,11 @@ object.
       verbose = FALSE
     ) %>%
     get_resources(
-      resources = c("treecover2000", "lossyear", "greenhouse"),
+      resources = c("gfw_treecover", "gfw_lossyear", "gfw_emissions"),
       vers_treecover = "GFC-2020-v1.8", vers_lossyear = "GFC-2020-v1.8"
     ) %>%
-    calc_indicators("treeloss", min_size = 1, min_cover = 30) %>%
-    tidyr::unnest(treeloss))
+    calc_indicators("treecover_area_and_emissions", min_size = 1, min_cover = 30) %>%
+    tidyr::unnest(treecover_area_and_emissions))
 ```
 
     ## Simple feature collection with 2 features and 8 fields
@@ -143,12 +146,22 @@ object.
     ## Bounding box:  xmin: -71.80933 ymin: 18.57668 xmax: -71.33201 ymax: 18.69931
     ## Geodetic CRS:  WGS 84
     ## # A tibble: 2 × 9
-    ##   WDPAID NAME            DESIG_ENG     ISO3  .assetid years emissions treecover
-    ##    <dbl> <chr>           <chr>         <chr>    <int> <int>     <dbl>     <dbl>
-    ## 1 478140 Sierra de Neiba National Park DOM          1  2016      2832     2357.
-    ## 2 478140 Sierra de Neiba National Park DOM          1  2017      3468     2345.
+    ##   WDPAID NAME            DESIG_ENG     ISO3  assetid years emissions treecover
+    ##    <dbl> <chr>           <chr>         <chr>   <int> <int>     <dbl>     <dbl>
+    ## 1 478140 Sierra de Neiba National Park DOM         1  2016      2832     2357.
+    ## 2 478140 Sierra de Neiba National Park DOM         1  2017      3468     2345.
     ## # … with 1 more variable: geom <POLYGON [°]>
+    ## # ℹ Use `colnames()` to see all variable names
 
 Head over to the [online
 documentation](https://mapme-initiative.github.io/mapme.biodiversity/index.html)
 find more detailed information about the package.
+
+## Important note for global scale analysis
+
+In the current version on CRAN (0.1.2) there is a bug that may cause
+issue when downloading tiled data (Global Forest Watch, ESA Landcover,
+SRTM) for global portfolios. It is described
+[here](https://github.com/mapme-initiative/mapme.biodiversity/issues/84).
+It is fixed in the current version on Github which you can download as
+described above.
