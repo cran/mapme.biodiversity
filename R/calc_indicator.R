@@ -32,18 +32,6 @@ calc_indicators <- function(x, indicators, ...) {
     existing_resources, required_resources,
     needed = TRUE
   )
-  # Fix for MacOS CI error with duplicated vertices in vector resources
-  # Error in s2_geography_from_wkb(x, oriented = oriented, check = check) :
-  # Evaluation error: Found 1 feature with invalid spherical geometry.
-  # [1] Loop 0 is not valid: Edge 821 is degenerate (duplicate vertex).
-  # https://github.com/r-spatial/sf/issues/1762 suggests to deactivate s2,
-  # proposition of https://github.com/r-spatial/sf/issues/1902 to dissable
-  # s2 and fix the geometry has failed, thus for now falling back to lwgeom
-  if (Sys.info()["sysname"] == "Darwin" | grepl("darwin", Sys.info()["sysname"])) {
-    s2_org <- sf_use_s2()
-    suppressMessages(sf_use_s2(FALSE))
-    on.exit(suppressMessages(sf_use_s2(s2_org)))
-  }
   for (indicator in indicators) x <- .get_single_indicator(x, indicator, ...)
   x
 }
@@ -59,6 +47,7 @@ calc_indicators <- function(x, indicators, ...) {
 #' @param ... Additional arguments required by the requested indicators.
 #'
 #' @keywords internal
+#' @noRd
 #' @importFrom dplyr relocate last_col
 #' @importFrom tidyr nest
 .get_single_indicator <- function(x, indicator, ...) {
@@ -108,19 +97,8 @@ calc_indicators <- function(x, indicators, ...) {
   # remove terra tmpdir
   unlink(file.path(tmpdir, "terra"), recursive = TRUE, force = TRUE)
   terra::terraOptions(tempdir = terra_org)
-  # bind results to data.frame
-  index_tbl <- purrr::map_lgl(results, function(x) inherits(x, "tbl_df"))
-  if(any(index_tbl) & any(!index_tbl)){
-    colnames <- names(results[[which(index_tbl)[1]]])
-    fill <- rep(NA, length(colnames))
-    names(fill) <- colnames
-    for (i in which(!index_tbl)) results[[i]] <- fill
-    results <- tibble(dplyr::bind_rows(results, .id = ".id"))
-  } else if (any(!index_tbl)) {
-    results <- tibble(.id = x$assetid, value = rep(NA, nrow(x)))
-  } else {
-    results <- tibble(dplyr::bind_rows(results, .id = ".id"))
-  }
+  # bind the asset results
+  results <- .bind_assets(results)
   # nest the results
   results <- nest(results, !!indicator := !.id)
   # attach results
@@ -248,4 +226,35 @@ calc_indicators <- function(x, indicators, ...) {
     return(NULL)
   }
   cropped
+}
+
+
+.bind_assets <- function(results){
+  # bind results to data.frame
+  index_tbl <- purrr::map_lgl(results, function(x) inherits(x, c("tbl_df", "data.frame")))
+
+  # case all assets returned tibbles
+  if(all(index_tbl)){
+    return(dplyr::bind_rows(results, .id = ".id"))
+  }
+
+  # case all assets returned NA
+  if(all(!index_tbl)){
+    return(
+      tibble::tibble(
+        .id = as.character(1:length(results)),
+        value = rep(NA, length(results))
+      )
+    )
+  }
+
+  # case some assets returned NA
+  if(any(index_tbl) & any(!index_tbl)){
+    colnames <- names(results[[which(index_tbl)[1]]])
+    fill_values <- lapply(1:length(colnames), function(x) return(NA))
+    fill_values <- tibble::as_tibble(data.frame(fill_values))
+    names(fill_values) <- colnames
+    for (i in which(!index_tbl)) results[[i]] <- fill_values
+    return(tibble::tibble(dplyr::bind_rows(results, .id = ".id")))
+  }
 }

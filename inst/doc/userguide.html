@@ -402,8 +402,8 @@ complete workflow. Because some of the cast geometries represent
 artefacts of the digitization process, in this example we will subset to
 only the largest polygon.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(aoi <span class="ot">&lt;-</span> <span class="fu">st_cast</span>(aoi, <span class="at">to =</span> <span class="st">&quot;POLYGON&quot;</span>)[<span class="dv">1</span>, ])</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in st_cast.sf(aoi, to = &quot;POLYGON&quot;): repeating attributes for all sub-</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; geometries for which they may not be constant</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in st_cast.sf(aoi, to = &quot;POLYGON&quot;): repeating attributes for all</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sub-geometries for which they may not be constant</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 1 feature and 4 fields</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Geometry type: POLYGON</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Dimension:     XY</span></span>
@@ -705,9 +705,9 @@ it.</p>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dsn =</span> tmp_output</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Writing layer `metadata&#39; to data source </span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   `/tmp/Rtmpm6nsEF/file66be32becf4d.gpkg&#39; using driver `GPKG&#39;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   `/tmp/RtmpiXiqgD/file91e06d004946.gpkg&#39; using driver `GPKG&#39;</span></span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Writing 20 features with 2 fields and geometry type Polygon.</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Updating layer `precipitation_chirps&#39; to data source `/tmp/Rtmpm6nsEF/file66be32becf4d.gpkg&#39; using driver `GPKG&#39;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Updating layer `precipitation_chirps&#39; to data source `/tmp/RtmpiXiqgD/file91e06d004946.gpkg&#39; using driver `GPKG&#39;</span></span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Writing 240 features with 5 fields without geometries.</span></span>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>(portfolio_from_disk <span class="ot">&lt;-</span> <span class="fu">read_portfolio</span>(tmp_output))</span>
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 20 features and 3 fields</span></span>

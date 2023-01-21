@@ -147,7 +147,8 @@
   )
 
   bbox <- st_bbox(c(xmin = xmin, xmax = xmax, ymax = ymax, ymin = ymin))
-  st_as_sf(st_make_grid(bbox, n = ncells, crs = "EPSG:4326", what = "polygons"))
+  bbox <- st_as_sfc(bbox, crs = proj)
+  st_as_sf(st_make_grid(bbox, n = ncells, crs = proj, what = "polygons"))
 }
 
 .get_gfw_tile_id <- function(tile) {
@@ -301,7 +302,7 @@
         }
 
         status <- download.file(missing_urls[i], missing_filenames[i],
-                                quiet = TRUE, "libcurl",
+                                quiet = TRUE,
                                 mode = ifelse(Sys.info()["sysname"] == "Windows", "wb", "w")
         )
         if (status != 0) {

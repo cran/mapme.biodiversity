@@ -1,6 +1,6 @@
 Package: mapme.biodiversity
 Title: Efficient Monitoring of Global Biodiversity Portfolios
-Version: 0.2.1
+Version: 0.3.0
 Authors@R: c(
     person("Darius A.", "Görgen", , "darius2402@web.de", role = c("aut", "cre")),
     person("Om Prakash", "Bhandari", role = "aut")
@@ -34,9 +34,9 @@ RoxygenNote: 7.2.1
 SystemRequirements: GDAL (>= 3.0.0), PROJ (>= 4.8.0)
 Language: en-GB
 NeedsCompilation: no
-Packaged: 2022-09-09 09:38:33 UTC; darius
+Packaged: 2023-01-21 13:46:11 UTC; darius
 Author: Darius A. Görgen [aut, cre],
   Om Prakash Bhandari [aut]
 Maintainer: Darius A. Görgen <darius2402@web.de>
 Repository: CRAN
-Date/Publication: 2022-09-09 10:12:54 UTC
+Date/Publication: 2023-01-21 14:10:02 UTC

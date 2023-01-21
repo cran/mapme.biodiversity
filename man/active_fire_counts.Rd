@@ -5,7 +5,7 @@
 \alias{active_fire_counts}
 \title{Calculate active fire counts based on NASA FIRMS polygons}
 \format{
-A tibble with a column for number of fire events and corresponding year.
+A tibble with a column for number of fire events per year and instrument.
 }
 \description{
 This function allows to efficiently calculate the number of fire
@@ -40,7 +40,7 @@ if (!file.exists(temp_loc)) {
     cores = 1,
     verbose = FALSE
   ) \%>\%
-  get_resources("nasa_firms") \%>\%
+  get_resources("nasa_firms", instrument = "VIIRS") \%>\%
   calc_indicators("active_fire_counts") \%>\%
   tidyr::unnest(active_fire_counts)))
 }
