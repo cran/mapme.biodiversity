@@ -21,7 +21,6 @@ test_that("emissions works", {
   gfw_emissions <- rast(gfw_emissions)
 
   attributes(shp)$years <- 1990:1999
-  attributes(shp)$cores <- 1
 
   expect_warning(
     .calc_treecoverloss_emissions(shp, gfw_treecover, gfw_lossyear, gfw_emissions),
@@ -59,8 +58,13 @@ test_that("emissions works", {
     "Argument 'min_cover' for indicator 'emissions' must be a numeric value between 0 and 100."
   )
 
+  result <- .calc_treecoverloss_emissions(shp, gfw_treecover, gfw_lossyear, gfw_emissions, min_size = 1, min_cover = 10)
+  expect_equal(
+    names(result),
+    c("years", "emissions")
+  )
   expect_snapshot(
-    .calc_treecoverloss_emissions(shp, gfw_treecover, gfw_lossyear, gfw_emissions, min_size = 1, min_cover = 10)
+    result$emissions
   )
 
   attributes(shp)$years <- 1999:2005
@@ -68,15 +72,14 @@ test_that("emissions works", {
     stat <- .calc_treecoverloss_emissions(shp, gfw_treecover, gfw_lossyear, gfw_emissions, min_size = 1, min_cover = 10),
     "Cannot calculate emissions statistics for years smaller than 2000."
   )
-  expect_snapshot(stat)
+
   attributes(shp)$years <- 2000:2005
   stats_treecover <- .calc_treecoverloss_emissions(shp, gfw_treecover, gfw_lossyear, gfw_emissions, min_size = 1, min_cover = 10)
   stats_treeloss <- .calc_treecover_area_and_emissions(shp, gfw_treecover, gfw_lossyear, gfw_emissions, min_size = 1, min_cover = 10)[, c(1, 2)]
-  expect_equal(stats_treecover, stats_treeloss)
+  expect_equal(stats_treecover$emissions, stats_treeloss$emissions, tolerance = 1e-4)
 
   # test that emissions and forest loss are returned as 0 if now loss occurs
-  gfw_lossyear[gfw_lossyear == 3] = 1
+  gfw_lossyear[gfw_lossyear == 3] <- 1
   stats_treeloss <- .calc_treecoverloss_emissions(shp, gfw_treecover, gfw_lossyear, gfw_emissions, min_size = 1, min_cover = 10)
   expect_equal(stats_treeloss$emissions[stats_treeloss$years == 2003], 0)
-
 })

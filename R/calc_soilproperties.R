@@ -24,81 +24,57 @@
 #'   output statistic as well as additional columns for all zonal statistics
 #'   specified via \code{stats_soil}
 #' @examples
+#' \dontshow{
+#' mapme.biodiversity:::.copy_resource_dir(file.path(tempdir(), "mapme-data"))
+#' }
+#' \dontrun{
 #' library(sf)
 #' library(mapme.biodiversity)
 #'
-#' temp_loc <- file.path(tempdir(), "mapme.biodiversity")
-#' if(!file.exists(temp_loc)){
-#' dir.create(temp_loc)
-#' resource_dir <- system.file("res", package = "mapme.biodiversity")
-#' file.copy(resource_dir, temp_loc, recursive = TRUE)
-#' }
+#' outdir <- file.path(tempdir(), "mapme-data")
+#' dir.create(outdir, showWarnings = FALSE)
 #'
-#' (try(aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
-#'                         package = "mapme.biodiversity") %>%
+#'
+#' aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
+#'   package = "mapme.biodiversity"
+#' ) %>%
 #'   read_sf() %>%
 #'   init_portfolio(
 #'     years = 2022,
-#'     outdir = file.path(temp_loc, "res"),
+#'     outdir = outdir,
 #'     tmpdir = tempdir(),
 #'     add_resources = FALSE,
-#'     cores = 1,
 #'     verbose = FALSE
 #'   ) %>%
 #'   get_resources("soilgrids",
 #'     layers = c("clay", "silt"), depths = c("0-5cm", "5-15cm"), stats = "mean"
 #'   ) %>%
 #'   calc_indicators("soilproperties", stats_soil = c("mean", "median"), engine = "extract") %>%
-#'   tidyr::unnest(soilproperties)))
+#'   tidyr::unnest(soilproperties)
+#'
+#' aoi
+#' }
 NULL
 
-.calc_soilproperties <- function(shp,
+#' @include register.R
+.calc_soilproperties <- function(x,
                                  soilgrids,
-                                 engine = "zonal",
+                                 engine = "extract",
                                  stats_soil = "mean",
-                                 rundir = tempdir(),
                                  verbose = TRUE,
-                                 todisk = FALSE,
                                  ...) {
   # check if input engines are correct
   if (is.null(soilgrids)) {
     return(NA)
   }
-  # check if intermediate raster should be written to disk
-  if (ncell(soilgrids) > 1024 * 1024) todisk <- TRUE
-  # check if input engine is correctly specified
-  available_engines <- c("zonal", "extract", "exactextract")
-  .check_engine(available_engines, engine)
-  # check if only supoorted stats have been specified
-  available_stats <- c("mean", "median", "sd", "min", "max", "sum", "var")
-  .check_stats(available_stats, stats_soil)
-
-  if (engine == "extract") {
-    extractor <- .soil_extract
-  }
-  if (engine == "exactextract") {
-    extractor <- .soil_exactextractr
-  }
-  if (engine == "zonal") {
-    extractor <- .soil_zonal
-  }
-
-  extractor(
-    shp = shp,
-    soilgrids = soilgrids,
+  results <- .select_engine(
+    x = x,
+    raster = soilgrids,
     stats = stats_soil,
-    todisk = todisk,
-    rundir = rundir
+    engine = engine,
+    mode = "asset"
   )
-}
 
-.soil_zonal <- function(shp = NULL,
-                        soilgrids,
-                        stats = "mean",
-                        todisk = FALSE,
-                        rundir = tempdir(),
-                        ...) {
-  shp_v <- vect(shp)
   parameters <- gsub(".tif", "", names(soilgrids))
   parameters <- lapply(parameters, function(param) {
     splitted <- strsplit(param, "_")[[1]]
@@ -106,125 +82,28 @@ NULL
     splitted
   })
 
-  soilgrids_mask <- terra::mask(soilgrids,
-    shp_v,
-    filename =  ifelse(todisk, file.path(rundir, "soilgrids.tif"), ""),
-    overwrite = TRUE
-  )
-  p_raster <- terra::rasterize(shp_v,
-    soilgrids_mask,
-    field = 1:nrow(shp_v),
-    filename =  ifelse(todisk, file.path(rundir, "polygon.tif"), ""),
-    overwrite = TRUE
-  )
-  results <- lapply(stats, function(stat) {
-    out <- terra::zonal(soilgrids_mask,
-      p_raster,
-      fun = stat,
-      na.rm = T
-    )
-    as.numeric(out[-1])
-  })
-
-  names(results) <- stats
-  results <- as.data.frame(results)
   results$layer <- sapply(parameters, function(para) para["layer"])
   results$depth <- sapply(parameters, function(para) para["depth"])
   results$stat <- sapply(parameters, function(para) para["stat"])
+
+  # conversion to conventional units
   conv_df <- lapply(.sg_layers, function(y) as.data.frame(y))
   conv_df <- do.call(rbind, conv_df)["conversion_factor"]
   conv_df$layer <- row.names(conv_df)
-  results <- merge(results, conv_df)
-  for (stat in stats) results[[stat]] <- results[[stat]] / results[["conversion_factor"]]
-  as_tibble(results[, c("layer", "depth", "stat", stats)])
+  results <- tibble(merge(results, conv_df))
+  # apply conversion factor
+  for (stat in stats_soil) results[[stat]] <- results[[stat]] / results[["conversion_factor"]]
+  # select cols in right order
+  as_tibble(results[, c("layer", "depth", "stat", stats_soil)])
 }
 
-.soil_extract <- function(shp = NULL,
-                          soilgrids = NULL,
-                          stats = "mean",
-                          todisk = todisk,
-                          rundir = tempdir(),
-                          ...) {
-  shp_v <- vect(shp)
-  parameters <- gsub(".tif", "", names(soilgrids))
-  parameters <- lapply(parameters, function(param) {
-    splitted <- strsplit(param, "_")[[1]]
-    names(splitted) <- c("layer", "depth", "stat")
-    splitted
-  })
-
-  soilgrids_mask <- terra::mask(soilgrids,
-    shp_v,
-    filename =  ifelse(todisk, file.path(rundir, "soilgrids.tif"), ""),
-    overwrite = TRUE
-  )
-  results <- lapply(stats, function(stat) {
-    out <- terra::extract(soilgrids_mask,
-      shp_v,
-      fun = stat,
-      na.rm = T
-    )
-    as.numeric(out[-1])
-  })
-
-  names(results) <- stats
-  results <- as.data.frame(results)
-  results$layer <- sapply(parameters, function(para) para["layer"])
-  results$depth <- sapply(parameters, function(para) para["depth"])
-  results$stat <- sapply(parameters, function(para) para["stat"])
-  conv_df <- lapply(.sg_layers, function(y) as.data.frame(y))
-  conv_df <- do.call(rbind, conv_df)["conversion_factor"]
-  conv_df$layer <- row.names(conv_df)
-  results <- merge(results, conv_df)
-  for (stat in stats) results[[stat]] <- results[[stat]] / results[["conversion_factor"]]
-  as_tibble(results[, c("layer", "depth", "stat", stats)])
-}
-
-.soil_exactextractr <- function(soilgrids = NULL,
-                                shp = NULL,
-                                stats = "mean",
-                                todisk = todisk,
-                                rundir = tempdir(),
-                                ...) {
-  if(!requireNamespace("exactextractr", quietly = TRUE)){
-    stop(paste(
-      "Needs package 'exactextractr' to be installed.",
-      "Consider installing with 'install.packages('exactextractr')"
-    ))
-  }
-  parameters <- gsub(".tif", "", names(soilgrids))
-  parameters <- lapply(parameters, function(param) {
-    splitted <- strsplit(param, "_")[[1]]
-    names(splitted) <- c("layer", "depth", "stat")
-    splitted
-  })
-
-  results <- lapply(stats, function(stat) {
-    if (stat %in% c("sd", "var")) {
-      out <- exactextractr::exact_extract(
-        soilgrids,
-        shp,
-        fun = ifelse(stat == "sd", "stdev", "variance")
-      )
-    } else {
-      out <- exactextractr::exact_extract(
-        soilgrids,
-        shp,
-        fun = stat
-      )
-    }
-    as.numeric(out)
-  })
-
-  names(results) <- stats
-  results <- as.data.frame(results)
-  results$layer <- sapply(parameters, function(para) para["layer"])
-  results$depth <- sapply(parameters, function(para) para["depth"])
-  results$stat <- sapply(parameters, function(para) para["stat"])
-  conv_df <- lapply(.sg_layers, function(y) as.data.frame(y))
-  conv_df <- do.call(rbind, conv_df)["conversion_factor"]
-  conv_df$layer <- row.names(conv_df)
-  results <- merge(results, conv_df)
-  for (stat in stats) results[[stat]] <- results[[stat]] / results[["conversion_factor"]]
-  as_tibble(results[, c("layer", "depth", "stat", stats)])
-}
+register_indicator(
+  name = "soilproperties",
+  resources = list(soilgrids = "raster"),
+  fun = .calc_soilproperties,
+  arguments = list(
+    engine = "extract",
+    stats_soil = "mean"
+  ),
+  processing_mode = "asset"
+)

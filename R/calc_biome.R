@@ -12,30 +12,33 @@
 #' @keywords indicator
 #' @format A tibble with a column for name of the biomes and corresponding area (in ha).
 #' @examples
+#' \dontshow{
+#' mapme.biodiversity:::.copy_resource_dir(file.path(tempdir(), "mapme-data"))
+#' }
+#' \dontrun{
 #' library(sf)
 #' library(mapme.biodiversity)
 #'
-#' temp_loc <- file.path(tempdir(), "mapme.biodiversity")
-#' if(!file.exists(temp_loc)){
-#' dir.create(temp_loc)
-#' resource_dir <- system.file("res", package = "mapme.biodiversity")
-#' file.copy(resource_dir, temp_loc, recursive = TRUE)
-#' }
+#' outdir <- file.path(tempdir(), "mapme-data")
+#' dir.create(outdir, showWarnings = FALSE)
 #'
-#' (try(aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
-#'                         package = "mapme.biodiversity") %>%
+#' aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
+#'   package = "mapme.biodiversity"
+#' ) %>%
 #'   read_sf() %>%
 #'   init_portfolio(
 #'     years = 2001,
-#'     outdir = file.path(temp_loc, "res"),
+#'     outdir = outdir,
 #'     tmpdir = tempdir(),
 #'     add_resources = FALSE,
-#'     cores = 1,
 #'     verbose = FALSE
 #'   ) %>%
 #'   get_resources("teow") %>%
 #'   calc_indicators("biome") %>%
-#'   tidyr::unnest(biome)))
+#'   tidyr::unnest(biome)
+#'
+#' aoi
+#' }
 NULL
 
 #' Calculate biomes statistics (TEOW) based on WWF
@@ -44,36 +47,30 @@ NULL
 #' retrieve the name of the biomes and compute the corresponding area
 #' of the particular biomes for their polygons.
 #'
-#' @param shp A single polygon for which to calculate the biomes statistic
+#' @param x A single polygon for which to calculate the biomes statistic
 #' @param teow The teow vector resource (TEOW - WWF)
-#' @param rundir A directory where intermediate files are written to.
 #' @param verbose A directory where intermediate files are written to.
-#' @param todisk Logical indicating whether or not temporary vector files shall
-#'   be written to disk
 #' @param ... additional arguments
 #' @return A tibble
 #' @keywords internal
+#' @include register.R
 #' @noRd
-
-
-.calc_biome <- function(shp,
+.calc_biome <- function(x,
                         teow,
-                        rundir = tempdir(),
                         verbose = TRUE,
-                        todisk = FALSE,
                         ...) {
   BIOME_NAME <- NULL
   biomes <- NULL
   new_area <- NULL
   area <- NULL
-  if(nrow(teow[[1]]) == 0) return(NA)
+  if (nrow(teow[[1]]) == 0) {
+    return(NA)
+  }
 
   merged <- .comp_teow(
-    shp = shp,
+    x = x,
     teow = teow,
-    rundir = rundir,
-    verbose = verbose,
-    todisk = todisk
+    verbose = verbose
   )
   out <- merged %>%
     dplyr::select(BIOME_NAME, new_area)
@@ -86,3 +83,11 @@ NULL
     dplyr::summarise(area = sum(as.numeric(area)))
   results_biome
 }
+
+register_indicator(
+  name = "biome",
+  resources = list(teow = "vector"),
+  fun = .calc_biome,
+  arguments = list(),
+  processing_mode = "asset"
+)

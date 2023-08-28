@@ -33,8 +33,8 @@ NULL
 #' @importFrom utils unzip
 #' @name WorldClim_Minimum_Temperature
 #' @keywords internal
+#' @include register.R
 #' @noRd
-
 .get_worldclim_min_temperature <- function(x,
                                            rundir = tempdir(),
                                            verbose = TRUE) {
@@ -54,8 +54,8 @@ NULL
 #' @importFrom utils unzip
 #' @name WorldClim_Maximum_Temperature
 #' @keywords internal
+#' @include register.R
 #' @noRd
-
 .get_worldclim_max_temperature <- function(x,
                                            rundir = tempdir(),
                                            verbose = TRUE) {
@@ -77,8 +77,8 @@ NULL
 #' @importFrom utils unzip
 #' @name WorldClim_Mean_Precipitation
 #' @keywords internal
+#' @include register.R
 #' @noRd
-
 .get_worldclim_precipitation <- function(x,
                                          rundir = tempdir(),
                                          verbose = TRUE) {
@@ -132,14 +132,15 @@ NULL
   nontarget_years <- available_years[!available_years %in% target_years]
 
   for (i in seq_along(nontarget_years)) {
-    unlink(file.path(
-      rundir,
-      paste0(
-        "wc2.1_2.5m_", layer, "_",
-        nontarget_years[i], "*.tif"
-      )
-    ),
-    recursive = T, force = T
+    unlink(
+      file.path(
+        rundir,
+        paste0(
+          "wc2.1_2.5m_", layer, "_",
+          nontarget_years[i], "*.tif"
+        )
+      ),
+      recursive = T, force = T
     )
   }
 
@@ -172,3 +173,28 @@ NULL
     NULL
   }
 }
+
+
+register_resource(
+  name = "worldclim_min_temperature",
+  type = "raster",
+  source = "https://www.worldclim.org/data/index.html",
+  fun = .get_worldclim_min_temperature,
+  arguments <- list()
+)
+
+register_resource(
+  name = "worldclim_max_temperature",
+  type = "raster",
+  source = "https://www.worldclim.org/data/index.html",
+  fun = .get_worldclim_max_temperature,
+  arguments <- list()
+)
+
+register_resource(
+  name = "worldclim_precipitation",
+  type = "raster",
+  source = "https://www.worldclim.org/data/index.html",
+  fun = .get_worldclim_precipitation,
+  arguments <- list()
+)

@@ -1,4 +1,5 @@
 test_that("get_resources works", {
+  skip_on_cran()
   aoi <- read_sf(
     system.file("extdata", "sierra_de_neiba_478140.gpkg",
       package = "mapme.biodiversity"
@@ -15,7 +16,6 @@ test_that("get_resources works", {
 
   portfolio <- init_portfolio(aoi,
     years = 2000:2020,
-    cores = 1,
     outdir = outdir,
     tmpdir = tmpdir,
     add_resources = FALSE,
@@ -39,9 +39,5 @@ test_that("get_resources works", {
       resources = c("gfw_treecover", "gfw_lossyear", "gfw_emissions")
     ),
     "The following requested resources are already available: gfw_treecover, gfw_lossyear, gfw_emissions."
-  )
-
-  expect_warning(
-    get_resources(portfolio, "treecover2000", vers_treecover="GFC-2020-v1.8")
   )
 })

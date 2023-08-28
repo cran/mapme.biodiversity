@@ -5,7 +5,8 @@
 \alias{landcover}
 \title{Calculate area of different landcover classes}
 \format{
-A tibble with a column for area (in ha) per landcover class
+A tibble with a column for area (in ha) and the percentage covered per
+landcover class
 }
 \description{
 The land cover data shows us how much of the region is covered by forests,
@@ -20,29 +21,32 @@ The required resources for this indicator are:
 }
 }
 \examples{
+\dontshow{
+mapme.biodiversity:::.copy_resource_dir(file.path(tempdir(), "mapme-data"))
+}
+\dontrun{
 library(sf)
 library(mapme.biodiversity)
 
-temp_loc <- file.path(tempdir(), "mapme.biodiversity")
-if(!file.exists(temp_loc)){
-dir.create(temp_loc)
-resource_dir <- system.file("res", package = "mapme.biodiversity")
-file.copy(resource_dir, temp_loc, recursive = TRUE)
-}
+outdir <- file.path(tempdir(), "mapme-data")
+dir.create(outdir, showWarnings = FALSE)
 
-(try(aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
-                        package = "mapme.biodiversity") \%>\%
+aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
+  package = "mapme.biodiversity"
+) \%>\%
   read_sf() \%>\%
   init_portfolio(
     years = 2016:2017,
-    outdir = file.path(temp_loc, "res"),
+    outdir = outdir,
     tmpdir = tempdir(),
     add_resources = FALSE,
-    cores = 1,
     verbose = FALSE
   ) \%>\%
   get_resources("esalandcover") \%>\%
   calc_indicators("landcover") \%>\%
-  tidyr::unnest(landcover)))
+  tidyr::unnest(landcover)
+
+aoi
+}
 }
 \keyword{indicator}

@@ -25,60 +25,58 @@
 #' @format A tibble with a column for years, months, absolute rainfall (in mm), rainfall
 #'   anomaly (in mm) and one or more columns per selected time-scale for SPI (dimensionless).
 #' @examples
-#' if (Sys.getenv("NOT_CRAN") == "true") {
-#'   library(sf)
-#'   library(mapme.biodiversity)
+#' \dontshow{
+#' mapme.biodiversity:::.copy_resource_dir(file.path(tempdir(), "mapme-data"))
+#' }
+#' \dontrun{
+#' library(sf)
+#' library(mapme.biodiversity)
 #'
-#'   temp_loc <- file.path(tempdir(), "mapme.biodiversity")
-#'   if (!file.exists(temp_loc)) {
-#'     dir.create(temp_loc)
-#'     resource_dir <- system.file("res", package = "mapme.biodiversity")
-#'     file.copy(resource_dir, temp_loc, recursive = TRUE)
-#'   }
+#' outdir <- file.path(tempdir(), "mapme-data")
+#' dir.create(outdir, showWarnings = FALSE)
 #'
-#'   (try(aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
-#'     package = "mapme.biodiversity"
+#' aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
+#'   package = "mapme.biodiversity"
+#' ) %>%
+#'   read_sf() %>%
+#'   init_portfolio(
+#'     years = 2010,
+#'     outdir = outdir,
+#'     tmpdir = tempdir(),
+#'     verbose = FALSE
 #'   ) %>%
-#'     read_sf() %>%
-#'     init_portfolio(
-#'       years = 2010,
-#'       outdir = file.path(temp_loc, "res"),
-#'       tmpdir = tempdir(),
-#'       cores = 1,
-#'       verbose = FALSE
-#'     ) %>%
-#'     get_resources("chirps") %>%
-#'     calc_indicators("precipitation_chirps",
+#'   get_resources("chirps") %>%
+#'   calc_indicators("precipitation_chirps",
 #'     engine = "exactextract",
 #'     scales_spi = 3,
-#'     spi_prev_years = 8) %>%
-#'     tidyr::unnest(precipitation_chirps)))
+#'     spi_prev_years = 8
+#'   ) %>%
+#'   tidyr::unnest(precipitation_chirps)
+#'
+#' aoi
 #' }
 NULL
 
 #' Calculate precipitation statistics based on CHIRPS
 #'
-#' @param shp A single polygon for which to calculate the tree cover statistic
+#' @param x A single polygon for which to calculate the tree cover statistic
 #' @param chirps The CHIRPS resource
 #' @param scales_spi Integers specifying time-scales for SPI
 #' @param spi_prec_years Integer specyfing how many previous years to include in
 #'   order to fit the SPI. Defaults to 8.
-#' @param rundir A directory where intermediate files are written to.
 #' @param verbose A directory where intermediate files are written to.
-#' @param todisk Logical indicating whether or not temporary raster files shall
-#'   be written to disk
 #' @param ... additional arguments
 #' @return A tibble
 #' @keywords internal
+#' @include register.R
 #' @noRd
-.calc_precipitation_chirps <- function(shp,
+.calc_precipitation_chirps <- function(x,
                                        chirps,
                                        scales_spi = 3,
                                        spi_prev_years = 8,
                                        engine = "extract",
                                        rundir = tempdir(),
                                        verbose = TRUE,
-                                       todisk = FALSE,
                                        processing_mode = "portfolio",
                                        ...) {
   if (!requireNamespace("SPEI", quietly = TRUE) & !is.null(scales_spi)) {
@@ -90,9 +88,7 @@ NULL
   if (is.null(chirps)) {
     return(NA)
   }
-  if (ncell(chirps) > 1024 * 1024) todisk <- TRUE
-  years <- attributes(shp)$years
-  cores <- attributes(shp)$cores
+  years <- attributes(x)$years
 
   if (!is.null(scales_spi)) {
     if (any(scales_spi < 0) | any(scales_spi > 48)) {
@@ -101,8 +97,8 @@ NULL
   }
   if (any(years < 1981)) {
     warning(paste("Cannot calculate precipitation statistics ",
-                  "for years smaller than 1981",
-                  sep = ""
+      "for years smaller than 1981",
+      sep = ""
     ))
     years <- years[years >= 1981]
     if (length(years) == 0) {
@@ -112,12 +108,13 @@ NULL
 
   src_names <- names(chirps)
   # set values smaller 0 to NA
-  chirps <- clamp(chirps,
-                  lower = 0, upper = Inf, values = FALSE,
-                  filename = ifelse(todisk, file.path(rundir, "chirps.tif"), ""),
-                  overwrite = TRUE,
-                  filetype = "GTiff"
+  chirps <- clamp(
+    chirps,
+    lower = 0,
+    upper = Inf,
+    values = FALSE
   )
+
   layer_years <- as.numeric(substr(src_names, 13, 17))
   climate_chirps <- chirps[[which(layer_years %in% 1981:2010)]]
   target_chirps <- chirps[[which(layer_years %in% years)]]
@@ -127,10 +124,9 @@ NULL
   layer_months <- as.numeric(substr(layer_names, 18, 19))
   # chirps[chirps < 0] = NA
   climate_chirps <- lapply(1:12, function(i) {
-    app(climate_chirps[[layer_months == i]],
-        fun = "mean", cores = cores,
-        filename = ifelse(todisk, file.path(rundir, paste0("chirps_", i, ".tif")), ""),
-        overwrite = TRUE, wopt = list(filetype = "GTiff")
+    app(
+      climate_chirps[[layer_months == i]],
+      fun = "mean"
     )
   })
   climate_chirps <- do.call(c, climate_chirps)
@@ -143,12 +139,12 @@ NULL
       target_years_spi <- years[1] - spi_prev_years
       target_years_spi <- target_years_spi:years[length(years)]
       target_spi <- chirps[[which(layer_years %in% target_years_spi)]]
-      spi_chirps <- app(target_spi,
-                        scale = scale, fun = function(x, scale) {
-                          SPEI::spi(x, scale = scale, na.rm = TRUE)$fitted
-                        }, cores = cores, overwrite = TRUE, wopt = list(filetype = "GTiff"),
-                        filename =
-                          ifelse(todisk, file.path(rundir, paste0("spi_", scale, ".tif")), "")
+      spi_chirps <- app(
+        target_spi,
+        scale = scale,
+        fun = function(x, scale) {
+          SPEI::spi(x, scale = scale, na.rm = TRUE, verbose = FALSE)$fitted
+        }
       )
       names(spi_chirps) <- names(target_spi)
       spi_chirps[[names(target_chirps)]]
@@ -158,124 +154,77 @@ NULL
     spi_chirps <- NULL
   }
 
-  available_engines <- c("zonal", "extract", "exactextract")
-  if (!engine %in% available_engines) {
-    stop(sprintf("Engine %s is not an available engine. Please choose one of: %s", engine, paste(available_engines, collapse = ", ")))
+  # extract zonal statistics
+  results_absolute <- .select_engine(
+    x = x,
+    raster = target_chirps,
+    stats = "mean",
+    engine = engine,
+    mode = processing_mode
+  )
+
+  results_anomaly <- .select_engine(
+    x = x,
+    raster = anomaly_chirps,
+    stats = "mean",
+    engine = engine,
+    mode = processing_mode
+  )
+
+  if (!is.null(spi_chirps)) {
+    results_spi <- purrr::map(1:nrow(x), function(i) {
+      results_x <- purrr::lmap(spi_chirps, function(spi) {
+        result <- .select_engine(
+          x = x[i, ],
+          raster = spi[[1]],
+          stats = "mean",
+          engine = engine,
+          name = names(spi),
+          mode = "asset"
+        )
+        names(result) <- names(spi)
+        result
+      })
+      dplyr::bind_cols(results_x)
+    })
+    if (processing_mode == "asset") results_spi <- results_spi[[1]]
   }
 
-
-  if (engine == "extract") {
-    extractor <- .prec_extract
-  }
-  if (engine == "exactextract") {
-    extractor <- .prec_exact_extractr
-  }
-  if (engine == "zonal") {
-    extractor <- .prec_zonal
-  }
-
-
-  if (processing_mode == "asset") {
-    results <- extractor(
-      shp = shp,
-      absolute = target_chirps,
-      anomaly = anomaly_chirps,
-      spi = spi_chirps,
-      todisk = todisk,
-      rundir = rundir
-    )
-  }
+  dates <- as.Date(paste0(substr(names(target_chirps), 13, 19), ".01"), "%Y.%m.%d")
 
   if (processing_mode == "portfolio") {
-    results <- pbapply::pblapply(1:nrow(shp), function(i) {
-      out <- extractor(
-        shp = shp[i, ],
-        absolute = target_chirps,
-        anomaly = anomaly_chirps,
-        spi = spi_chirps,
-        todisk = todisk,
-        rundir = rundir
+    results <- purrr::map(1:nrow(x), function(i) {
+      result <- tibble(
+        dates = dates,
+        absolute = as.numeric(results_absolute[[i]]$mean),
+        anomaly = as.numeric(results_anomaly[[i]]$mean)
       )
-      out
-    }, cl = cores)
+      if (!is.null(scales_spi)) {
+        result <- dplyr::bind_cols(result, results_spi[[i]])
+      }
+    })
+  } else {
+    results <- tibble(
+      dates = dates,
+      absolute = as.numeric(results_absolute$mean),
+      anomaly = as.numeric(results_anomaly$mean)
+    )
+    if (!is.null(scales_spi)) {
+      results <- dplyr::bind_cols(results, results_spi)
+    }
   }
   results
 }
 
-.prec_zonal <- function(shp, absolute, anomaly, spi, todisk, rundir) {
-  dates <- as.Date(paste0(substr(names(absolute), 13, 19), ".01"), "%Y.%m.%d")
 
-  shp_v <- vect(shp)
-  p_raster <- terra::rasterize(shp_v,
-                               absolute,
-                               field = 1,
-                               touches = TRUE,
-                               filename =  ifelse(todisk, file.path(rundir, "polygon.tif"), ""),
-                               overwrite = TRUE
-  )
-
-  absolute <- terra::zonal(absolute, p_raster, fun = "mean")
-  anomaly <- terra::zonal(anomaly, p_raster, fun = "mean")
-
-  results <- tibble(
-    dates = dates,
-    absolute = as.numeric(absolute)[-1],
-    anomaly = as.numeric(anomaly)[-1]
-  )
-
-  if (!is.null(spi)) {
-    spi <- lapply(spi, function(x) as.numeric(terra::zonal(x, p_raster, fun = "mean"))[-1])
-    tibble(cbind(results, as.data.frame(spi)))
-  } else {
-    results
-  }
-}
-
-
-.prec_extract <- function(shp, absolute, anomaly, spi, todisk, rundir) {
-  dates <- as.Date(paste0(substr(names(absolute), 13, 19), ".01"), "%Y.%m.%d")
-  shp_v <- vect(shp)
-  absolute <- terra::extract(absolute, shp_v, fun = "mean")
-  anomaly <- terra::extract(anomaly, shp_v, fun = "mean")
-
-  results <- tibble(
-    dates = dates,
-    absolute = as.numeric(absolute)[-1],
-    anomaly = as.numeric(anomaly)[-1]
-  )
-
-  if (!is.null(spi)) {
-    spi <- lapply(spi, function(x) as.numeric(terra::extract(x, shp_v, fun = "mean"))[-1])
-    tibble(cbind(results, as.data.frame(spi)))
-  } else {
-    results
-  }
-}
-
-
-.prec_exact_extractr <- function(shp, absolute, anomaly, spi, todisk, rundir) {
-  if (!requireNamespace("exactextractr", quietly = TRUE)) {
-    stop(paste(
-      "Needs package 'exactextractr' to be installed.",
-      "Consider installing with 'install.packages('exactextractr')"
-    ))
-  }
-  dates <- as.Date(paste0(substr(names(absolute), 13, 19), ".01"), "%Y.%m.%d")
-
-  absolute <- exactextractr::exact_extract(absolute, shp, fun = "mean")
-  anomaly <- exactextractr::exact_extract(anomaly, shp, fun = "mean")
-
-
-  results <- tibble(
-    dates = dates,
-    absolute = as.numeric(absolute),
-    anomaly = as.numeric(anomaly)
-  )
-
-  if (!is.null(spi)) {
-    spi <- lapply(spi, function(x) as.numeric(exactextractr::exact_extract(x, shp, fun = "mean")))
-    tibble(cbind(results, as.data.frame(spi)))
-  } else {
-    results
-  }
-}
+register_indicator(
+  name = "precipitation_chirps",
+  resources = list(chirps = "raster"),
+  fun = .calc_precipitation_chirps,
+  arguments = list(
+    scales_spi = 3,
+    spi_prev_years = 8,
+    engine = "extract"
+  ),
+  processing_mode = "portfolio"
+)

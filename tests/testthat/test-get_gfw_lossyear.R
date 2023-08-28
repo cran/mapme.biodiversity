@@ -1,4 +1,5 @@
 test_that(".get_gfw_lossyear works", {
+  skip_on_cran()
   aoi <- read_sf(
     system.file("extdata", "sierra_de_neiba_478140.gpkg",
       package = "mapme.biodiversity"
@@ -17,7 +18,6 @@ test_that(".get_gfw_lossyear works", {
     years = 2000:2020,
     outdir = outdir,
     tmpdir = tmpdir,
-    cores = 1,
     add_resources = FALSE,
     verbose = FALSE
   )
@@ -32,12 +32,11 @@ test_that(".get_gfw_lossyear works", {
   # adds test to check for multiple polygons in the same tile
   splitted_aoi <- st_as_sf(st_make_grid(aoi, n = 2))
   portfolio <- init_portfolio(splitted_aoi,
-                              years = 2000:2020,
-                              outdir = outdir,
-                              tmpdir = tmpdir,
-                              cores = 1,
-                              add_resources = FALSE,
-                              verbose = TRUE
+    years = 2000:2020,
+    outdir = outdir,
+    tmpdir = tmpdir,
+    add_resources = FALSE,
+    verbose = TRUE
   )
   attributes(portfolio)$testing <- TRUE
   expect_equal(

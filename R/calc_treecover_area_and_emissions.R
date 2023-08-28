@@ -21,27 +21,25 @@
 #' @keywords indicator
 #' @format A tibble with a column for years, treecover (in ha), and emissions (in Mg CO2)
 #' @examples
-#' if (Sys.getenv("NOT_CRAN") == "true") {
+#' \dontshow{
+#' mapme.biodiversity:::.copy_resource_dir(file.path(tempdir(), "mapme-data"))
+#' }
+#' \dontrun{
 #' library(sf)
 #' library(mapme.biodiversity)
 #'
-#' temp_loc <- file.path(tempdir(), "mapme.biodiversity")
-#' if (!file.exists(temp_loc)) {
-#'   dir.create(temp_loc)
-#'   resource_dir <- system.file("res", package = "mapme.biodiversity")
-#'   file.copy(resource_dir, temp_loc, recursive = TRUE)
-#' }
+#' outdir <- file.path(tempdir(), "mapme-data")
+#' dir.create(outdir, showWarnings = FALSE)
 #'
-#' (try(aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
+#' aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
 #'   package = "mapme.biodiversity"
 #' ) %>%
 #'   read_sf() %>%
 #'   init_portfolio(
 #'     years = 2016:2017,
-#'     outdir = file.path(temp_loc, "res"),
+#'     outdir = outdir,
 #'     tmpdir = tempdir(),
 #'     add_resources = FALSE,
-#'     cores = 1,
 #'     verbose = FALSE
 #'   ) %>%
 #'   get_resources(
@@ -49,7 +47,9 @@
 #'     vers_treecover = "GFC-2021-v1.9", vers_lossyear = "GFC-2021-v1.9"
 #'   ) %>%
 #'   calc_indicators("treecover_area_and_emissions", min_size = 1, min_cover = 30) %>%
-#'   tidyr::unnest(treecover_area_and_emissions)))
+#'   tidyr::unnest(treecover_area_and_emissions)
+#'
+#' aoi
 #' }
 NULL
 
@@ -62,37 +62,35 @@ NULL
 #' both indicators are very similar. If a user is interested only in one of
 #' these two indicators consider applying the respective functions.
 #'
-#' @param shp A single polygon for which to calculate the tree cover statistic
+#' @param x A single polygon for which to calculate the tree cover statistic
 #' @param gfw_treecover The treecover 2000 resource from GFW
 #' @param gfw_lossyear The lossyear resource from GFW
 #' @param gfw_emissions The greenhouse emission layer from GFW
 #' @param min_size The minimum size of a forest patch in ha.
 #' @param min_cover The minimum threshold of stand density for a pixel to be
 #'   considered forest in the year 2000.
-#' @param rundir A directory where intermediate files are written to.
 #' @param verbose A directory where intermediate files are written to.
 #' @param ... additional arguments
 #' @return A tibble
 #' @importFrom stringr str_sub
 #' @keywords internal
+#' @include register.R
 #' @noRd
-.calc_treecover_area_and_emissions <- function(shp,
+.calc_treecover_area_and_emissions <- function(x,
                                                gfw_treecover,
                                                gfw_lossyear,
                                                gfw_emissions,
                                                min_size = 10,
                                                min_cover = 35,
-                                               rundir = tempdir(),
                                                verbose = TRUE,
                                                ...) {
-
   # initial argument checks
   # handling of return value if resources are missing, e.g. no overlap
   if (any(is.null(gfw_treecover), is.null(gfw_lossyear), is.null(gfw_emissions))) {
     return(NA)
   }
   # retrieve years from portfolio
-  years <- attributes(shp)$years
+  years <- attributes(x)$years
 
   if (any(years < 2000)) {
     warning(paste("Cannot calculate treeloss statistics ",
@@ -154,7 +152,7 @@ NULL
   )
   # rasterize the polygon
   polyraster <- rasterize(
-    vect(shp), gfw_treecover,
+    vect(x), gfw_treecover,
     field = 1, touches = TRUE
   )
 
@@ -272,3 +270,19 @@ NULL
   out$years <- years
   out[, c(3, 2, 1)]
 }
+
+
+register_indicator(
+  name = "treecover_area_and_emissions",
+  resources = list(
+    gfw_treecover = "raster",
+    gfw_lossyear = "raster",
+    gfw_emissions = "raster"
+  ),
+  fun = .calc_treecover_area_and_emissions,
+  arguments = list(
+    min_size = 10,
+    min_cover = 35
+  ),
+  processing_mode = "asset"
+)

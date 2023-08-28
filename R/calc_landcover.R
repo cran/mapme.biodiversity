@@ -12,32 +12,36 @@
 #' @name landcover
 #' @docType data
 #' @keywords indicator
-#' @format A tibble with a column for area (in ha) per landcover class
+#' @format A tibble with a column for area (in ha) and the percentage covered per
+#'   landcover class
 #' @examples
+#' \dontshow{
+#' mapme.biodiversity:::.copy_resource_dir(file.path(tempdir(), "mapme-data"))
+#' }
+#' \dontrun{
 #' library(sf)
 #' library(mapme.biodiversity)
 #'
-#' temp_loc <- file.path(tempdir(), "mapme.biodiversity")
-#' if(!file.exists(temp_loc)){
-#' dir.create(temp_loc)
-#' resource_dir <- system.file("res", package = "mapme.biodiversity")
-#' file.copy(resource_dir, temp_loc, recursive = TRUE)
-#' }
+#' outdir <- file.path(tempdir(), "mapme-data")
+#' dir.create(outdir, showWarnings = FALSE)
 #'
-#' (try(aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
-#'                         package = "mapme.biodiversity") %>%
+#' aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
+#'   package = "mapme.biodiversity"
+#' ) %>%
 #'   read_sf() %>%
 #'   init_portfolio(
 #'     years = 2016:2017,
-#'     outdir = file.path(temp_loc, "res"),
+#'     outdir = outdir,
 #'     tmpdir = tempdir(),
 #'     add_resources = FALSE,
-#'     cores = 1,
 #'     verbose = FALSE
 #'   ) %>%
 #'   get_resources("esalandcover") %>%
 #'   calc_indicators("landcover") %>%
-#'   tidyr::unnest(landcover)))
+#'   tidyr::unnest(landcover)
+#'
+#' aoi
+#' }
 NULL
 
 #' Calculate area of different landcover classes from ESA
@@ -46,90 +50,59 @@ NULL
 #' can compute the area of the landcover classes among 23 discrete classes provided
 #' from ESA available for years 2015 to 2019.
 #'
-#' @param shp A single polygon for which to calculate the area of landcover classes
+#' @param x A single polygon for which to calculate the area of landcover classes
 #' @param esalandcover The landcover raster resource from ESA
-#' @param rundir A directory where intermediate files are written to.
 #' @param verbose A directory where intermediate files are written to.
-#' @param todisk Logical indicating whether or not temporary raster files shall
-#'   be written to disk
 #' @param ... additional arguments
 #' @return A tibble
 #' @keywords internal
+#' @include register.R
 #' @noRd
 
-.calc_landcover <- function(shp,
+.calc_landcover <- function(x,
                             esalandcover,
-                            rundir = tempdir(),
                             verbose = TRUE,
-                            todisk = FALSE,
                             ...) {
+  percentage <- NULL
+  year <- NULL
+  classes <- NULL
+
   if (is.null(esalandcover)) {
     return(NA)
   }
 
-  # check if intermediate raster should be written to disk
-  if (ncell(esalandcover) > 1024 * 1024) todisk <- TRUE
-  .comp_esalandcover(
-    shp = shp,
-    esalandcover = esalandcover,
-    rundir = rundir,
-    verbose = verbose,
-    todisk = todisk
-  )
+  x_v <- vect(x)
+  esa_mask <- terra::mask(esalandcover, x_v)
+  arearaster <- cellSize(esa_mask, mask = TRUE, unit = "ha")
+  total_size <- as.numeric(global(arearaster, fun = sum, na.rm = TRUE))
+
+  purrr::map_dfr(1:nlyr(esa_mask), function(i) {
+    zonal(arearaster, esa_mask[[i]], sum) %>%
+      tidyr::pivot_longer(cols = -area, names_to = "year", values_to = "code") %>%
+      dplyr::left_join(.esa_landcover_classes, by = "code") %>%
+      dplyr::mutate(
+        percentage = area / total_size,
+        year = regmatches(year, regexpr("\\d{4}", year))
+      ) %>%
+      dplyr::select(classes, year, area, percentage)
+  })
 }
 
-#' Helper function to compute area of diffrent landcover classes from single raster
-#'
-#' @param esalandcover esa landcover raster from which to compute area of classes
-#' @importFrom tidyr pivot_wider
-#' @return A data-frame
-#' @keywords internal
-#' @noRd
+.esa_landcover_classes <- data.frame(
+  code = c(0, 111:116, 121:126, seq(20, 100, 10), 200),
+  classes = c(
+    "no_data", "closed_forest_evergreen_needle_leaf", "closed_forest_evergreen_broad_leaf", "closed_forest_deciduous_needle_leaf",
+    "closed_forest_deciduous_broad_leaf", "closed_forest_mixed", "closed_forest_unknown", "open_forest_evergreen_needle_leaf",
+    "open_forest_evergreen_broad_leaf", "open_forest_deciduous_needle_leaf", "open_forest_deciduous_broad_leaf",
+    "open_forest_mixed", "open_forest_unknown", "shrubs", "herbaceous_vegetation", "cropland", "built_up", "bare_vegetation",
+    "snow_and_ice", "permanent_water_bodies", "herbaceous_wetland", "moss_and_lichen", "open_sea"
+  )
+)
 
-.comp_esalandcover <- function(shp,
-                               esalandcover,
-                               rundir = tempdir(),
-                               verbose = TRUE,
-                               todisk = FALSE,
-                               ...) {
-  # mask raster per shapefile
-  shp_v <- vect(shp)
-  esa_mask <- terra::mask(esalandcover, shp_v)
-  # compute area of each cell
-  arearaster <- cellSize(
-    esa_mask,
-    unit = "ha",
-    filename = ifelse(todisk, file.path(rundir, "arearaster.tif"), ""),
-    datatype = "FLT4S",
-    overwrite = TRUE
-  )
-  patchsizes <- zonal(
-    arearaster, esa_mask, sum,
-    filename = ifelse(todisk, file.path(rundir, "patchsizes.tif"), ""),
-    datatype = "FLT4S",
-    overwrite = TRUE
-  )
-  # create discrete classification coding
-  discrete_classes <-
-    base::data.frame(
-      value = c(0, 111:116, 121:126, seq(20, 100, 10), 200),
-      classes = c(
-        "no_data", "closed_forest_evergreen_needle_leaf", "closed_forest_evergreen_broad_leaf", "closed_forest_deciduous_needle_leaf",
-        "closed_forest_deciduous_broad_leaf", "closed_forest_mixed", "closed_forest_unknown", "open_forest_evergreen_needle_leaf",
-        "open_forest_evergreen_broad_leaf", "open_forest_deciduous_needle_leaf", "open_forest_deciduous_broad_leaf",
-        "open_forest_mixed", "open_forest_unknown", "shrubs", "herbaceous_vegetation", "cropland", "built_up", "bare_vegetation",
-        "snow_and_ice", "permanent_water_bodies", "herbaceous_wetland", "moss_and_lichen", "open_sea"
-      )
-    )
-  # merge results
-  out <- merge(
-    x = patchsizes, y = discrete_classes,
-    by.x = colnames(patchsizes)[1],
-    by.y = colnames(discrete_classes)[1]
-  )
-  result <- out[, -1]
-  layernames <- tools::file_path_sans_ext(names(esalandcover))
-  years <- as.numeric(sapply(layernames, function(layer) strsplit(layer, "_")[[1]][4]))
-  names(result)[1:length(years)] <- years
-  tidyr::pivot_longer(result, cols = 1:length(years), names_to = "year", values_to = "area")
-}
+register_indicator(
+  name = "landcover",
+  resources = list(esalandcover = "raster"),
+  fun = .calc_landcover,
+  arguments = list(),
+  processing_mode = "asset"
+)

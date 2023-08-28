@@ -23,8 +23,8 @@ NULL
 #' @param rundir A directory where intermediate files are written to.
 #' @param verbose Logical controlling verbosity.
 #' @keywords internal
+#' @include register.R
 #' @noRd
-
 .get_esalandcover <- function(x,
                               rundir = tempdir(),
                               verbose = TRUE) {
@@ -48,14 +48,14 @@ NULL
   }
   # create all urls for target years and per tile
   urls <- c()
-  for(i in tile_ids){
+  for (i in tile_ids) {
     tmp <- purrr::map_chr(target_years, .get_esa_url, tile = grid_esa[i, ])
     urls <- c(urls, tmp)
   }
   # change filename structure
   basenames <- basename(urls)
   splitted <- strsplit(basenames, "-|_")
-  filenames <- purrr::map_chr(basenames, function(x){
+  filenames <- purrr::map_chr(basenames, function(x) {
     x <- strsplit(x, "-|_")[[1]]
     paste0(x[1], "_", x[3], "_", x[5], "_", x[6], ".tif")
   })
@@ -129,3 +129,12 @@ NULL
     return(NULL)
   }
 }
+
+
+register_resource(
+  name = "esalandcover",
+  type = "raster",
+  source = "https://registry.opendata.aws/esa-worldcover-vito/",
+  fun = .get_esalandcover,
+  arguments <- list()
+)

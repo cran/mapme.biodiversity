@@ -28,8 +28,8 @@ NULL
 #' @param verbose Logical controlling verbosity.
 #' @importFrom utils unzip
 #' @keywords internal
+#' @include register.R
 #' @noRd
-
 .get_teow <- function(x,
                       rundir = tempdir(),
                       verbose = TRUE) {
@@ -41,15 +41,15 @@ NULL
 
   # get url
   url <- paste("https://files.worldwildlife.org/wwfcmsprod/files/",
-               "Publication/file/6kcchn7e3u_official_teow.zip",
-               sep = ""
+    "Publication/file/6kcchn7e3u_official_teow.zip",
+    sep = ""
   )
   # start download in a temporal directory within rundir
   downloads <- tryCatch(
     {
       download.file(url,
-                    file.path(rundir, basename(paste0("TEOW_global.zip"))),
-                    quiet = TRUE
+        file.path(rundir, basename(paste0("TEOW_global.zip"))),
+        quiet = TRUE
       )
     },
     error = function(e) e,
@@ -65,8 +65,16 @@ NULL
   # remove all except desired layers
   all_files <- list.files(rundir, full.names = T)
   unlink(grep(paste0("wwf_terr_ecos.gpkg"), all_files, value = T, invert = T),
-         recursive = T, force = T
+    recursive = T, force = T
   )
   # return paths to the gpkg
   filename
 }
+
+register_resource(
+  name = "teow",
+  type = "vector",
+  source = "https://www.worldwildlife.org/publications/terrestrial-ecoregions-of-the-world",
+  fun = .get_teow,
+  arguments <- list()
+)

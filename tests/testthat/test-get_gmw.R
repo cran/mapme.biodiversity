@@ -1,7 +1,8 @@
 test_that(".get_gmw works", {
+  skip_on_cran()
   aoi <- read_sf(
     system.file("extdata", "shell_beach_protected_area_41057_B.gpkg",
-                package = "mapme.biodiversity"
+      package = "mapme.biodiversity"
     )
   )
   aoi <- suppressWarnings(st_cast(aoi, to = "POLYGON")[1, ])
@@ -14,12 +15,11 @@ test_that(".get_gmw works", {
   tmpdir <- tempdir()
 
   portfolio <- init_portfolio(aoi,
-                              years = 2007:2008,
-                              outdir = outdir,
-                              tmpdir = tmpdir,
-                              cores = 1,
-                              add_resources = FALSE,
-                              verbose = FALSE
+    years = 2007:2008,
+    outdir = outdir,
+    tmpdir = tmpdir,
+    add_resources = FALSE,
+    verbose = FALSE
   )
   # Add testing attribute in order to skip downloads
   attributes(portfolio)$testing <- TRUE

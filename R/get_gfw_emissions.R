@@ -34,11 +34,11 @@ NULL
 #' @param verbose Logical controlling verbosity.
 #' @param rundir A directory where intermediate files are written to.
 #' @keywords internal
+#' @include register.R
 #' @noRd
 .get_gfw_emissions <- function(x,
                                verbose = TRUE,
                                rundir = tempdir()) {
-
   index_file <- system.file("extdata", "greenhouse_index.geosjon", package = "mapme.biodiversity")
   spatialindex <- st_read(index_file, quiet = TRUE)
   tile_ids <- unique(unlist(st_intersects(x, spatialindex)))
@@ -58,3 +58,12 @@ NULL
   # return all paths to the downloaded files
   filenames
 }
+
+
+register_resource(
+  name = "gfw_emissions",
+  type = "raster",
+  source = "https://data.globalforestwatch.org/datasets/gfw::forest-greenhouse-gas-emissions/about",
+  fun = .get_gfw_emissions,
+  arguments <- list()
+)

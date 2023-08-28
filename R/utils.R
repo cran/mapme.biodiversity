@@ -27,14 +27,14 @@
     unsupported <- indicators[which(!indicators %in% names_indicators)]
     base_msg <- "The following requested %s not supported: %s."
     mid_msg <- ifelse(length(unsupported) == 1,
-                      "indicator is", "indicators are"
+      "indicator is", "indicators are"
     )
     end_msg <- paste(unsupported, collapse = ", ")
     stop(sprintf(base_msg, mid_msg, end_msg))
   }
   required_resources <- sapply(
     available_indicators()[indicators],
-    function(x) names(x$inputs)
+    function(x) names(x$resources)
   )
   required_resources <- unique(unlist(required_resources))
   as.vector(required_resources)
@@ -68,8 +68,8 @@
       nonexisting <- req_resources[which(!req_resources %in% ex_resources)]
       base_msg <- "The following required %s not available: %s."
       mid_msg <- ifelse(length(nonexisting) == 1,
-                        "resource is",
-                        "resources are"
+        "resource is",
+        "resources are"
       )
       end_msg <- paste(nonexisting, collapse = ", ")
       stop(sprintf(base_msg, mid_msg, end_msg))
@@ -105,8 +105,8 @@
     unspecified_args <- req_args_names[!req_args_names %in% names(args)]
   }
   base_msg <- paste("Argument '%s' for resource '%s' was not specified. ",
-                    "Setting to default value of '%s'.",
-                    sep = ""
+    "Setting to default value of '%s'.",
+    sep = ""
   )
   default_args <- as.list(sapply(unspecified_args, function(arg_name) {
     message(
@@ -179,14 +179,26 @@
 #' @keywords internal
 #' @noRd
 .unzip_and_remove <- function(zip, rundir, remove = TRUE) {
-  suppressWarnings(unzip(
-    zipfile = file.path(rundir, basename(zip)),
-    exdir = rundir,
-    overwrite = FALSE
-  ))
+  extension <- tools::file_ext(zip)
+  if (extension == "zip") {
+    filenames <- suppressWarnings(unzip(
+      zipfile = zip,
+      exdir = rundir,
+      overwrite = FALSE
+    ))
+  } else if (extension == "gz") {
+    filenames <- R.utils::gunzip(
+      zip,
+      skip = TRUE,
+      remove = FALSE
+    )
+  } else {
+    stop(paste0("decompression for ", extension, " files not implemented"))
+  }
   if (remove) {
     unlink(file.path(rundir, basename(zip)))
   }
+  return(filenames)
 }
 
 
@@ -200,7 +212,7 @@
 .check_available_years <- function(target_years, available_years, indicator) {
   if (any(!target_years %in% available_years)) {
     target_years <- target_years[target_years %in% available_years]
-    if(length(target_years) > 0 ){
+    if (length(target_years) > 0) {
       message(sprintf("Some target years are not available for %s.", indicator))
     } else {
       stop(
@@ -213,47 +225,6 @@
   }
   target_years
 }
-
-.check_engine <- function(implemented_engines, queried_engine) {
-  if (length(queried_engine) > 1) {
-    stop(sprintf(
-      "Please specify only one engine of: %s.",
-      paste(implemented_engines, collapse = ", ")
-    ))
-  }
-
-  if (!queried_engine %in% implemented_engines) {
-    stop(sprintf(
-      paste("Engine '%s' is not an available engine.",
-            "Please choose one of: %s",
-            collapse = " "
-      ),
-      queried_engine, paste(implemented_engines, collapse = ", ")
-    ))
-  }
-}
-
-.check_stats <- function(implemented_stats, queried_stats) {
-  if (any(!queried_stats %in% implemented_stats)) {
-    not_available <- queried_stats[which(!queried_stats %in% implemented_stats)]
-    msg_body <- "%s '%s' %s not supported. Please choose one of: %s"
-    if (length(not_available) == 1) {
-      stat <- "Statistic"
-      verb <- "is"
-    } else {
-      stat <- "Statistics"
-      verb <- "are"
-    }
-    msg <- sprintf(
-      msg_body, stat,
-      paste(not_available, collapse = "', '"),
-      verb,
-      paste(implemented_stats, collapse = ", ")
-    )
-    stop(msg)
-  }
-}
-
 
 #' Helper to check valid urls
 #'
@@ -296,14 +267,14 @@
     retry <- TRUE
     counter <- 1
     while (retry) {
-      unsuccessful <- pbapply::pblapply(seq_along(missing_urls), function(i) {
+      unsuccessful <- purrr::map(seq_along(missing_urls), function(i) {
         if (file.exists(missing_filenames[i])) {
           return(NULL) # file exists locally
         }
 
         status <- download.file(missing_urls[i], missing_filenames[i],
-                                quiet = TRUE,
-                                mode = ifelse(Sys.info()["sysname"] == "Windows", "wb", "w")
+          quiet = TRUE,
+          mode = ifelse(Sys.info()["sysname"] == "Windows", "wb", "w")
         )
         if (status != 0) {
           return(list(urls = missing_urls[i], filenames = missing_filenames[i]))
@@ -315,8 +286,8 @@
       unsuccessful <- unsuccessful[which(sapply(unsuccessful, function(x) !is.null(x)))]
       if (length(unsuccessful) > 0 & counter <= stubbornnes) {
         warning(paste("Some target files have not been downloaded correctly. ",
-                      "Download will be retried.",
-                      sep = ""
+          "Download will be retried.",
+          sep = ""
         ))
         missing_urls <- sapply(unsuccessful, function(x) x$missing_urls)
         missing_filenames <- sapply(unsuccessful, function(x) x$missing_filenames)
@@ -350,85 +321,12 @@
   return(filenames)
 }
 
-
-.depreciation_warning <- function(names, resource){
-  resources <- tibble(
-    old = c("treecover2000",
-            "lossyear",
-            "greenhouse",
-            "traveltime",
-            "nasagrace",
-            "mintemperature",
-            "maxtemperature",
-            "precipitation",
-            "ecoregions",
-            "mangrove",
-            "srtmdem"),
-    new = c("gfw_treecover",
-            "gfw_lossyear",
-            "gfw_emissions",
-            "nelson_et_al",
-            "nasa_grace",
-            "worldclim_min_temperature",
-            "worldclim_max_temperature",
-            "worldclim_precipitation",
-            "teow",
-            "gmw",
-            "nasa_srtm")
-  )
-
-  indicators <- tibble(
-    old = c("treecover",
-            "emissions",
-            "treeloss",
-            "chirpsprec",
-            "accessibility",
-            "popcount",
-            "wctmin",
-            "wctmax",
-            "wcprec",
-            "gmw",
-            "teow"
-    ),
-    new = c("treecover_area",
-            "treecoverloss_emissions",
-            "treecover_area_and_emissions",
-            "precipitation_chirps",
-            "traveltime",
-            "population_count",
-            "temperature_min_wc",
-            "temperature_max_wc",
-            "precipitation_wc",
-            "mangroves_area",
-            "ecoregion")
-  )
-
-  if(resource){
-    basemsg <- paste("Resource '%s' has been renamed to '%s'. In the next release '%s'",
-                     "will no longer be supported.\nPlease adjust your scripts accordingly.", sep = " ")
-    for (name in names){
-      if(name %in% resources$old){
-        old <- name
-        new <- resources$new[which(resources$old == name)]
-        msg <- sprintf(basemsg, old, new, old)
-        warning(msg)
-        names[names == name] <- new
-      }
+.copy_resource_dir <- function(target) {
+  if (!dir.exists(target)) {
+    dir.create(target, showWarnings = FALSE)
+    resource_dir <- system.file("res", package = "mapme.biodiversity")
+    for (dir in list.dirs(resource_dir)) {
+      file.copy(dir, target, recursive = TRUE)
     }
   }
-
-  if(!resource){
-    basemsg <- paste("Indicator '%s' has been renamed to '%s'. In the next release '%s'",
-                     "will no longer be supported.\nPlease adjust your scripts accordingly.", sep = " ")
-    for (name in names){
-      if(name %in% indicators$old){
-        old <- name
-        new <- indicators$new[which(indicators$old == name)]
-        msg <- sprintf(basemsg, old, new, old)
-        warning(msg)
-        names[names == name] <- new
-      }
-    }
-  }
-  names
 }

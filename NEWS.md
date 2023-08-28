@@ -1,3 +1,80 @@
+# mapme.biodiversity 0.4.0
+
+## New features
+
+- added new resource called `ucdp_ged` providing a database of violent conflict
+  from 1989 to today
+
+- added a new indicator called `fatalities` aggregating number of deaths
+  by type of conflict on a monthly time scale based on the `ucdp_ged` resource.
+  
+- Added a new resource called `fritz_et_al` providing a raster layer of deforestation
+
+- added a new resource called `fritz_et_al` providing a raster layer of deforestation
+  drivers in tropical forests based on [Fritz et al. (2022)](https://www.frontiersin.org/articles/10.3389/fcosc.2022.830248/full)
+
+- added a new indicator called `deforestation_drivers` using the `fritz_et_al` resource
+  to obtain information on the absolute and relative area driving forest losses in 
+  assets for the period 2008-2019
+  
+- added two new exported functions `register_resource()` and `register_indicator()`
+  which allow users to register custom functions for resources/indicators
+  
+- added a new vignette for the web-version of the package only informing
+  about how to obtain wide-output from indicators
+  
+- added a new vignette for the web-version for a custom analysis of the NASA
+  FIRMS resource in the example section
+
+- added the data for years 2017-2020 to the Global Mangrove Watch resource 
+
+
+## Breaking changes
+
+- Changed the parallel backend to the [future](https://cran.r-project.org/package=future) 
+  package. Parallel processing is now implemented by
+  [furrr::future_map()](https://furrr.futureverse.org/reference/future_map.html)
+  on the asset level within the calc_indicators() function. User code is now
+  required to set up a [plan()](https://future.futureverse.org/reference/plan.html)
+  to enable parallel processing. The function call needs to be wrapped on the user
+  side with [progressr::with_progress()](https://progressr.futureverse.org/reference/with_progress.html)
+  to show a progress bar.
+  
+- mapme.biodiversity no longer sets terra's temporal directory for you.
+  Instead you have to call `terra::terraOptions()` manually
+
+## Bug Fixes
+
+- `esalandcover` indicator now returns the value per each land cover class 
+  exactly once (#177)
+
+## Internal
+
+- disabled running examples on CRAN 
+
+- disabled tests for get_* functions on CRAN
+
+- `terra` engines now use `get()` to resolve the requested zonal
+  statistic function
+
+- applying tidyverse coding style to existing code (#156, @karpfen)
+
+- extensive re-factoring of vector-raster zonal statistic engines (#150)
+
+- extensive re-writing of testing infrastructure for indicator functions omitting
+  the usage of snapshot tests as far as possible (#142)
+
+- `rundir` and `todisk` arguments removed from indicator functions since they were
+  of no practical use
+
+- instead of a resource and indicator backlog, resources and indicators are now
+  registered to .pkgenv and queried there during runtime. This also allows
+  users to register custom resources/indicator functions
+  
+- removed deprecation warnings for old resource/indicator name
+  
+
+
 # mapme.biodiversity 0.3.0
 
 ## Breaking changes

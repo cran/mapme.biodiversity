@@ -37,13 +37,12 @@ NULL
 #' @param rundir A directory where intermediate files are written to.
 #' @param verbose Logical controlling verbosity.
 #' @keywords internal
+#' @include register.R
 #' @noRd
-#'
 .get_gfw_treecover <- function(x,
                                vers_treecover = "GFC-2021-v1.9",
                                rundir = tempdir(),
                                verbose = TRUE) {
-
   # check that version is correct
   if (!vers_treecover %in% .available_gfw_versions()) {
     stop(
@@ -93,3 +92,12 @@ NULL
     "GFC-2021-v1.9"
   )
 }
+
+
+register_resource(
+  name = "gfw_treecover",
+  type = "raster",
+  source = "https://data.globalforestwatch.org/documents/tree-cover-2000/explore",
+  fun = .get_gfw_treecover,
+  arguments <- list(vers_treecover = "GFC-2021-v1.9")
+)

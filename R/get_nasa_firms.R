@@ -40,25 +40,26 @@ NULL
 #' @param verbose Logical controlling verbosity.
 #' @importFrom utils unzip
 #' @keywords internal
+#' @include register.R
 #' @noRd
-
 .get_nasa_firms <- function(x,
                             instrument = "VIIRS",
                             rundir = tempdir(),
                             verbose = TRUE) {
-
   org_target_years <- attributes(x)$years
 
   if (!any(instrument %in% c("MODIS", "VIIRS"))) {
     stop(
-      paste("The selected instrument",
-            instrument[which(!instrument %in% c("MODIS", "VIIRS"))],
-            "is not available. Please choose between MODIS and VIIRS")
+      paste(
+        "The selected instrument",
+        instrument[which(!instrument %in% c("MODIS", "VIIRS"))],
+        "is not available. Please choose between MODIS and VIIRS"
+      )
     )
   }
 
   filenames <- c()
-  for (sensor in instrument){
+  for (sensor in instrument) {
     if (sensor == "VIIRS") {
       available_years <- c(2012:2021)
       target_years <- .check_available_years(
@@ -71,8 +72,9 @@ NULL
       )
     }
 
-    urls <- unlist(sapply(target_years,
-                          function(year) .get_firms_url(year, sensor)
+    urls <- unlist(sapply(
+      target_years,
+      function(year) .get_firms_url(year, sensor)
     ))
     filename <- file.path(
       rundir,
@@ -93,7 +95,9 @@ NULL
     # remove unneeded files
     unlink(
       grep("*.gpkg$|*.zip$",
-           list.files(rundir, full.names = T), value = T, invert = T),
+        list.files(rundir, full.names = T),
+        value = T, invert = T
+      ),
       recursive = T, force = T
     )
   }
@@ -103,8 +107,9 @@ NULL
   }
   # return paths to the gpkg for target years
   grep(paste(org_target_years, collapse = "|"),
-       list.files(rundir, full.names = T, pattern = ".gpkg$"),
-       value = TRUE)
+    list.files(rundir, full.names = T, pattern = ".gpkg$"),
+    value = TRUE
+  )
 }
 
 
@@ -178,7 +183,6 @@ NULL
 #' @noRd
 #'
 .convert_csv_to_gpkg <- function(gpkg, rundir, instrument, year) {
-
   if (instrument == "VIIRS") {
     loc <- file.path(rundir, "viirs-snpp", year)
   } else {
@@ -187,9 +191,17 @@ NULL
 
   csv_files <- list.files(loc, pattern = "*.csv", full.names = TRUE)
 
-  walk(csv_files, function(file){
+  walk(csv_files, function(file) {
     data <- read.csv(file)
     data <- st_as_sf(data, coords = c("longitude", "latitude"), crs = 4326)
     write_sf(data, dsn = gpkg, append = TRUE)
   })
 }
+
+register_resource(
+  name = "nasa_firms",
+  type = "vector",
+  source = "https://firms.modaps.eosdis.nasa.gov",
+  fun = .get_nasa_firms,
+  arguments <- list(instrument = "VIIRS")
+)

@@ -1,4 +1,5 @@
 test_that(".get_worldpop works", {
+  skip_on_cran()
   aoi <- read_sf(
     system.file("extdata", "sierra_de_neiba_478140.gpkg",
       package = "mapme.biodiversity"
@@ -17,7 +18,6 @@ test_that(".get_worldpop works", {
     years = 2001,
     outdir = outdir,
     tmpdir = tmpdir,
-    cores = 1,
     add_resources = FALSE,
     verbose = TRUE
   )

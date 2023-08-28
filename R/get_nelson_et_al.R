@@ -46,8 +46,8 @@ NULL
 #' @param rundir A directory where intermediate files are written to.
 #' @param verbose Logical controlling verbosity.
 #' @keywords internal
+#' @include register.R
 #' @noRd
-
 .get_nelson_et_al <- function(x,
                               range_traveltime = "20k_50k",
                               rundir = tempdir(),
@@ -93,15 +93,15 @@ NULL
   if (any(!range %in% df_index$range)) {
     index <- which(!range %in% df_index$range)
     basemsg <- paste("The selected %s not available ranges ",
-                     "for traveltime Available ranges are %s.",
-                     sep = ""
+      "for traveltime Available ranges are %s.",
+      sep = ""
     )
     if (length(index) == 1) {
       body <- sprintf("range '%s' is", range[index])
     } else {
       body <- sprintf("ranges '%s' are", paste(range[index], collapse = "', '"))
     }
-    if(verbose) message(sprintf(basemsg, body, paste(df_index$range, collapse = ", ")))
+    if (verbose) message(sprintf(basemsg, body, paste(df_index$range, collapse = ", ")))
     range <- range[-index]
     filenames <- filenames[-index]
     if (length(range) == 0) {
@@ -113,7 +113,7 @@ NULL
       } else {
         body <- sprintf("ranges of %s.", paste(range, collapse = ", "))
       }
-      if(verbose) message(sprintf(basemsg, body))
+      if (verbose) message(sprintf(basemsg, body))
     }
   }
 
@@ -123,3 +123,11 @@ NULL
   }))
   return(list(urls = urls, filenames = filenames))
 }
+
+register_resource(
+  name = "nelson_et_al",
+  type = "raster",
+  source = "https://figshare.com/articles/dataset/Travel_time_to_cities_and_ports_in_the_year_2015/7638134/3",
+  fun = .get_nelson_et_al,
+  arguments <- list(range_traveltime = "20k_50k")
+)

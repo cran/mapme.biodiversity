@@ -21,33 +21,35 @@
 #' @keywords indicator
 #' @format A tibble with a column for each specified stats and a column with the respective date.
 #' @examples
-#' if (Sys.getenv("NOT_CRAN") == "true") {
-#'   library(sf)
-#'   library(mapme.biodiversity)
+#' \dontshow{
+#' mapme.biodiversity:::.copy_resource_dir(file.path(tempdir(), "mapme-data"))
+#' }
+#' \dontrun{
+#' library(sf)
+#' library(mapme.biodiversity)
 #'
-#'   temp_loc <- file.path(tempdir(), "mapme.biodiversity")
-#'   if(!file.exists(temp_loc)){
-#'     dir.create(temp_loc)
-#'     resource_dir <- system.file("res", package = "mapme.biodiversity")
-#'     file.copy(resource_dir, temp_loc, recursive = TRUE)
-#'   }
+#' outdir <- file.path(tempdir(), "mapme-data")
+#' dir.create(outdir, showWarnings = FALSE)
 #'
-#'   (try(aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
-#'                         package = "mapme.biodiversity") %>%
-#'          read_sf() %>%
-#'          init_portfolio(
-#'            years = 2022,
-#'            outdir = file.path(temp_loc, "res"),
-#'            tmpdir = tempdir(),
-#'            add_resources = FALSE,
-#'            cores = 1,
-#'            verbose = FALSE
-#'          ) %>%
-#'          get_resources("nasa_grace") %>%
-#'          calc_indicators("drought_indicator",
-#'                          stats_drought = c("mean", "median"),
-#'                          engine = "extract") %>%
-#'          tidyr::unnest(drought_indicator)))
+#' aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
+#'   package = "mapme.biodiversity"
+#' ) %>%
+#'   read_sf() %>%
+#'   init_portfolio(
+#'     years = 2022,
+#'     outdir = outdir,
+#'     tmpdir = tempdir(),
+#'     add_resources = FALSE,
+#'     verbose = FALSE
+#'   ) %>%
+#'   get_resources("nasa_grace") %>%
+#'   calc_indicators("drought_indicator",
+#'     stats_drought = c("mean", "median"),
+#'     engine = "extract"
+#'   ) %>%
+#'   tidyr::unnest(drought_indicator)
+#'
+#' aoi
 #' }
 NULL
 
@@ -58,202 +60,58 @@ NULL
 #' can specify the functions i.e. zonal from package terra, extract from package
 #' terra, or exactextract from exactextractr as desired.
 #'
-#' @param shp A single polygon for which to calculate the drought statistic
+#' @param x A single polygon for which to calculate the drought statistic
 #' @param nasa_grace The drought indicator raster resource from NASA GRACE
 #' @param stats_drought Function to be applied to compute statistics for polygons
 #'    either one or multiple inputs as character "mean", "median" or "sd".
 #' @param engine The preferred processing functions from either one of "zonal",
 #'   "extract" or "exactextract" as character.
-#' @param rundir A directory where intermediate files are written to.
 #' @param verbose A directory where intermediate files are written to.
-#' @param todisk Logical indicating whether or not temporary raster files shall
-#'   be written to disk
 #' @param ... additional arguments
 #' @return A tibble
 #' @keywords internal
+#' @include register.R
 #' @noRd
-
-.calc_drought_indicator <- function(shp,
+.calc_drought_indicator <- function(x,
                                     nasa_grace,
                                     engine = "extract",
                                     stats_drought = "mean",
-                                    rundir = tempdir(),
                                     verbose = TRUE,
-                                    todisk = FALSE,
                                     processing_mode = "portfolio",
                                     ...) {
-
   # check if input engines are correct
   if (is.null(nasa_grace)) {
     return(NA)
   }
-  # check if intermediate raster should be written to disk
-  if (ncell(nasa_grace) > 1024 * 1024) todisk <- TRUE
-  # check if input engine is correctly specified
-  available_engines <- c("zonal", "extract", "exactextract")
-  .check_engine(available_engines, engine)
-  # check if only supoorted stats have been specified
-  available_stats <- c("mean", "median", "sd", "min", "max", "sum", "var")
-  .check_stats(available_stats, stats_drought)
+  results <- .select_engine(
+    x = x,
+    raster = nasa_grace,
+    stats = stats_drought,
+    engine = engine,
+    name = "wetness",
+    mode = processing_mode
+  )
 
-  if (engine == "extract") {
-    extractor <- .comp_drought_extract
-  }
-  if (engine == "exactextract") {
-    extractor <- .comp_drought_exact_extract
-  }
-  if (engine == "zonal") {
-    extractor <- .comp_drought_zonal
-  }
-
-
-  if (processing_mode == "asset") {
-    results <- extractor(
-      nasa_grace = nasa_grace,
-      shp = shp,
-      stats = stats_drought,
-      todisk = todisk,
-      rundir = rundir
-    )
-  }
-
+  dates <- sub(".*(\\d{8}).*", "\\1", names(nasa_grace))
+  dates <- as.Date(dates, format = "%Y%m%d")
   if (processing_mode == "portfolio") {
-    cores <- attributes(shp)$cores
-    results <- parallel::mclapply(1:nrow(shp), function(i) {
-      out <- extractor(
-        nasa_grace = nasa_grace,
-        shp = shp[i, ],
-        stats = stats_drought,
-        todisk = todisk,
-        rundir = rundir
-      )
-    }, mc.cores = cores)
+    results <- purrr::map(results, function(x) {
+      x$date <- dates
+      x
+    })
+  } else {
+    results$date <- dates
   }
-
   results
 }
 
-#' Helper function to compute statistics using routines from terra zonal
-#'
-#' @param nasa_grace drought indicator raster from which to compute statistics
-#'
-#' @return A data-frame
-#' @keywords internal
-#' @noRd
-
-.comp_drought_zonal <- function(nasa_grace = NULL,
-                                shp = NULL,
-                                stats = "mean",
-                                todisk = FALSE,
-                                rundir = tempdir(),
-                                ...) {
-  shp_v <- vect(shp)
-  nasa_grace <- terra::mask(nasa_grace,
-                            shp_v,
-                            filename =  ifelse(todisk, file.path(rundir, "nasa_grace.tif"), ""),
-                            overwrite = TRUE
-  )
-
-  p_raster <- terra::rasterize(shp_v,
-                               nasa_grace,
-                               field = 1:nrow(shp_v),
-                               touches = TRUE,
-                               filename =  ifelse(todisk, file.path(rundir, "polygon.tif"), ""),
-                               overwrite = TRUE
-  )
-
-  results <- lapply(1:length(stats), function(j) {
-    out <- terra::zonal(
-      nasa_grace,
-      p_raster,
-      fun = stats[j],
-      na.rm = T
-    )
-    out <- tibble(wetness = as.numeric(out[-1]))
-    names(out) <- paste0("wetness_", stats[j])
-    out
-  })
-
-  results <- tibble(do.call(cbind, results))
-  bn <- names(nasa_grace)
-  time_frame <- sub(".*(\\d{8}).*", "\\1", bn)
-  time_frame <- as.Date(time_frame, format = "%Y%m%d")
-  results$date <- time_frame
-  results
-}
-
-#' Helper function to compute statistics using routines from terra extract
-#'
-#' @param nasa_grace drought indicator raster from which to compute statistics
-#'
-#' @return A data-frame
-#' @keywords internal
-#' @noRd
-
-.comp_drought_extract <- function(shp = NULL,
-                                  nasa_grace = NULL,
-                                  stats = "mean",
-                                  ...) {
-  shp_v <- vect(shp)
-  results <- lapply(1:length(stats), function(j) {
-    out <- terra::extract(
-      nasa_grace,
-      shp_v,
-      fun = stats[j],
-      na.rm = T
-    )
-    out <- tibble(wetness = as.numeric(out[-1]))
-    names(out) <- paste0("wetness_", stats[j])
-    out
-  })
-  results <- tibble(do.call(cbind, results))
-  bn <- names(nasa_grace)
-  time_frame <- sub(".*(\\d{8}).*", "\\1", bn)
-  time_frame <- as.Date(time_frame, format = "%Y%m%d")
-  results$date <- time_frame
-  results
-}
-
-#' Helper function to compute statistics using routines from exactextractr
-#'
-#' @param nasa_grace drought indicator raster from which to compute statistics
-#'
-#' @return A data-frame
-#' @keywords internal
-#' @noRd
-
-.comp_drought_exact_extract <- function(shp = NULL,
-                                        nasa_grace = NULL,
-                                        stats = "mean",
-                                        ...) {
-  if(!requireNamespace("exactextractr", quietly = TRUE)){
-    stop(paste(
-      "Needs package 'exactextractr' to be installed.",
-      "Consider installing with 'install.packages('exactextractr')"
-    ))
-  }
-  results <- lapply(1:length(stats), function(j) {
-    if (stats[j] %in% c("sd", "var")) {
-      out <- exactextractr::exact_extract(
-        nasa_grace,
-        shp,
-        fun = ifelse(stats[j] == "sd", "stdev", "variance")
-      )
-    } else {
-      out <- exactextractr::exact_extract(
-        nasa_grace,
-        shp,
-        fun = stats[j]
-      )
-    }
-    out <- tibble(wetness = as.numeric(out))
-    names(out) <- paste0("wetness_", stats[j])
-    out
-  })
-  results <- tibble(do.call(cbind, results))
-  bn <- names(nasa_grace)
-  time_frame <- sub(".*(\\d{8}).*", "\\1", bn)
-  time_frame <- as.Date(time_frame, format = "%Y%m%d")
-  results$date <- time_frame
-  results
-}
+register_indicator(
+  name = "drought_indicator",
+  resources = list(nasa_grace = "raster"),
+  fun = .calc_drought_indicator,
+  arguments = list(
+    engine = "extract",
+    stats_drought = "mean"
+  ),
+  processing_mode = "portfolio"
+)

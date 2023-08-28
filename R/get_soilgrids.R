@@ -75,6 +75,7 @@ NULL
 #' @return A charchter vector of the final filenames
 #' @keywords internal
 #' @importFrom stringr str_replace
+#' @include register.R
 #' @noRd
 .get_soilgrids <- function(x,
                            layers,
@@ -106,14 +107,15 @@ NULL
 
   if (any(!depths %in% .sg_depths)) {
     na_depths <- depths[which(!depths %in% .sg_depths)]
-    stop(sprintf(
-      paste("The selected depth range(s) '%s' is/are not available. ",
-        "Please choose one of: %s.",
-        sep = ""
+    stop(
+      sprintf(
+        paste("The selected depth range(s) '%s' is/are not available. ",
+          "Please choose one of: %s.",
+          sep = ""
+        ),
+        na_depths, paste(.sg_depths, collapse = ", ")
       ),
-      na_depths, paste(.sg_depths, collapse = ", ")
-    ),
-    call. = FALSE
+      call. = FALSE
     )
   }
 
@@ -274,3 +276,15 @@ NULL
   "60-100cm", "100-200cm", "0-30cm"
 )
 .sg_stats <- c("Q0.05", "Q0.5", "mean", "Q0.95")
+
+register_resource(
+  name = "soilgrids",
+  type = "raster",
+  source = "https://www.isric.org/explore/soilgrids",
+  fun = .get_soilgrids,
+  arguments <- list(
+    layers = "clay",
+    depths = "0-5cm",
+    stats = "mean"
+  )
+)

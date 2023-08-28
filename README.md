@@ -3,7 +3,7 @@
 
 [![R-CMD-check](https://github.com/mapme-initiative/mapme.biodiversity/workflows/R-CMD-check/badge.svg)](https://github.com/mapme-initiative/mapme.biodiversity/actions)
 [![Coverage
-Status](https://img.shields.io/codecov/c/github/mapme-initiative/mapme.biodiversity/master.svg)](https://codecov.io/github/mapme-initiative/mapme.biodiversity?branch=master)
+Status](https://img.shields.io/codecov/c/github/mapme-initiative/mapme.biodiversity/master.svg)](https://app.codecov.io/github/mapme-initiative/mapme.biodiversity?branch=main)
 [![CRAN
 status](https://badges.cranchecks.info/summary/mapme.biodiversity.svg)](https://cran.r-project.org/web/checks/check_results_mapme.biodiversity.html)
 [![CRAN
@@ -25,17 +25,17 @@ global biodiversity under threat.
 The mapme.biodiversity package helps to analyse a number of biodiversity
 related indicators and biodiversity threats based on freely available
 geodata-sources such as the Global Forest Watch. It supports
-computational efficient routines and heavy parallelization in
-cloud-infrastructures such as AWS or AZURE using in the statistical
-programming language R. The package allows for the analysis of global
-biodiversity portfolios with a thousand or millions of AOIs which is
-normally only possible on dedicated platforms such as the Google Earth
-Engine. It provides the possibility to e.g. analyse the World Database
-of Protected Areas (WDPA) for a number of relevant indicators. The
-primary use case of this package is to support scientific analysis and
-data science for individuals and organizations who seek to preserve the
-planet biodiversity. It’s development is funded by the German
-Development Bank KfW.
+computational efficient routines and heavy parallel computing in
+cloud-infrastructures such as AWS or Microsoft Azure using in the
+statistical programming language R. The package allows for the analysis
+of global biodiversity portfolios with a thousand or millions of AOIs
+which is normally only possible on dedicated platforms such as the
+Google Earth Engine. It provides the possibility to e.g. analyse the
+World Database of Protected Areas (WDPA) for a number of relevant
+indicators. The primary use case of this package is to support
+scientific analysis and data science for individuals and organizations
+who seek to preserve the planet biodiversity. Its development is funded
+by the German Development Bank KfW.
 
 ## Installation
 
@@ -66,19 +66,22 @@ library(mapme.biodiversity)
 library(sf)
 ```
 
-    ## Linking to GEOS 3.11.1, GDAL 3.6.1, PROJ 9.1.1; sf_use_s2() is TRUE
+    ## Linking to GEOS 3.11.1, GDAL 3.6.4, PROJ 9.1.1; sf_use_s2() is TRUE
 
 ``` r
 resources <- names(available_resources())
 indicators <- names(available_indicators())
-cat(sprintf("Supported resources:\n- %s\n\nSupported indicators:\n- %s",
-            paste(resources, collapse = "\n- "),
-            paste(indicators, collapse = "\n- ")))
+cat(sprintf(
+  "Supported resources:\n- %s\n\nSupported indicators:\n- %s",
+  paste(resources, collapse = "\n- "),
+  paste(indicators, collapse = "\n- ")
+))
 ```
 
     ## Supported resources:
     ## - chirps
     ## - esalandcover
+    ## - fritz_et_al
     ## - gfw_emissions
     ## - gfw_lossyear
     ## - gfw_treecover
@@ -89,6 +92,7 @@ cat(sprintf("Supported resources:\n- %s\n\nSupported indicators:\n- %s",
     ## - nelson_et_al
     ## - soilgrids
     ## - teow
+    ## - ucdp_ged
     ## - worldclim_max_temperature
     ## - worldclim_min_temperature
     ## - worldclim_precipitation
@@ -98,9 +102,11 @@ cat(sprintf("Supported resources:\n- %s\n\nSupported indicators:\n- %s",
     ## - active_fire_counts
     ## - active_fire_properties
     ## - biome
+    ## - deforestation_drivers
     ## - drought_indicator
     ## - ecoregion
     ## - elevation
+    ## - fatalities
     ## - landcover
     ## - mangroves_area
     ## - population_count
@@ -127,21 +133,20 @@ object.
 
 ``` r
 (system.file("extdata", "sierra_de_neiba_478140_2.gpkg", package = "mapme.biodiversity") %>%
-    sf::read_sf() %>%
-    init_portfolio(
-      years = 2016:2017,
-      outdir = system.file("res", package = "mapme.biodiversity"),
-      tmpdir = system.file("tmp", package = "mapme.biodiversity"),
-      add_resources = FALSE,
-      cores = 1,
-      verbose = FALSE
-    ) %>%
-    get_resources(
-      resources = c("gfw_treecover", "gfw_lossyear", "gfw_emissions"),
-      vers_treecover = "GFC-2020-v1.8", vers_lossyear = "GFC-2020-v1.8"
-    ) %>%
-    calc_indicators("treecover_area_and_emissions", min_size = 1, min_cover = 30) %>%
-    tidyr::unnest(treecover_area_and_emissions))
+  sf::read_sf() %>%
+  init_portfolio(
+    years = 2016:2017,
+    outdir = system.file("res", package = "mapme.biodiversity"),
+    tmpdir = system.file("tmp", package = "mapme.biodiversity"),
+    add_resources = FALSE,
+    verbose = FALSE
+  ) %>%
+  get_resources(
+    resources = c("gfw_treecover", "gfw_lossyear", "gfw_emissions"),
+    vers_treecover = "GFC-2020-v1.8", vers_lossyear = "GFC-2020-v1.8"
+  ) %>%
+  calc_indicators("treecover_area_and_emissions", min_size = 1, min_cover = 30) %>%
+  tidyr::unnest(treecover_area_and_emissions))
 ```
 
     ## Simple feature collection with 2 features and 8 fields
@@ -154,7 +159,50 @@ object.
     ##    <dbl> <chr>           <chr>         <chr>   <int> <int>     <dbl>     <dbl>
     ## 1 478140 Sierra de Neiba National Park DOM         1  2016      2832     2357.
     ## 2 478140 Sierra de Neiba National Park DOM         1  2017      3468     2345.
-    ## # … with 1 more variable: geom <POLYGON [°]>
+    ## # ℹ 1 more variable: geom <POLYGON [°]>
+
+## A note on parallel computing
+
+{mapme.biodiversity} follows the parallel computing paradigm of the
+{[future](https://cran.r-project.org/package=future)} package. That
+means that you as a user are in the control if and how you would like to
+set up parallel processing. Currently, {mapme.biodiversity} supports
+parallel processing on the asset level of the `calc_indicators()`
+function only. We also currently assume that parallel processing is done
+on the cores of a single machine. In future developments, we would like
+to support distributed processing. If you are working on a distributed
+use-cases, please contact the developers, e.g. via the [discussion
+board](https://github.com/mapme-initiative/mapme.biodiversity/discussions)
+or mail.
+
+To process 6 assets in parallel and report a progress bar you will have
+to set up the following in your code:
+
+``` r
+library(future)
+library(progressr)
+
+plan(multisession, workers = 6) # set up parallel plan
+
+with_progress({
+  portfolio <- calc_indicators(
+    portfolio,
+    "treecover_area_and_emissions",
+    min_size = 1,
+    min_cover = 30
+  )
+})
+
+plan(sequential) # close child processes
+```
+
+Note, that the above code uses `future::multisession()` as the parallel
+backend. This backend will resolve the calculation in multiple
+background R sessions. You should use that backend if you are operating
+on Windows, using RStudio or otherwise are not sure about which backend
+to use. In case you are operating on a system that allows process
+forking and are *not* using RStudio, consider using
+`future::multicore()` for more efficient parallel processing.
 
 Head over to the [online
 documentation](https://mapme-initiative.github.io/mapme.biodiversity/index.html)

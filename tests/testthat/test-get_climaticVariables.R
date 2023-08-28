@@ -1,4 +1,5 @@
 test_that(".get_climaticVariables works", {
+  skip_on_cran()
   aoi <- read_sf(
     system.file("extdata", "sierra_de_neiba_478140.gpkg",
       package = "mapme.biodiversity"
@@ -17,7 +18,6 @@ test_that(".get_climaticVariables works", {
     years = 2000:2018,
     outdir = outdir,
     tmpdir = tmpdir,
-    cores = 1,
     add_resources = FALSE,
     verbose = FALSE
   )

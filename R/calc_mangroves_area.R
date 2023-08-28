@@ -12,57 +12,55 @@
 #' @keywords indicator
 #' @format A tibble with a column for area of mangrove (in ha) and corresponding year.
 #' @examples
+#' \dontshow{
+#' mapme.biodiversity:::.copy_resource_dir(file.path(tempdir(), "mapme-data"))
+#' }
+#' \dontrun{
 #' library(sf)
 #' library(mapme.biodiversity)
 #'
-#' temp_loc <- file.path(tempdir(), "mapme.biodiversity")
-#' if(!file.exists(temp_loc)){
-#' dir.create(temp_loc)
-#' resource_dir <- system.file("res", package = "mapme.biodiversity")
-#' file.copy(resource_dir, temp_loc, recursive = TRUE)
-#' }
+#' outdir <- file.path(tempdir(), "mapme-data")
+#' dir.create(outdir, showWarnings = FALSE)
 #'
-#' (try(aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
-#'                         package = "mapme.biodiversity") %>%
+#' aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
+#'   package = "mapme.biodiversity"
+#' ) %>%
 #'   read_sf() %>%
 #'   init_portfolio(
 #'     years = c(1996, 2016),
-#'     outdir = file.path(temp_loc, "res"),
+#'     outdir = outdir,
 #'     tmpdir = tempdir(),
 #'     add_resources = FALSE,
-#'     cores = 1,
 #'     verbose = FALSE
 #'   ) %>%
 #'   get_resources("gmw") %>%
 #'   calc_indicators("mangroves_area") %>%
-#'   tidyr::unnest(mangroves_area)))
+#'   tidyr::unnest(mangroves_area)
+#'
+#' aoi
+#' }
 NULL
 
 #' Calculate mangrove extent based on Global Mangrove Watch (GMW)
 #'
 #' Considering 25 meter spatial resolution global polygons users can compute
 #' the mangrve extent area for their area of interest available from 1996 to
-#' 2016 with periodic updates in between.
+#' 2020 with periodic updates in between.
 #'
-#' @param shp A single polygon for which to calculate the mangrove extent
+#' @param x A single polygon for which to calculate the mangrove extent
 #' @param gmw The mangrove vector resource (GMW)
-#' @param rundir A directory where intermediate files are written to.
 #' @param verbose A directory where intermediate files are written to.
-#' @param todisk Logical indicating whether or not temporary vector files shall
-#'   be written to disk
 #' @param ... additional arguments
 #' @return A tibble
 #' @keywords internal
+#' @include register.R
 #' @noRd
-
-.calc_mangroves_area <- function(shp,
+.calc_mangroves_area <- function(x,
                                  gmw,
-                                 rundir = tempdir(),
                                  verbose = TRUE,
-                                 todisk = FALSE,
                                  ...) {
   results <- lapply(1:length(gmw), function(j) {
-    intersected <- suppressWarnings(st_intersection(gmw[[j]], shp))
+    intersected <- suppressWarnings(st_intersection(gmw[[j]], x))
     area <- st_area(intersected) %>%
       as.numeric() %>%
       sum() %>%
@@ -75,3 +73,11 @@ NULL
   results <- tibble(do.call(rbind, results))
   results
 }
+
+register_indicator(
+  name = "mangroves_area",
+  resources = list(gmw = "vector"),
+  fun = .calc_mangroves_area,
+  arguments = list(),
+  processing_mode = "asset"
+)

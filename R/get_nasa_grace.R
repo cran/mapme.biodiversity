@@ -11,7 +11,6 @@
 #' @docType data
 #' @keywords resource
 #' @format Global raster layers available for years 2003 to present.
-#' @source \url{https://nasagrace.unl.edu/globaldata/}
 NULL
 
 
@@ -21,8 +20,8 @@ NULL
 #' @param rundir A directory where intermediate files are written to.
 #' @param verbose Logical controlling verbosity.
 #' @keywords internal
+#' @include register.R
 #' @noRd
-
 .get_nasa_grace <- function(x,
                             rundir = tempdir(),
                             verbose = TRUE) {
@@ -71,3 +70,11 @@ NULL
     NULL
   }
 }
+
+register_resource(
+  name = "nasa_grace",
+  type = "raster",
+  source = "https://nasagrace.unl.edu/globaldata/",
+  fun = .get_nasa_grace,
+  arguments <- list()
+)

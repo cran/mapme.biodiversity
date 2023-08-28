@@ -1,7 +1,8 @@
 test_that(".get_nelson_et_al works", {
+  skip_on_cran()
   aoi <- read_sf(
     system.file("extdata", "sierra_de_neiba_478140.gpkg",
-                package = "mapme.biodiversity"
+      package = "mapme.biodiversity"
     )
   )
   aoi <- suppressWarnings(st_cast(aoi, to = "POLYGON")[1, ])
@@ -14,12 +15,11 @@ test_that(".get_nelson_et_al works", {
   tmpdir <- tempdir()
 
   portfolio <- init_portfolio(aoi,
-                              years = 2000:2020,
-                              outdir = outdir,
-                              tmpdir = tmpdir,
-                              cores = 1,
-                              add_resources = FALSE,
-                              verbose = TRUE
+    years = 2000:2020,
+    outdir = outdir,
+    tmpdir = tmpdir,
+    add_resources = FALSE,
+    verbose = TRUE
   )
   # Add testing attribute in order to skip downloads
   attributes(portfolio)$testing <- TRUE

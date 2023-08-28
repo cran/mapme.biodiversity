@@ -20,27 +20,26 @@
 #' @keywords indicator
 #' @format A tibble with a column for precipitation statistics (in mm)
 #' @examples
+#' \dontshow{
+#' mapme.biodiversity:::.copy_resource_dir(file.path(tempdir(), "mapme-data"))
+#' }
+#' \dontrun{
 #' library(sf)
 #' library(mapme.biodiversity)
 #'
-#' temp_loc <- file.path(tempdir(), "mapme.biodiversity")
-#' if (!file.exists(temp_loc)) {
-#'   dir.create(temp_loc)
-#'   resource_dir <- system.file("res", package = "mapme.biodiversity")
-#'   file.copy(resource_dir, temp_loc, recursive = TRUE)
-#' }
+#' outdir <- file.path(tempdir(), "mapme-data")
+#' dir.create(outdir, showWarnings = FALSE)
 #'
 #'
-#' (try(aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
+#' aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
 #'   package = "mapme.biodiversity"
 #' ) %>%
 #'   read_sf() %>%
 #'   init_portfolio(
 #'     years = 2018,
-#'     outdir = file.path(temp_loc, "res"),
+#'     outdir = outdir,
 #'     tmpdir = tempdir(),
 #'     add_resources = FALSE,
-#'     cores = 1,
 #'     verbose = FALSE
 #'   ) %>%
 #'   get_resources("worldclim_precipitation") %>%
@@ -48,7 +47,10 @@
 #'     stats_worldclim = c("mean", "median"),
 #'     engine = "extract"
 #'   ) %>%
-#'   tidyr::unnest(precipitation_wc)))
+#'   tidyr::unnest(precipitation_wc)
+#'
+#' aoi
+#' }
 NULL
 
 #' Calculate worldclim precipitation statistics
@@ -59,38 +61,39 @@ NULL
 #' from package terra, extract from package terra, or exactextract from exactextractr
 #' as desired.
 #'
-#' @param shp A single polygon for which to calculate the precipitation statistic
+#' @param x A single polygon for which to calculate the precipitation statistic
 #' @param worldclim_precipitation precipitation raster from which to compute statistics
 #' @param stats_worldclim Function to be applied to compute statistics for polygons
 #'    either one or multiple inputs as character "min", "max", "sum", "mean", "median"
 #'    "sd" or "var".
 #' @param engine The preferred processing functions from either one of "zonal",
 #'   "extract" or "exactextract" as character.
-#' @param rundir A directory where intermediate files are written to.
-#' @param verbose A directory where intermediate files are written to.
-#' @param todisk Logical indicating whether or not temporary raster files shall
-#'   be written to disk
 #' @param ... additional arguments
 #' @return A tibble
 #' @keywords internal
+#' @include register.R
 #' @noRd
-
-.calc_precipitation_wc <- function(shp,
+.calc_precipitation_wc <- function(x,
                                    worldclim_precipitation,
                                    engine = "extract",
                                    stats_worldclim = "mean",
-                                   rundir = tempdir(),
-                                   verbose = TRUE,
-                                   todisk = FALSE,
                                    ...) {
   results <- .calc_worldclim(
-    shp = shp,
+    x = x,
     worldclim = worldclim_precipitation,
     engine = engine,
-    stats_worldclim = stats_worldclim,
-    rundir = rundir,
-    verbose = verbose,
-    todisk = todisk
+    stats_worldclim = stats_worldclim
   )
   results
 }
+
+register_indicator(
+  name = "precipitation_wc",
+  resources = list(worldclim_precipitation = "raster"),
+  fun = .calc_precipitation_wc,
+  arguments = list(
+    engine = "extract",
+    stats_worldclim = "mean"
+  ),
+  processing_mode = "asset"
+)
