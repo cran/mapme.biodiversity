@@ -1,11 +1,11 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/mapme-initiative/mapme.biodiversity/workflows/R-CMD-check/badge.svg)](https://github.com/mapme-initiative/mapme.biodiversity/actions)
+[![R-CMD-check](https://github.com/mapme-initiative/mapme.biodiversity/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/mapme-initiative/mapme.biodiversity/actions)
 [![Coverage
 Status](https://img.shields.io/codecov/c/github/mapme-initiative/mapme.biodiversity/master.svg)](https://app.codecov.io/github/mapme-initiative/mapme.biodiversity?branch=main)
 [![CRAN
-status](https://badges.cranchecks.info/summary/mapme.biodiversity.svg)](https://cran.r-project.org/web/checks/check_results_mapme.biodiversity.html)
+status](https://badges.cranchecks.info/worst/mapme.biodiversity.svg)](https://cran.r-project.org/web/checks/check_results_mapme.biodiversity.html)
 [![CRAN
 version](https://www.r-pkg.org/badges/version/mapme.biodiversity)](https://CRAN.R-project.org/package=mapme.biodiversity)
 [![License](https://img.shields.io/badge/License-GPL%20(%3E=3)-brightgreen.svg?style=flat)](https://choosealicense.com/licenses/gpl-3.0/)
@@ -66,7 +66,7 @@ library(mapme.biodiversity)
 library(sf)
 ```
 
-    ## Linking to GEOS 3.11.1, GDAL 3.6.4, PROJ 9.1.1; sf_use_s2() is TRUE
+    ## Linking to GEOS 3.11.1, GDAL 3.8.2, PROJ 9.1.1; sf_use_s2() is TRUE
 
 ``` r
 resources <- names(available_resources())
@@ -138,7 +138,6 @@ object.
     years = 2016:2017,
     outdir = system.file("res", package = "mapme.biodiversity"),
     tmpdir = system.file("tmp", package = "mapme.biodiversity"),
-    add_resources = FALSE,
     verbose = FALSE
   ) %>%
   get_resources(

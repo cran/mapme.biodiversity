@@ -22,11 +22,11 @@
 #' @export
 calc_indicators <- function(x, indicators, ...) {
   # check if the requested resource is supported
-  required_resources <- .check_requested_indicator(indicators)
+  req_resources <- .check_requested_indicator(indicators)
   # check if any of the requested resources is already locally available
-  existing_resources <- names(attributes(x)$resources)
+  existing_resources <- names(attributes(x)[["resources"]])
   .check_existing_resources(
-    existing_resources, required_resources,
+    existing_resources, req_resources,
     needed = TRUE
   )
   for (indicator in indicators) x <- .get_single_indicator(x, indicator, ...)
@@ -56,28 +56,21 @@ calc_indicators <- function(x, indicators, ...) {
   # retrieve the selected indicator
   selected_indicator <- available_indicators(indicator)
   # get processing mode
-  processing_mode <- selected_indicator[[indicator]]$processing_mode
+  processing_mode <- selected_indicator[[indicator]][["processing_mode"]]
   # matching the specified arguments to the required arguments
   params <- .check_resource_arguments(selected_indicator, args)
   # append parameters
-  params$verbose <- atts$verbose
-  fun <- selected_indicator[[indicator]]$fun
-  available_resources <- atts$resources
-  required_resources <- selected_indicator[[indicator]]$resources
+  params[["verbose"]] <- atts[["verbose"]]
+  fun <- selected_indicator[[indicator]][["fun"]]
+  avail_resources <- atts[["resources"]]
+  req_resources <- selected_indicator[[indicator]][["resources"]]
 
-  if (processing_mode == "asset") {
-    p <- progressr::progressor(steps = nrow(x))
-    # apply function with parameters and add hidden id column
-    results <- furrr::future_map(1:nrow(x), function(i) {
-      p()
-      resources <- .prep(x[i, ], atts$resources, required_resources)
-      .compute(x[i, ], resources, fun, params, i)
-    }, .options = furrr::furrr_options(seed = TRUE))
-  } else {
-    resources <- .prep(x, atts$resources, required_resources)
-    results <- .compute(x, resources, fun, params, 1)
-  }
+  processor <- switch(processing_mode,
+                      asset = .asset_processor,
+                      portfolio = .portfolio_processor,
+                      stop(sprintf("Processing mode '%s' is not supported.", processing_mode)))
 
+  results <- processor(x, fun, avail_resources, req_resources, params)
   # bind the asset results
   results <- .bind_assets(results)
   # nest the results
@@ -91,27 +84,19 @@ calc_indicators <- function(x, indicators, ...) {
 
 
 
-.prep <- function(x, available_resources, required_resources) {
-  resources <- purrr::imap(
-    required_resources, function(resource_type, resource_name) {
-      if (resource_type == "raster") {
-        tindex <- read_sf(available_resources[resource_name], quiet = TRUE)
-        resource <- .read_raster_source(x, tindex)
-      } else if (resource_type == "vector") {
-        resource <- .read_vector_source(x, available_resources[[resource_name]])
-      } else {
-        stop(sprintf("Resource type '%s' currently not supported", resource_type))
-      }
-      resource
-    }
-  )
-
-  names(resources) <- names(resources)
-  resources
+.prep_resources <- function(x, avail_resources, req_resources) {
+  if (any(!names(req_resources) %in% names(avail_resources))) {
+    stop("Some required resources are not available.")
+  }
+  purrr::imap(req_resources, function(resource_type, resource_name) {
+    reader <- switch(resource_type,
+                     raster = .read_raster,
+                     vector = .read_vector,
+                     stop(sprintf("Resource type '%s' currently not supported", resource_type)))
+    reader(x, avail_resources[[resource_name]])})
 }
 
-
-.read_vector_source <- function(x, vector_sources) {
+.read_vector <- function(x, vector_sources) {
   vectors <- purrr::map(vector_sources, function(source) {
     tmp <- read_sf(source, wkt_filter = st_as_text(st_as_sfc(st_bbox(x))))
     st_make_valid(tmp)
@@ -120,63 +105,39 @@ calc_indicators <- function(x, indicators, ...) {
   vectors
 }
 
+.read_raster <- function(x, tindex) {
 
-
-.read_raster_source <- function(x, tindex) {
-  all_bboxes <- lapply(1:nrow(tindex), function(i) paste(as.numeric(st_bbox(tindex[i, ])), collapse = " "))
-  is_stacked <- length(unique(unlist(all_bboxes))) == 1
-
-  if (is_stacked) { # current resource/extent all have the same bounding box
-
-    filenames <- basename(tindex$location)
-    out <- terra::rast(tindex$location)
-    names(out) <- filenames
-  } else {
-    is_unique <- length(unique(unlist(all_bboxes))) == nrow(tindex)
-
-    if (is_unique) { # all tiles have a different bounding box
-      target_files <- tindex$location[unlist(st_intersects(x, tindex))]
-
-      if (length(target_files) == 0) {
-        warning("No intersection with resource.")
-        return(NULL)
-      } else if (length(target_files) == 1) {
-        out <- terra::rast(target_files)
-      } else {
-        # create a vrt for multiple targets
-        vrt_name <- tempfile("vrt", fileext = ".vrt")
-        out <- terra::vrt(target_files, filename = vrt_name)
-      }
-    } else { # some tiles share the same bboxes, and others do not, needs proper merging
-      # We assume here that the tiles present in tileindex have a temporal dimension.
-      # Thus each timestep should end up in its own layer. Different tiles from
-      # the same timestep should be spatially merged. We want to avoid merging
-      # different tile from different timesteps. We thus assume some regularity
-      # in how the name of a raster file expresses its temporal dimension.
-      # With this assumption, we can expect the files in tindex to be ordered.
-      # Thus we retrive the index of all files sharing the same bbox and assume
-      # that they belong to different timesteps. The files in between these
-      # indices thus belong to the previous timestep and we can merge these
-      # as a vrt and later join the bands. We always assign the name of the
-      # first file as the layername.
-      unique_bboxes <- unique(unlist(all_bboxes))
-      layer_index <- which(all_bboxes == unique_bboxes[[1]])
-      temporal_gap <- layer_index[2] - layer_index[1] - 1
-      out <- lapply(layer_index, function(j) {
-        target_files <- tindex$location[j:(j + temporal_gap)]
-        org_filename <- basename(target_files[1])
-        filename <- tools::file_path_sans_ext(org_filename)
-        vrt_name <- tempfile(pattern = sprintf("vrt_%s.vrt", filename))
-        tmp <- terra::vrt(target_files, filename = vrt_name)
-        names(tmp) <- org_filename
-        tmp
-      })
-      out <- do.call(c, out)
-    }
+  if (st_crs(x) != st_crs(tindex)) {
+    x <- st_transform(x, st_crs(tindex))
   }
 
+  geoms <- tindex[["geom"]]
+  unique_geoms <- unique(geoms)
+  grouped_geoms <- match(geoms, unique_geoms)
+  names(grouped_geoms) <- tindex[["location"]]
+  grouped_geoms <- sort(grouped_geoms)
+
+  n_tiles <- length(unique(grouped_geoms))
+  n_timesteps <- unique(table(grouped_geoms))
+
+  if (length(n_timesteps) > 1) {
+    stop("Did not find equal number of tiles per timestep.")
+  }
+
+  out <- lapply(1:n_timesteps, function(i){
+    index <- rep(FALSE, n_timesteps)
+    index[i] <- TRUE
+    filenames <- names(grouped_geoms[index])
+    layer_name <- tools::file_path_sans_ext(basename(filenames[1]))
+    vrt_name <- tempfile(pattern = sprintf("vrt_%s", layer_name), fileext = ".vrt")
+    tmp <- terra::vrt(filenames, filename = vrt_name)
+    names(tmp) <- layer_name
+    tmp
+  })
+  out <- do.call(c, out)
+
   # crop the source to the extent of the current polygon
-  cropped <- try(terra::crop(out, terra::vect(x)))
+  cropped <- try(terra::crop(out, terra::vect(x), snap = "out"))
   if (inherits(cropped, "try-error")) {
     warning(as.character(cropped))
     return(NULL)
@@ -184,24 +145,63 @@ calc_indicators <- function(x, indicators, ...) {
   cropped
 }
 
+.asset_processor <- function(
+    x,
+    fun,
+    avail_resources,
+    req_resources,
+    params){
 
-.compute <- function(x, resources, fun, args, i) {
+  p <- progressr::progressor(steps = nrow(x))
+  furrr::future_map(1:nrow(x), function(i) {
+    p()
+    resources <- .prep_resources(x[i, ], avail_resources, req_resources)
+    result <- .compute(x[i, ], resources, fun, params)
+    .check_single_asset(result, i)
+  }, .options = furrr::furrr_options(seed = TRUE))
+}
+
+#' @noRd
+#' @importFrom utils str
+.check_single_asset <- function(obj, i){
+
+  if (inherits(obj, "try-error")) {
+    warning(sprintf("At asset %s an error occured. Returning NA.\n", i), obj)
+    return(NA)
+  }
+
+  if (!inherits(obj, "tbl_df")) {
+    warning(sprintf("At asset %s a non-tibble object was returned. Returning NA.\n", i), str(obj))
+    return(NA)
+  }
+
+  if (nrow(obj) == 0) {
+    warning(sprintf("At asset %s a 0-length tibble was returned. Returning NA.", i))
+    return(NA)
+  }
+  obj
+}
+
+.portfolio_processor <- function(
+    x,
+    fun,
+    avail_resources,
+    req_resources,
+    params ){
+
+  resources <- .prep_resources(x, avail_resources, req_resources)
+  results <- .compute(x, resources, fun, params)
+  if (!inherits(results, "list")) {
+    stop("Expected output for processing mode 'portfolio' is a list.")
+  }
+  results <- purrr::imap(results, function(r, i) .check_single_asset(r, i))
+  results
+}
+
+.compute <- function(x, resources, fun, args) {
   args <- append(args, resources)
-  args$x <- x
-
-  # call the indicator function with the associated parameters
-  out <- try(do.call(fun, args = args))
-
-  if (length(out) == 1) {
-    if (is.na(out)) {
-      out <- list(NA)
-    }
-  }
-  if (inherits(out, "try-error")) {
-    warning(sprintf("Error occured at polygon %s with the following error message: %s. \n Returning NAs.", i, out))
-    out <- list(NA)
-  }
-  out # return
+  args[["x"]] <- x
+  try(do.call(what = fun, args = args), silent = TRUE)
 }
 
 .bind_assets <- function(results) {

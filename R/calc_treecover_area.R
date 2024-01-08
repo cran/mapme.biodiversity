@@ -37,12 +37,11 @@
 #'     years = 2016:2017,
 #'     outdir = outdir,
 #'     tmpdir = tempdir(),
-#'     add_resources = FALSE,
 #'     verbose = FALSE
 #'   ) %>%
 #'   get_resources(
 #'     resources = c("gfw_treecover", "gfw_lossyear"),
-#'     vers_treecover = "GFC-2021-v1.9", vers_lossyear = "GFC-2021-v1.9"
+#'     vers_treecover = "GFC-2022-v1.10", vers_lossyear = "GFC-2022-v1.10"
 #'   ) %>%
 #'   calc_indicators("treecover_area", min_size = 1, min_cover = 30) %>%
 #'   tidyr::unnest(treecover_area)

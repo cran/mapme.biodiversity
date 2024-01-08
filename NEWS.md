@@ -1,3 +1,45 @@
+# mapme.biodiversity 0.5.0
+
+## General
+
+- Quickstart vignette uses the WorldPop resource instead of CHIRPS, not
+  relying on a working internet connection (#230).
+  
+## New features
+
+- GFW resources and indicators include latest GFC-2022-v1.10 version (#203).
+- Raster resources with a CRS different from WGS84 are now supported (#213).
+
+## Breaking changes
+
+- The argument `add_resources` to `init_portfolio()` is deprecated. This
+  means that `get_resources()` has to be run in every new R session to make 
+  resource available for further processing (#219).
+- Rasters are now cropped to the spatial extent of an asset with setting 
+  `snap="out"`, thus delivering a slightly bigger extent (#212).
+  
+## Bug Fixes
+
+- `calc_indicators()` checks for 0-length tibbles (#196, #199, #215).
+- Fix bug with reading rasters with temporal dimensions (#209).
+- All raster cells touching a polygon are now returned (#208).
+
+## Internal
+
+- `.read_raster_source()` now uses a simplified logic to cover all cases 
+  (e.g. single tiles, tiled rasters with and without temporal dimension, 
+  single temporal rasters) (#211).
+- Rasters are cropped using `snap="out"` by default (#212).
+- `.read_raster_source()` now projects assets in case their CRS differs 
+  from the portfolio (#213).
+- tile indices for raster resources are now appended to the portfolio attributes
+  as `sf` objects instead of being written to disk (#219).
+- `.read_raster_source()` now applies a precision round-trip of 5 decimal point 
+  to match rasters with slight changes in their spatial extent (#217).
+- `register_resource()` and `register_indicator()` now issue warnings for 
+  resources/indicators with names already registered and overwrites them (#220).
+
+
 # mapme.biodiversity 0.4.0
 
 ## New features
@@ -83,7 +125,7 @@
   to return numerically equivalent results on any operating system (#131)
   
 - the online source for the `nasa_srtm` resource shows an expired SSL certificate
-  since November 2022. The get_resources()` function now includes an error and 
+  since November 2022. The `get_resources()` function now includes an error and 
   instructions how to disable SSL certification at a users own risk. The 
   websites maintainers have been contacted and asked to renew the certification. (#131)
 

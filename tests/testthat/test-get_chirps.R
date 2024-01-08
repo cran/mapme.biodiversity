@@ -18,12 +18,11 @@ test_that(".get_chirps works", {
     years = 2000:2020,
     outdir = outdir,
     tmpdir = tmpdir,
-    add_resources = FALSE,
     verbose = FALSE
   )
   # Add testing attribute in order to skip downloads
   attributes(portfolio)$testing <- TRUE
-  expect_snapshot(
-    .get_chirps(portfolio)
-  )
+  urls <- .get_chirps(portfolio)
+  exts <- unique(substr(urls, nchar(urls[1]) - 5, nchar(urls[1])))
+  expect_equal(exts, "tif.gz")
 })

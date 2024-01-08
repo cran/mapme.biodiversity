@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -8,7 +8,7 @@ knitr::opts_chunk$set(
 library(mapme.biodiversity)
 library(sf)
 library(dplyr)
-library(ggplot2)
+library(tidyr)
 
 aoi_path <- system.file("extdata", "sierra_de_neiba_478140.gpkg", package = "mapme.biodiversity")
 (aoi <- read_sf(aoi_path))
@@ -20,8 +20,7 @@ aoi_path <- system.file("extdata", "sierra_de_neiba_478140.gpkg", package = "map
 aoi_gridded <- st_make_grid(
   x = st_bbox(aoi),
   n = c(10, 10),
-  square = FALSE
-) %>%
+  square = FALSE) %>%
   st_intersection(aoi) %>%
   st_as_sf() %>%
   mutate(geom_type = st_geometry_type(x)) %>%
@@ -32,8 +31,8 @@ aoi_gridded <- st_make_grid(
 metanames <- names(st_drop_geometry(aoi))
 aoi_gridded[metanames] <- st_drop_geometry(aoi)
 
-## ----init_portfolio, dpi = 50, out.width="120%", out.height="120%"------------
-# copying package internal resource to tempdir
+## ----init_portfolio-----------------------------------------------------------
+# copying package internal resource to a temporary location
 outdir <- file.path(tempdir(), "mapme.biodiversity")
 dir.create(outdir)
 resource_dir <- system.file("res", package = "mapme.biodiversity")
@@ -41,10 +40,9 @@ file.copy(resource_dir, outdir, recursive = TRUE)
 
 sample_portfolio <- init_portfolio(
   x = aoi_gridded,
-  years = 2010,
+  years = 2010:2015,
   outdir = file.path(outdir, "res"),
   tmpdir = outdir,
-  add_resources = FALSE,
   verbose = TRUE
 )
 plot(sample_portfolio["assetid"])
@@ -53,88 +51,53 @@ plot(sample_portfolio["assetid"])
 names(available_indicators())
 
 ## ----helppage_indicator, eval = FALSE-----------------------------------------
-#  ?precipitation_chirps
-#  help(precipitation_chirps)
+#  ?population_count
+#  help(population_count)
 
 ## ----query_resources----------------------------------------------------------
 names(available_resources())
 
 ## ----helppage_resource, eval = FALSE------------------------------------------
-#  ?chirps
-#  help(chirps)
+#  ?worldpop
+#  help(worldpop)
 
-## ----get_chirps---------------------------------------------------------------
-sample_portfolio <- get_resources(x = sample_portfolio, resources = "chirps")
+## ----get_esalandcover---------------------------------------------------------
+sample_portfolio <- get_resources(x = sample_portfolio, resources = "worldpop")
 
 ## ----get_multi_resources, eval = FALSE----------------------------------------
 #  sample_portfolio <- get_resources(
 #    x = sample_portfolio,
-#    resources = c("chirps", "gfw_treecover"),
+#    resources = c("worldpop", "gfw_treecover"),
 #    vers_treecover = "GFC-2021-v1.9"
 #  )
 
 ## ----calc_indicator-----------------------------------------------------------
-sample_portfolio <- calc_indicators(sample_portfolio,
-  indicators = "precipitation_chirps",
-  scales_spi = 3,
-  spi_prev_years = 8,
-  engine = "extract"
-)
+sample_portfolio <- calc_indicators(sample_portfolio, indicators = "population_count",
+                                    stats_popcount = "sum", engine = "zonal")
 
 ## ----select_cols--------------------------------------------------------------
-(sample_portfolio <- sample_portfolio %>% select(assetid, WDPAID, precipitation_chirps))
+(sample_portfolio <- sample_portfolio %>% select(assetid, WDPAID, population_count))
 
 ## ----investigate_indicator----------------------------------------------------
-sample_portfolio$precipitation_chirps[10]
+sample_portfolio$population_count[10]
 
-## ----plot_precipitation, echo = FALSE, warning=FALSE, dpi = 50----------------
-sample_portfolio %>%
+## ----plot_landcover, echo = FALSE---------------------------------------------
+data <- sample_portfolio %>%
   filter(assetid == 10) %>%
   st_drop_geometry() %>%
-  tidyr::unnest(precipitation_chirps) %>%
-  mutate(sign = ifelse(anomaly < 0, "lower than average", "higher than average")) %>%
-  ggplot() +
-  geom_bar(aes(x = dates, y = anomaly, fill = sign), stat = "identity") +
-  scale_fill_manual(values = c("darkblue", "brown2")) +
-  labs(
-    title = "Monthly precipitation anomaly for 2010 in regard to the 1981-2010 climate normal", x = "", y = "Precipitation anomaly [mm]",
-    fill = "Anomaly"
-  ) +
-  theme_classic() +
-  theme(legend.position = "bottom")
+  unnest(population_count)
 
-sample_portfolio %>%
-  filter(assetid == 10) %>%
-  st_drop_geometry() %>%
-  tidyr::unnest(precipitation_chirps) %>%
-  mutate(
-    spi_3 = ifelse(is.na(spi_3), 0, spi_3),
-    sign = ifelse(spi_3 < 0, "lower than average", "higher than average")
-  ) %>%
-  ggplot() +
-  geom_bar(aes(x = dates, y = spi_3, fill = sign), stat = "identity") +
-  scale_fill_manual(values = c("darkblue", "brown2")) +
-  labs(
-    title = "Monthly SPI value for 2010 (timescale = 3)", x = "Month", y = "SPI",
-    fill = "SPI"
-  ) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-
-sample_portfolio %>%
-  filter(assetid == 10) %>%
-  st_drop_geometry() %>%
-  tidyr::unnest(precipitation_chirps) %>%
-  ggplot() +
-  geom_bar(aes(x = dates, y = absolute), stat = "identity", fill = "darkblue") +
-  labs(title = "Sum of monthly precipitation 2010", x = "", y = "Precipitation sum [mm]") +
-  theme_classic()
+pop <- data$popcount_sum
+names(pop) <- data$year
+barplot(pop, main = "Population totals over time", 
+        xlab = "Year", ylab = "Persons", 
+        col = "steelblue")
 
 ## ----unnest-------------------------------------------------------------------
 geometries <- select(sample_portfolio, assetid)
 sample_portfolio %>%
   st_drop_geometry() %>%
-  tidyr::unnest(precipitation_chirps) %>%
+  tidyr::unnest(population_count) %>%
   filter(assetid == 3)
 
 ## ----parallel, eval = FALSE---------------------------------------------------
@@ -146,10 +109,9 @@ sample_portfolio %>%
 #  with_progress({
 #    portfolio <- calc_indicators(
 #      sample_portfolio,
-#      indicators = "precipitation_chirps",
-#      scales_spi = 3,
-#      spi_prev_years = 8,
-#      engine = "extract"
+#      indicators = "population_count",
+#      stats_popcount = "sum",
+#      engine = "zonal"
 #    )
 #  })
 #  

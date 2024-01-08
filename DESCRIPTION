@@ -1,6 +1,6 @@
 Package: mapme.biodiversity
 Title: Efficient Monitoring of Global Biodiversity Portfolios
-Version: 0.4.0
+Version: 0.5.0
 Authors@R: c(
     person("Darius A.", "Görgen", , "darius2402@web.de", role = c("aut", "cre")),
     person("Om Prakash", "Bhandari", role = "aut")
@@ -26,11 +26,11 @@ Depends: R (>= 3.5.0)
 SystemRequirements: GDAL (>= 3.0.0), PROJ (>= 4.8.0)
 Imports: curl, dplyr, furrr, httr, magrittr, progressr, purrr, rvest,
         R.utils, sf, stringr, terra, tibble, tidyr, tidyselect
-Suggests: exactextractr, future, ggplot2, knitr, rmarkdown, rstac,
-        SPEI, testthat (>= 3.0.0)
+Suggests: exactextractr, future, knitr, rmarkdown, rstac, SPEI,
+        testthat (>= 3.0.0)
 VignetteBuilder: knitr
-Config/Needs/website: DiagrammeR, lubridate, manipulateWidget, rgl,
-        spatstat, wdpar
+Config/Needs/website: DiagrammeR, ggplot2, lubridate, manipulateWidget,
+        rgl, spatstat, wdpar
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-GB
@@ -54,9 +54,9 @@ Collate: 'register.R' 'calc_active_fire_counts.R'
         'get_ucdp_ged.R' 'get_worldclim.R' 'get_worldpop.R'
         'mapme.biodiversity-pkg.R' 'portfolio.R' 'utils.R'
 NeedsCompilation: no
-Packaged: 2023-08-28 13:50:06 UTC; darius
+Packaged: 2024-01-08 11:02:16 UTC; darius
 Author: Darius A. Görgen [aut, cre],
   Om Prakash Bhandari [aut]
 Maintainer: Darius A. Görgen <darius2402@web.de>
 Repository: CRAN
-Date/Publication: 2023-08-28 14:10:02 UTC
+Date/Publication: 2024-01-08 15:10:02 UTC

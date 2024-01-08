@@ -30,7 +30,6 @@
 #'     years = 2001,
 #'     outdir = outdir,
 #'     tmpdir = tempdir(),
-#'     add_resources = FALSE,
 #'     verbose = FALSE
 #'   ) %>%
 #'   get_resources("teow") %>%
@@ -63,6 +62,7 @@ NULL
   biomes <- NULL
   new_area <- NULL
   area <- NULL
+
   if (nrow(teow[[1]]) == 0) {
     return(NA)
   }
@@ -70,17 +70,23 @@ NULL
   merged <- .comp_teow(
     x = x,
     teow = teow,
-    verbose = verbose
-  )
+    verbose = verbose)
+
+  if (nrow(merged) == 0) {
+    return(NA)
+  }
+
   out <- merged %>%
     dplyr::select(BIOME_NAME, new_area)
+
   out_tibble <- tibble(
     biomes = out[[1]],
-    area = out[[2]]
-  )
+    area = out[[2]])
+
   results_biome <- out_tibble %>%
     dplyr::group_by(biomes) %>%
     dplyr::summarise(area = sum(as.numeric(area)))
+
   results_biome
 }
 
