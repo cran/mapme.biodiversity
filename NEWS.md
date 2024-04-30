@@ -1,3 +1,34 @@
+# mapme.biodiversity 0.6.0
+
+## Breaking changes
+
+- introduces a new UI based on closures for resources and indicators, see #240 for
+  more information
+
+## General
+
+- improves output of `available_resources()` and `available_indicators()`
+- introduces `mapme_options()` to add fine-control of the packages behaviour
+- deprecates `init_portfolio()` in favor of `mapme_options()`
+- exports helper functions for third parties to extend the package for custom
+  resources and indicators:
+  - `check_available_years()`
+  - `check_namespace()`
+  - `download_or_skip()`
+  - `check_engine()`
+  - `check_stats()`
+  - `select_engine()`
+  - `make_global_grid()`
+  - `unzip_and_remove()`
+  
+## New features
+
+- added Global Surface Water resources and respective indicators (#235, @karpfen)
+
+## Internal
+
+- removed `st_make_valid()` from `.read_vector()`.
+
 # mapme.biodiversity 0.5.0
 
 ## General
@@ -17,6 +48,11 @@
   resource available for further processing (#219).
 - Rasters are now cropped to the spatial extent of an asset with setting 
   `snap="out"`, thus delivering a slightly bigger extent (#212).
+  
+- Speed improvements for GFW indicators (up to x10 for larger rasters) now
+  require R package `exactextractr` to be installed. Also, it is advised
+  to have the R package `landscapemetrics` installed to gain the full computation 
+  speed improvement.
   
 ## Bug Fixes
 

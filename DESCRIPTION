@@ -1,6 +1,6 @@
 Package: mapme.biodiversity
 Title: Efficient Monitoring of Global Biodiversity Portfolios
-Version: 0.5.0
+Version: 0.6.0
 Authors@R: c(
     person("Darius A.", "Görgen", , "darius2402@web.de", role = c("aut", "cre")),
     person("Om Prakash", "Bhandari", role = "aut")
@@ -26,20 +26,23 @@ Depends: R (>= 3.5.0)
 SystemRequirements: GDAL (>= 3.0.0), PROJ (>= 4.8.0)
 Imports: curl, dplyr, furrr, httr, magrittr, progressr, purrr, rvest,
         R.utils, sf, stringr, terra, tibble, tidyr, tidyselect
-Suggests: exactextractr, future, knitr, rmarkdown, rstac, SPEI,
-        testthat (>= 3.0.0)
+Suggests: exactextractr, future, knitr, landscapemetrics, rmarkdown,
+        rstac, SPEI, testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/Needs/website: DiagrammeR, ggplot2, lubridate, manipulateWidget,
         rgl, spatstat, wdpar
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-GB
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Collate: 'register.R' 'calc_active_fire_counts.R'
         'calc_active_fire_properties.R' 'calc_biome.R'
         'calc_deforestation_drivers.R' 'calc_drought_indicator.R'
         'calc_ecoregion.R' 'calc_elevation.R' 'calc_fatalities.R'
-        'calc_indicators.R' 'calc_landcover.R' 'calc_mangroves_area.R'
+        'calc_gsw_change.R' 'calc_gsw_occurrence.R'
+        'calc_gsw_recurrence.R' 'calc_gsw_seasonality.R'
+        'calc_gsw_transitions.R' 'get_resources.R' 'calc_indicators.R'
+        'calc_landcover.R' 'calc_mangroves_area.R'
         'calc_population_count.R' 'calc_precipitation_chirps.R'
         'calc_precipitation_wc.R' 'calc_soilproperties.R'
         'calc_temperature_max_wc.R' 'calc_temperature_min_wc.R'
@@ -48,15 +51,15 @@ Collate: 'register.R' 'calc_active_fire_counts.R'
         'calc_treecoverloss_emissions.R' 'calc_tri.R' 'engines.R'
         'get_chirps.R' 'get_esalandcover.R' 'get_fritz_et_al.R'
         'get_gfw_emissions.R' 'get_gfw_lossyear.R'
-        'get_gfw_treecover.R' 'get_gmw.R' 'get_nasa_firms.R'
-        'get_nasa_grace.R' 'get_nasa_srtm.R' 'get_nelson_et_al.R'
-        'get_resources.R' 'get_soilgrids.R' 'get_teow.R'
+        'get_gfw_treecover.R' 'get_gmw.R' 'get_gsw.R'
+        'get_nasa_firms.R' 'get_nasa_grace.R' 'get_nasa_srtm.R'
+        'get_nelson_et_al.R' 'get_soilgrids.R' 'get_teow.R'
         'get_ucdp_ged.R' 'get_worldclim.R' 'get_worldpop.R'
         'mapme.biodiversity-pkg.R' 'portfolio.R' 'utils.R'
 NeedsCompilation: no
-Packaged: 2024-01-08 11:02:16 UTC; darius
+Packaged: 2024-04-30 09:54:44 UTC; darius
 Author: Darius A. Görgen [aut, cre],
   Om Prakash Bhandari [aut]
 Maintainer: Darius A. Görgen <darius2402@web.de>
 Repository: CRAN
-Date/Publication: 2024-01-08 15:10:02 UTC
+Date/Publication: 2024-04-30 10:20:02 UTC
