@@ -43,18 +43,18 @@
 #' ) %>%
 #'   read_sf() %>%
 #'   get_resources(
-#'     get_gfw_treecover(version = "GFC-2020-v1.8"),
-#'     get_gfw_lossyear(version = "GFC-2020-v1.8"),
+#'     get_gfw_treecover(version = "GFC-2023-v1.11"),
+#'     get_gfw_lossyear(version = "GFC-2023-v1.11"),
 #'     get_gfw_emissions()
 #'   ) %>%
 #'   calc_indicators(
 #'     calc_treecoverloss_emissions(years = 2016:2017, min_size = 1, min_cover = 30)
 #'   ) %>%
-#'   tidyr::unnest(treecoverloss_emissions)
+#'   portfolio_long()
 #'
 #' aoi
 #' }
-calc_treecoverloss_emissions <- function(years = 2000:2020,
+calc_treecoverloss_emissions <- function(years = 2000:2023,
                                          min_size = 10,
                                          min_cover = 35) {
   check_namespace("exactextractr")
@@ -68,24 +68,39 @@ calc_treecoverloss_emissions <- function(years = 2000:2020,
            gfw_emissions,
            name = "treecoverloss_emissions",
            mode = "asset",
+           aggregation = "sum",
            verbose = mapme_options()[["verbose"]]) {
+    emissions <- NULL
+
     if (any(is.null(gfw_treecover), is.null(gfw_lossyear), is.null(gfw_emissions))) {
-      return(NA)
+      return(NULL)
     }
     # mask gfw
     gfw_treecover <- terra::mask(gfw_treecover, x)
     # check if gfw_treecover only contains 0s, e.g. on the ocean
     if (.gfw_empty_raster(gfw_treecover, min_cover)) {
-      return(tibble::tibble(years = years, emissions = 0))
+      return(NULL)
     }
     # prepare gfw rasters
     gfw <- .gfw_prep_rasters(x, gfw_treecover, gfw_lossyear, gfw_emissions, min_cover)
+
+    # retrieves maximum lossyear value from layer name
+    max_year <- as.numeric(
+      gsub(
+        ".*GFC-([0-9]+)-.*", "\\1",
+        names(gfw_lossyear)
+      )
+    )
+
+    if (max_year < min(years)) {
+      return(NULL)
+    }
 
     gfw_stats <- exactextractr::exact_extract(
       gfw, x, function(data, min_size) {
         # retain only forest pixels and set area to ha
         data <- .prep_gfw_data(data, min_size)
-        emissions <- .sum_gfw(data, "emissions")
+        emissions <- .sum_gfw(data, "emissions", max_year)
 
         if (all(emissions[["emissions"]] == 0)) {
           result <- tibble::tibble(
@@ -101,9 +116,15 @@ calc_treecoverloss_emissions <- function(years = 2000:2020,
       min_size = min_size, coverage_area = TRUE, summarize_df = TRUE
     )
 
-    rm(gfw)
-    gc()
-    tibble::as_tibble(gfw_stats)
+    gfw_stats %>%
+      dplyr::mutate(
+        datetime = as.Date(paste0(years, "-01-01")),
+        variable = "emissions",
+        unit = "Mg",
+        value = emissions
+      ) %>%
+      dplyr::select(datetime, variable, unit, value) %>%
+      tibble::as_tibble()
   }
 }
 

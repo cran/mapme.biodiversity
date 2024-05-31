@@ -7,9 +7,11 @@
 .onLoad <- function(libname, pkgname) {
   .pkgenv$outdir <- tempfile()
   dir.create(.pkgenv$outdir, showWarnings = FALSE)
+  .pkgenv$log_dir <- NULL
   .pkgenv$verbose <- TRUE
   .pkgenv$aria_bin <- NULL
   .pkgenv$testing <- FALSE
+  .pkgenv$chunk_size <- 100000
   invisible()
 }
 
@@ -24,11 +26,18 @@
 #'
 #' @param ... ignored
 #' @param outdir A length one character indicating the output path.
+#' @param chunk_size A numeric of length one giving the maximum chunk area in ha.
+#'   Defaults to 100,000 ha.
 #' @param aria_bin A character vector to an aria2c executable for parallel
 #'  downloads.
 #' @param verbose A logical, indicating if informative messages should be printed.
 #' @param testing A logical. Not to be set by users. Controls the behavior
 #'   during automated test pipelines.
+#' @param log_dir A character path pointing toward a GDAL-writable destination
+#'   used to log erroneous assets. Defaults to NULL, meaning that erroneous
+#'   assets will not be serialized to disk. If specified, a GPKG named
+#'   `file.path(log_dir, paste0(Sys.Date(), "_mapme-error-assets.gpkg"))` will
+#'   be created and appended to in case of erroneous assets.
 #' @return `mapme_options()` returns a list of options if no arguments are specified. Otherwise sets
 #'   matching arguments to new values in the package's internal environment.
 #' @name mapme
@@ -37,13 +46,18 @@
 #' @examples
 #' library(mapme.biodiversity)
 #' mapme_options()
-mapme_options <- function(..., outdir, verbose, aria_bin, testing) {
+mapme_options <- function(..., outdir, chunk_size, verbose, aria_bin, testing, log_dir) {
   if (!missing(outdir)) {
     stopifnot(is.character(outdir) && length(outdir) == 1)
     if (!dir.exists(outdir)) {
       stop("outdir must point to an existing directory")
     }
     .pkgenv$outdir <- outdir
+  }
+
+  if (!missing(chunk_size)) {
+    stopifnot(length(chunk_size) == 1 && is.numeric(chunk_size))
+    .pkgenv$chunk_size <- chunk_size
   }
 
   if (!missing(verbose)) {
@@ -60,12 +74,19 @@ mapme_options <- function(..., outdir, verbose, aria_bin, testing) {
     .pkgenv$testing <- testing
   }
 
+  if (!missing(log_dir)){
+    stopifnot(is.null(log_dir) | (is.character(log_dir) && length(log_dir) == 1))
+    .pkgenv$log_dir <- log_dir
+  }
+
   if (nargs() == 0) {
     return(list(
       outdir = .pkgenv$outdir,
+      chunk_size = .pkgenv$chunk_size,
       verbose = .pkgenv$verbose,
       aria_bin = .pkgenv$aria_bin,
-      testing = .pkgenv$testing
+      testing = .pkgenv$testing,
+      log_dir = .pkgenv$log_dir
     ))
   }
 }

@@ -1,6 +1,6 @@
 Package: mapme.biodiversity
 Title: Efficient Monitoring of Global Biodiversity Portfolios
-Version: 0.6.0
+Version: 0.7.0
 Authors@R: c(
     person("Darius A.", "Görgen", , "darius2402@web.de", role = c("aut", "cre")),
     person("Om Prakash", "Bhandari", role = "aut")
@@ -24,10 +24,10 @@ URL: https://mapme-initiative.github.io/mapme.biodiversity/index.html,
 BugReports: https://github.com/mapme-initiative/mapme.biodiversity/issues
 Depends: R (>= 3.5.0)
 SystemRequirements: GDAL (>= 3.0.0), PROJ (>= 4.8.0)
-Imports: curl, dplyr, furrr, httr, magrittr, progressr, purrr, rvest,
-        R.utils, sf, stringr, terra, tibble, tidyr, tidyselect
-Suggests: exactextractr, future, knitr, landscapemetrics, rmarkdown,
-        rstac, SPEI, testthat (>= 3.0.0)
+Imports: dplyr, furrr, httr, magrittr, purrr, R.utils, sf, terra,
+        tibble, tidyr
+Suggests: exactextractr, future, knitr, landscapemetrics, progressr,
+        rmarkdown, rstac, rvest, testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/Needs/website: DiagrammeR, ggplot2, lubridate, manipulateWidget,
         rgl, spatstat, wdpar
@@ -35,8 +35,7 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-GB
 RoxygenNote: 7.3.1
-Collate: 'register.R' 'calc_active_fire_counts.R'
-        'calc_active_fire_properties.R' 'calc_biome.R'
+Collate: 'register.R' 'calc_active_fire_counts.R' 'calc_biome.R'
         'calc_deforestation_drivers.R' 'calc_drought_indicator.R'
         'calc_ecoregion.R' 'calc_elevation.R' 'calc_fatalities.R'
         'calc_gsw_change.R' 'calc_gsw_occurrence.R'
@@ -57,9 +56,9 @@ Collate: 'register.R' 'calc_active_fire_counts.R'
         'get_ucdp_ged.R' 'get_worldclim.R' 'get_worldpop.R'
         'mapme.biodiversity-pkg.R' 'portfolio.R' 'utils.R'
 NeedsCompilation: no
-Packaged: 2024-04-30 09:54:44 UTC; darius
+Packaged: 2024-05-31 08:26:38 UTC; darius
 Author: Darius A. Görgen [aut, cre],
   Om Prakash Bhandari [aut]
 Maintainer: Darius A. Görgen <darius2402@web.de>
 Repository: CRAN
-Date/Publication: 2024-04-30 10:20:02 UTC
+Date/Publication: 2024-05-31 08:50:02 UTC

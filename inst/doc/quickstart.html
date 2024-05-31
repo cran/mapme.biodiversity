@@ -27,31 +27,46 @@ document.addEventListener('DOMContentLoaded', function(e) {
   }
 });
 </script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
 
 <style type="text/css">
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-ul.task-list{list-style: none;}
-</style>
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 
 <style type="text/css">
-code {
-white-space: pre;
-}
-.sourceCode {
-overflow: visible;
-}
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -63,54 +78,55 @@ pre > code.sourceCode { white-space: pre-wrap; }
 pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-{ counter-reset: source-line 0; }
+  { counter-reset: source-line 0; }
 pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
+  { position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-color: #aaaaaa;
-}
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-{ }
+  {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -342,360 +358,208 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>In the following we will demonstrate an idealized workflow based on a
-subset of the WorldPop data set that is delivered together with this
-package. You can follow along the code snippets below to reproduce the
-results. Please note that to reduce the time it takes to process this
-vignette, we will not download any resources from the internet. In a
-real use case, thus processing time might substantially increase because
-resources have to be downloaded and real portfolios might be larger than
-the one created in this example.</p>
-<p>This vignette assumes that you have already followed the steps in <a href="https://mapme-initiative.github.io/mapme.biodiversity/articles/installation.html">Installation</a>
-and have familiarized yourself with the terminology used in the package.
-If you are unfamiliar with the terminology used here, please head over
-to the <a href="https://mapme-initiative.github.io/mapme.biodiversity/articles/terminology.html">Terminology</a>
-article to learn about the most important concepts.</p>
-<p>The idealized workflow for using <code>{mapme.biodiversity}</code>
-consists of the following steps:</p>
+<p>In the following we will demonstrate an idealized workflow based on a subset of the WorldPop data set that is delivered together with this package. You can follow along the code snippets below to reproduce the results. Please note that to reduce the time it takes to process this vignette, we will not download any resources from the internet. In a real use case, thus processing time might substantially increase because resources have to be downloaded and real portfolios might be larger than the one created in this example.</p>
+<p>This vignette assumes that you have already followed the steps in <a href="https://mapme-initiative.github.io/mapme.biodiversity/articles/installation.html">Installation</a> and have familiarized yourself with the terminology used in the package. If you are unfamiliar with the terminology used here, please head over to the <a href="https://mapme-initiative.github.io/mapme.biodiversity/articles/terminology.html">Terminology</a> article to learn about the most important concepts.</p>
+<p>The idealized workflow for using <code>{mapme.biodiversity}</code> consists of the following steps:</p>
 <ul>
-<li>prepare your sf-object containing only geometries of type
-<code>&#39;POLYGON&#39;</code></li>
-<li>decide which indicator(s) you wish to calculate and make the
-required resource(s) available</li>
-<li>conduct your indicator calculation, which adds a nested list column
-to your portfolio object</li>
-<li>continue your analysis in R or decide to export your results to a
-GeoPackage and use it with other geospatial software</li>
+<li>prepare your sf-object containing only geometries of type <code>&#39;POLYGON&#39;</code> or <code>&#39;MULTIPOLYGON&#39;</code></li>
+<li>decide which indicator(s) you wish to calculate and make the required resource(s) available</li>
+<li>conduct your indicator calculation, which adds a nested list column to your portfolio object</li>
+<li>continue your analysis in R or decide to export your results to a spatial data format to use it with other geospatial software</li>
 </ul>
 </div>
 <div id="getting-started" class="section level1">
 <h1>Getting started</h1>
-<p>First, we will load the <code>{mapme.biodiversity}</code> and the
-<code>{sf}</code> package for handling spatial vector data. For tabular
-data handling, we will also load the <code>{dplyr}</code> and
-<code>{tidyr}</code> packages. Then, we will read an internal GeoPackage
-which includes the geometry of a protected area in the Dominican
-Republic from the WDPA database.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(mapme.biodiversity)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>aoi_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;sierra_de_neiba_478140.gpkg&quot;</span>, <span class="at">package =</span> <span class="st">&quot;mapme.biodiversity&quot;</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>(aoi <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(aoi_path))</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 1 feature and 4 fields</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt; Dimension:     XY</span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt; Bounding box:  xmin: -71.80933 ymin: 18.57668 xmax: -71.33201 ymax: 18.69931</span></span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 5</span></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt;   WDPAID NAME            DESIG_ENG     ISO3                                 geom</span></span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;         &lt;chr&gt;                  &lt;MULTIPOLYGON [°]&gt;</span></span>
-<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co">#&gt; 1 478140 Sierra de Neiba National Park DOM   (((-71.76134 18.66333, -71.76067 1…</span></span></code></pre></div>
-<p>The sf-object contains a single object of geometry type
-<code>&#39;MULTIPOLYGON&#39;</code>. The <code>{mapme.biodiversity}</code>
-package, however, only supports geometries of type
-<code>&#39;POLYGON&#39;</code>, thus we need to cast the geometry before we
-advance. The resulting <code>sf</code> object also contains some
-metadata, that will be retained throughout the complete workflow.
-Because some of the casted geometries represent artefacts of the
-digitization process, in this example we will subset to include only the
-largest polygon.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>(aoi <span class="ot">&lt;-</span> <span class="fu">st_cast</span>(aoi, <span class="at">to =</span> <span class="st">&quot;POLYGON&quot;</span>)[<span class="dv">1</span>, ])</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt; Warning in st_cast.sf(aoi, to = &quot;POLYGON&quot;): repeating attributes for all</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt; sub-geometries for which they may not be constant</span></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 1 feature and 4 fields</span></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; Geometry type: POLYGON</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; Dimension:     XY</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; Bounding box:  xmin: -71.80731 ymin: 18.58134 xmax: -71.33268 ymax: 18.69799</span></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 5</span></span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt;   WDPAID NAME            DESIG_ENG     ISO3                                 geom</span></span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;         &lt;chr&gt;                       &lt;POLYGON [°]&gt;</span></span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; 1 478140 Sierra de Neiba National Park DOM   ((-71.76202 18.66333, -71.74668 18…</span></span></code></pre></div>
-<p>In the following, we will simulate a portfolio consisting of several
-polygons (assets, in the jargon of this package). To this end, we create
-smaller polygons within the original extent of the main polygon. This
-way, we can showcase the behavior of the
-<code>{mapme.biodiversity}</code> package for portfolios that contain
-multiple assets. We will only select single assets with geometry type
-<code>&#39;POLYGON&#39;</code> that lie within the original boundary of the
-protected area.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>aoi_gridded <span class="ot">&lt;-</span> <span class="fu">st_make_grid</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">st_bbox</span>(aoi),</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">10</span>),</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">square =</span> <span class="cn">FALSE</span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="fu">st_intersection</span>(aoi) <span class="sc">%&gt;%</span></span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="fu">st_as_sf</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">geom_type =</span> <span class="fu">st_geometry_type</span>(x)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="fu">filter</span>(geom_type <span class="sc">==</span> <span class="st">&quot;POLYGON&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>geom_type, <span class="at">geom =</span> x) <span class="sc">%&gt;%</span></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  <span class="fu">st_as_sf</span>()</span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>metanames <span class="ot">&lt;-</span> <span class="fu">names</span>(<span class="fu">st_drop_geometry</span>(aoi))</span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>aoi_gridded[metanames] <span class="ot">&lt;-</span> <span class="fu">st_drop_geometry</span>(aoi)</span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="fu">plot</span>(aoi_gridded)</span></code></pre></div>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>First, we will load the <code>{mapme.biodiversity}</code> and the <code>{sf}</code> package for handling spatial vector data. For tabular data handling, we will also load the <code>{dplyr}</code> and <code>{tidyr}</code> packages. Then, we will read an internal GeoPackage which includes the geometry of a protected area in the Dominican Republic from the WDPA database.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(mapme.biodiversity)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(sf)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="kw">library</span>(tidyr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>aoi_path &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;sierra_de_neiba_478140.gpkg&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;mapme.biodiversity&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>aoi &lt;-<span class="st"> </span><span class="kw">st_read</span>(aoi_path, <span class="dt">quiet =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>aoi</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a><span class="co">#&gt; Simple feature collection with 1 feature and 4 fields</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a><span class="co">#&gt; Bounding box:  xmin: -71.80933 ymin: 18.57668 xmax: -71.33201 ymax: 18.69931</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a><span class="co">#&gt;   WDPAID            NAME     DESIG_ENG ISO3                           geom</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a><span class="co">#&gt; 1 478140 Sierra de Neiba National Park  DOM MULTIPOLYGON (((-71.76134 1...</span></span></code></pre></div>
+<p>The sf-object contains a single object of geometry type <code>&#39;MULTIPOLYGON&#39;</code>. Each of these polygons will be processed individually before the results are combined and returned. The <code>sf</code> object also contains some metadata (e.g. its WDPAID and its name), that will be retained throughout the complete workflow.</p>
 </div>
-<div id="initialization-of-a-portfolio" class="section level1">
-<h1>Initialization of a portfolio</h1>
-<p>Now, we are ready to initiate a portfolio object containing multiple
-assets. We use the <code>mapme_options()</code> function and set some
-arguments, such as the output directory, that are important for the
-subsequent processing.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># copying package internal resource to a temporary location</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>outdir <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&quot;mapme.biodiversity&quot;</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">dir.create</span>(outdir)</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>resource_dir <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;res&quot;</span>, <span class="at">package =</span> <span class="st">&quot;mapme.biodiversity&quot;</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="fu">file.copy</span>(resource_dir, outdir, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="fu">mapme_options</span>(</span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="at">outdir =</span> <span class="fu">file.path</span>(outdir, <span class="st">&quot;res&quot;</span>),</span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>)</span></code></pre></div>
-<p>The <code>outdir</code> argument points towards a directory on the
-local file system of your machine. All downloaded resources will be
-written to respective directories nested within <code>outdir</code>.</p>
-<p>Once you request a specific resource for your portfolio, only those
-files will be downloaded that are missing to match its spatio-temporal
-extent. This behavior is beneficial, e.g. in case you share the
-<code>outdir</code> between different projects to ensure that only
-resources matching your current portfolio are returned.</p>
-<p>The <code>verbose</code> logical controls whether or not the package
-will print informative messages during the calculations. Note, that even
-if set to <code>FALSE</code>, the package will inform users about any
-potential errors or warnings.</p>
+<div id="setting-standard-option" class="section level1">
+<h1>Setting standard option</h1>
+<p>We use the <code>mapme_options()</code> function and set some arguments, such as the output directory, that are important to govern the subsequent processing. For this, we create a temporary directory. Internally, to save time on downloading when building this vignette, we copied already existing files to that output location (code not shown here).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>outdir &lt;-<span class="st"> </span><span class="kw">file.path</span>(<span class="kw">tempdir</span>(), <span class="st">&quot;mapme-resources&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="kw">dir.create</span>(outdir, <span class="dt">showWarnings =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="kw">mapme_options</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>  <span class="dt">outdir =</span> outdir,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>  <span class="dt">verbose =</span> <span class="ot">TRUE</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>)</span></code></pre></div>
+<p>The <code>outdir</code> argument points towards a directory on the local file system of your machine. All downloaded resources will be written to respective directories nested within <code>outdir</code>.</p>
+<p>Once you request a specific resource for your portfolio, only those files will be downloaded that are missing to match its spatio-temporal extent. This behavior is beneficial, e.g. in case you share the <code>outdir</code> between different projects to ensure that only resources matching your current portfolio are returned.</p>
+<p>The <code>verbose</code> logical controls whether or not the package will print informative messages during the calculations. Note, that even if set to <code>FALSE</code>, the package will inform users about any potential errors or warnings.</p>
 </div>
 <div id="getting-the-right-resources" class="section level1">
 <h1>Getting the right resources</h1>
-<p>You can check which indicators are available via the
-<code>available_indicators()</code> function:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">available_indicators</span>()</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 26 × 3</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt;    name                   description                                  resources</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                  &lt;chr&gt;                                        &lt;list&gt;   </span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt;  1 active_fire_counts     Number of detected fires by NASA FIRMS       &lt;tibble&gt; </span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt;  2 active_fire_properties Extraction of properties of fires detected … &lt;tibble&gt; </span></span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt;  3 biome                  Areal statistics of biomes from TEOW         &lt;tibble&gt; </span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt;  4 deforestation_drivers  Areal statistics of deforestation drivers    &lt;tibble&gt; </span></span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt;  5 drought_indicator      Relative wetness statistics based on NASA G… &lt;tibble&gt; </span></span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;  6 ecoregion              Areal statstics of ecoregions based on TEOW  &lt;tibble&gt; </span></span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt;  7 elevation              Statistics of elevation based on NASA SRTM   &lt;tibble&gt; </span></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt;  8 fatalities             Number of fatalities by group of conflict b… &lt;tibble&gt; </span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt;  9 gsw_change             Statistics of the surface water change laye… &lt;tibble&gt; </span></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; 10 gsw_occurrence         Areal statistic of surface water based on o… &lt;tibble&gt; </span></span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; # ℹ 16 more rows</span></span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="fu">available_indicators</span>(<span class="st">&quot;population_count&quot;</span>)</span>
-<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
-<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt;   name             description                    resources       </span></span>
-<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;            &lt;chr&gt;                          &lt;list&gt;          </span></span>
-<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt; 1 population_count Statistic of population counts &lt;tibble [1 × 5]&gt;</span></span></code></pre></div>
-<p>Say, we are interested in the <code>population_count</code>
-indicator. We can learn more about this indicator and its required
-resources by using either of the commands below or, if you are viewing
-the online version, head over to the <a href="https://mapme-initiative.github.io/mapme.biodiversity/reference/population_count.html">population_count</a>
-documentation.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>?population_count</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">help</span>(population_count)</span></code></pre></div>
-<p>By inspecting the help page we learned that this indicator requires
-the <code>worldpop</code> resource and it requires to specify two extra
-arguments: the population statistic to calculate and the eninge to be
-used for the calculation (learn more about engines <a href="https://mapme-initiative.github.io/mapme.biodiversity/articles/terminology.html">here</a>).</p>
-<p>With that information at hand, we can start to retrieve the required
-resource. We can learn about all available resources using the
-<code>available_resources()</code> function:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">available_resources</span>()</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 23 × 5</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt;    name                             description             licence source type </span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                            &lt;chr&gt;                   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt;  1 chirps                           Climate Hazards Group … CC - u… https… rast…</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt;  2 esalandcover                     Copernicus Land Monito… CC-BY … https… rast…</span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt;  3 fritz_et_al                      Drivers of deforestati… CC-BY … https… rast…</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt;  4 gfw_emissions                    Global Forest Watch - … CC-BY … https… rast…</span></span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt;  5 gfw_lossyear                     Global Forest Watch - … CC-BY … https… rast…</span></span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt;  6 gfw_treecover                    Global Forest Watch - … CC-BY … https… rast…</span></span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt;  7 global_surface_water_change      Global Surface Water -… https:… https… rast…</span></span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt;  8 global_surface_water_occurrence  Global Surface Water -… https:… https… rast…</span></span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt;  9 global_surface_water_recurrence  Global Surface Water -… https:… https… rast…</span></span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; 10 global_surface_water_seasonality Global Surface Water -… https:… https… rast…</span></span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; # ℹ 13 more rows</span></span>
-<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="fu">available_resources</span>(<span class="st">&quot;worldpop&quot;</span>)</span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 5</span></span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt;   name     description                                      licence source type </span></span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;                                            &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;</span></span>
-<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt; 1 worldpop WorldPop - Unconstrained Global Mosaics 2000 - … CC-BY … https… rast…</span></span></code></pre></div>
-<p>For the purpose of this vignette, we are going to download the
-<code>worldpop</code> resource. We can get more detailed information
-about a given resource, by using either of the commands below to open up
-the help page. If you are viewing the online version of this
-documentation, you can simply head over to the <a href="https://mapme-initiative.github.io/mapme.biodiversity/reference/worldpop.html">worldpop</a>
-resource documentation.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>?worldpop</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">help</span>(worldpop)</span></code></pre></div>
-<p>We can now make the <code>worldpop</code> resource available for our
-portfolio. We will use a common interface that is used for all
-resources, called <code>get_resources()</code>. We have to specify our
-portfolio object and supply one or more resource functions with their
-respective arguments. This will then download the matching resources to
-the output directory specified earlier.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>aoi_gridded <span class="ot">&lt;-</span> <span class="fu">get_resources</span>(<span class="at">x =</span> aoi_gridded, <span class="fu">get_worldpop</span>(<span class="at">years =</span> <span class="dv">2010</span><span class="sc">:</span><span class="dv">2015</span>))</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; Skipping existing files in output directory.</span></span></code></pre></div>
-<p>In case you want to download more than one resource, you can use the
-same interface and the resources will be made available sequentially.
-Required arguments for a resource are simply added as usual:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>aoi_gridded <span class="ot">&lt;-</span> <span class="fu">get_resources</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="at">x =</span> aoi_gridded,</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="fu">get_worldpop</span>(<span class="at">years =</span> <span class="dv">2010</span><span class="sc">:</span><span class="dv">2015</span>),</span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">get_gfw_treecover</span>(<span class="at">version =</span> <span class="st">&quot;GFC-2021-v1.8&quot;</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>)</span></code></pre></div>
+<p>You can check which indicators are available via the <code>available_indicators()</code> function:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">available_indicators</span>()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 25 × 3</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="co">#&gt;    name                  description                                   resources</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="co">#&gt;    &lt;chr&gt;                 &lt;chr&gt;                                         &lt;list&gt;   </span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="co">#&gt;  1 active_fire_counts    Number of detected fires by NASA FIRMS        &lt;tibble&gt; </span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a><span class="co">#&gt;  2 biome                 Areal statistics of biomes from TEOW          &lt;tibble&gt; </span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a><span class="co">#&gt;  3 deforestation_drivers Areal statistics of deforestation drivers     &lt;tibble&gt; </span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="co">#&gt;  4 drought_indicator     Relative wetness statistics based on NASA GR… &lt;tibble&gt; </span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a><span class="co">#&gt;  5 ecoregion             Areal statstics of ecoregions based on TEOW   &lt;tibble&gt; </span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a><span class="co">#&gt;  6 elevation             Statistics of elevation based on NASA SRTM    &lt;tibble&gt; </span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a><span class="co">#&gt;  7 fatalities            Number of fatalities by group of conflict ba… &lt;tibble&gt; </span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a><span class="co">#&gt;  8 gsw_change            Statistics of the surface water change layer… &lt;tibble&gt; </span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a><span class="co">#&gt;  9 gsw_occurrence        Areal statistic of surface water based on oc… &lt;tibble&gt; </span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a><span class="co">#&gt; 10 gsw_recurrence        Areal statistic of surface water based on re… &lt;tibble&gt; </span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a><span class="co">#&gt; # ℹ 15 more rows</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a><span class="kw">available_indicators</span>(<span class="st">&quot;population_count&quot;</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a><span class="co">#&gt;   name             description                    resources       </span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;            &lt;chr&gt;                          &lt;list&gt;          </span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true"></a><span class="co">#&gt; 1 population_count Statistic of population counts &lt;tibble [1 × 5]&gt;</span></span></code></pre></div>
+<p>Say, we are interested in the <code>population_count</code> indicator. We can learn more about this indicator and its required resources by using either of the commands below or, if you are viewing the online version, head over to the <a href="https://mapme-initiative.github.io/mapme.biodiversity/reference/population_count.html">population_count</a> documentation.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>?population_count</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="kw">help</span>(population_count)</span></code></pre></div>
+<p>By inspecting the help page we learned that this indicator requires the <code>worldpop</code> resource and it requires to specify two extra arguments: the population statistic to calculate and the eninge to be used for the calculation (learn more about engines <a href="https://mapme-initiative.github.io/mapme.biodiversity/articles/terminology.html">here</a>).</p>
+<p>With that information at hand, we can start to retrieve the required resource. We can learn about all available resources using the <code>available_resources()</code> function:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="kw">available_resources</span>()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 23 × 5</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="co">#&gt;    name                             description             licence source type </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="co">#&gt;    &lt;chr&gt;                            &lt;chr&gt;                   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a><span class="co">#&gt;  1 chirps                           Climate Hazards Group … CC - u… https… rast…</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a><span class="co">#&gt;  2 esalandcover                     Copernicus Land Monito… CC-BY … https… rast…</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a><span class="co">#&gt;  3 fritz_et_al                      Drivers of deforestati… CC-BY … https… rast…</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a><span class="co">#&gt;  4 gfw_emissions                    Global Forest Watch - … CC-BY … https… rast…</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a><span class="co">#&gt;  5 gfw_lossyear                     Global Forest Watch - … CC-BY … https… rast…</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a><span class="co">#&gt;  6 gfw_treecover                    Global Forest Watch - … CC-BY … https… rast…</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a><span class="co">#&gt;  7 global_surface_water_change      Global Surface Water -… https:… https… rast…</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true"></a><span class="co">#&gt;  8 global_surface_water_occurrence  Global Surface Water -… https:… https… rast…</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true"></a><span class="co">#&gt;  9 global_surface_water_recurrence  Global Surface Water -… https:… https… rast…</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true"></a><span class="co">#&gt; 10 global_surface_water_seasonality Global Surface Water -… https:… https… rast…</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true"></a><span class="co">#&gt; # ℹ 13 more rows</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true"></a><span class="kw">available_resources</span>(<span class="st">&quot;worldpop&quot;</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 1 × 5</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true"></a><span class="co">#&gt;   name     description                                      licence source type </span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;                                            &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true"></a><span class="co">#&gt; 1 worldpop WorldPop - Unconstrained Global Mosaics 2000 - … CC-BY … https… rast…</span></span></code></pre></div>
+<p>For the purpose of this vignette, we are going to download the <code>worldpop</code> resource. We can get more detailed information about a given resource, by using either of the commands below to open up the help page. If you are viewing the online version of this documentation, you can simply head over to the <a href="https://mapme-initiative.github.io/mapme.biodiversity/reference/worldpop.html">worldpop</a> resource documentation.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>?worldpop</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="kw">help</span>(worldpop)</span></code></pre></div>
+<p>We can now make the <code>worldpop</code> resource available for our portfolio. We will use a common interface that is used for all resources, called <code>get_resources()</code>. We have to specify our portfolio object and supply one or more resource functions with their respective arguments. This will then download the matching resources to the output directory specified earlier.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>aoi &lt;-<span class="st"> </span><span class="kw">get_resources</span>(<span class="dt">x =</span> aoi, <span class="kw">get_worldpop</span>(<span class="dt">years =</span> <span class="dv">2010</span><span class="op">:</span><span class="dv">2015</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="co">#&gt; Skipping existing files in output directory.</span></span></code></pre></div>
+<p>In case you want to download more than one resource, you can use the same interface and the resources will be made available sequentially. Required arguments for a resource are simply added as usual:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>aoi &lt;-<span class="st"> </span><span class="kw">get_resources</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a>  <span class="dt">x =</span> aoi,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a>  <span class="kw">get_worldpop</span>(<span class="dt">years =</span> <span class="dv">2010</span><span class="op">:</span><span class="dv">2015</span>),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a>  <span class="kw">get_gfw_treecover</span>(<span class="dt">version =</span> <span class="st">&quot;GFC-2021-v1.9&quot;</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a>)</span></code></pre></div>
 </div>
 <div id="calculate-specific-indicators" class="section level1">
 <h1>Calculate specific indicators</h1>
-<p>The next step consists of calculating specific indicators. Note that
-each indicator requires one or more resources that were made available
-via the <code>get_resources()</code> function explained above. You will
-have to re-run this function in every new R session, but note that data
-that is already available will not be re-downloaded.</p>
-<p>Here, we are goingto calculate the <code>population_count</code>
-indicator which is based on the <code>worldpop</code> resource. Since
-the resource has been made available in the previous step, we can
-continue requesting the calculation of our desired indicator. Note the
-command below would issue an error in case a required resource has not
-been made available via <code>get_resources()</code> beforehand.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>aoi_gridded <span class="ot">&lt;-</span> <span class="fu">calc_indicators</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  aoi_gridded,</span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="fu">calc_population_count</span>(<span class="at">engine =</span> <span class="st">&quot;zonal&quot;</span>, <span class="at">stats =</span> <span class="st">&quot;sum&quot;</span>)</span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>)</span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt; Found a column named &#39;assetid&#39;. Overwritting its values with a unique identifier.</span></span></code></pre></div>
-<p>Now let’s take a look at the results. We will select only some of the
-metadata and the output indicator column to get a clearer picture of
-what has happened.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>(aoi_gridded <span class="ot">&lt;-</span> aoi_gridded <span class="sc">%&gt;%</span> <span class="fu">select</span>(assetid, population_count))</span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 23 features and 2 fields</span></span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt; Geometry type: POLYGON</span></span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; Dimension:     XY</span></span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt; Bounding box:  xmin: -71.80731 ymin: 18.58134 xmax: -71.33268 ymax: 18.69799</span></span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt; # A tibble: 23 × 3</span></span>
-<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt;    assetid population_count                                                 geom</span></span>
-<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt;      &lt;int&gt; &lt;list&gt;                                                  &lt;POLYGON [°]&gt;</span></span>
-<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co">#&gt;  1       1 &lt;tibble [6 × 2]&gt; ((-71.78358 18.65871, -71.78358 18.67725, -71.79993…</span></span>
-<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="co">#&gt;  2       2 &lt;tibble [6 × 2]&gt; ((-71.79993 18.6867, -71.78358 18.67725, -71.75984 …</span></span>
-<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="co">#&gt;  3       3 &lt;tibble [6 × 2]&gt; ((-71.76202 18.66333, -71.74668 18.64602, -71.74431…</span></span>
-<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="co">#&gt;  4       4 &lt;tibble [6 × 2]&gt; ((-71.71238 18.62893, -71.71238 18.63615, -71.73611…</span></span>
-<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a><span class="co">#&gt;  5       5 &lt;tibble [6 × 2]&gt; ((-71.75984 18.69367, -71.75984 18.69095, -71.73611…</span></span>
-<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a><span class="co">#&gt;  6       6 &lt;tibble [6 × 2]&gt; ((-71.71429 18.68985, -71.73611 18.67725, -71.73611…</span></span>
-<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a><span class="co">#&gt;  7       7 &lt;tibble [6 × 2]&gt; ((-71.66702 18.63736, -71.68865 18.64985, -71.71238…</span></span>
-<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a><span class="co">#&gt;  8       8 &lt;tibble [6 × 2]&gt; ((-71.70975 18.68944, -71.68865 18.67725, -71.67141…</span></span>
-<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a><span class="co">#&gt;  9       9 &lt;tibble [6 × 2]&gt; ((-71.67141 18.68721, -71.68865 18.67725, -71.68865…</span></span>
-<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a><span class="co">#&gt; 10      10 &lt;tibble [6 × 2]&gt; ((-71.64095 18.64971, -71.64119 18.64985, -71.64178…</span></span>
-<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a><span class="co">#&gt; # ℹ 13 more rows</span></span></code></pre></div>
-<p>We obtained a new listed column in our <code>sf</code>-object that is
-named like the requested indicator. For each asset in our portfolio,
-this column contains a tibble with 6 rows and two columns. Let’s have a
-closer look at one of these objects.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>aoi_gridded<span class="sc">$</span>population_count[<span class="dv">10</span>]</span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 2</span></span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#&gt;   population_count_sum year </span></span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co">#&gt;                  &lt;dbl&gt; &lt;chr&gt;</span></span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co">#&gt; 1                 31.9 2010 </span></span>
-<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co">#&gt; 2                 43.3 2011 </span></span>
-<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co">#&gt; 3                 32.8 2012 </span></span>
-<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co">#&gt; 4                 32.9 2013 </span></span>
-<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="co">#&gt; 5                 36.5 2014 </span></span>
-<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co">#&gt; 6                 38.0 2015</span></span></code></pre></div>
-<p>For each asset, the result is a tibble in long format indicating the
-population sum per year (make sure to read the detailed indicator
-documentation via <code>?population_count</code>). Let’s quickly
-visualize the results for a single asset:</p>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
-<p>If you wish to conduct your statistical analysis in R, you can use
-<code>{tidyr}</code> functionality to unnest one or multiple columns.
-Especially for large portfolios, it is usually a good idea to keep the
-geometry information in a separated variable to keep the size of the
-data object relatively small.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>geometries <span class="ot">&lt;-</span> <span class="fu">select</span>(aoi_gridded, assetid)</span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>aoi_gridded <span class="sc">%&gt;%</span></span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">unnest</span>(population_count)</span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="co">#&gt; # A tibble: 138 × 3</span></span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="co">#&gt;    assetid population_count_sum year </span></span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co">#&gt;      &lt;int&gt;                &lt;dbl&gt; &lt;chr&gt;</span></span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co">#&gt;  1       1                 305. 2010 </span></span>
-<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co">#&gt;  2       1                 313. 2011 </span></span>
-<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co">#&gt;  3       1                 324. 2012 </span></span>
-<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co">#&gt;  4       1                 321. 2013 </span></span>
-<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="co">#&gt;  5       1                 286. 2014 </span></span>
-<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co">#&gt;  6       1                 330. 2015 </span></span>
-<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="co">#&gt;  7       2                 217. 2010 </span></span>
-<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co">#&gt;  8       2                 218. 2011 </span></span>
-<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a><span class="co">#&gt;  9       2                 224. 2012 </span></span>
-<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co">#&gt; 10       2                 241. 2013 </span></span>
-<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="co">#&gt; # ℹ 128 more rows</span></span></code></pre></div>
+<p>The next step consists of calculating specific indicators. Note that each indicator requires one or more resources that were made available via the <code>get_resources()</code> function explained above. You will have to re-run this function in every new R session, but note that data that is already available will not be re-downloaded.</p>
+<p>Here, we are going to calculate the <code>population_count</code> indicator which is based on the <code>worldpop</code> resource. Since the resource has been made available in the previous step, we can continue requesting the calculation of our desired indicator. Note the command below would issue an error in case a required resource has not been made available via <code>get_resources()</code> beforehand.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a>aoi &lt;-<span class="st"> </span><span class="kw">calc_indicators</span>(aoi, <span class="kw">calc_population_count</span>(<span class="dt">engine =</span> <span class="st">&quot;zonal&quot;</span>, <span class="dt">stats =</span> <span class="st">&quot;sum&quot;</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a><span class="co">#&gt; Found a column named &#39;assetid&#39;. Overwritting its values with a unique identifier.</span></span></code></pre></div>
+<p>Now let’s take a look at the results. In addition to the metadata we are already familiar with, we see that there is an additional column called <code>population_count</code> which contains a <code>tibble</code>.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a>aoi</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a><span class="co">#&gt; Simple feature collection with 1 feature and 6 fields</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true"></a><span class="co">#&gt; Bounding box:  xmin: -71.80731 ymin: 18.57734 xmax: -71.33268 ymax: 18.69799</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true"></a><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 1 × 7</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true"></a><span class="co">#&gt;   WDPAID NAME            DESIG_ENG     ISO3  assetid population_count</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;         &lt;chr&gt;   &lt;int&gt; &lt;list&gt;          </span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true"></a><span class="co">#&gt; 1 478140 Sierra de Neiba National Park DOM         1 &lt;tibble [6 × 4]&gt;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true"></a><span class="co">#&gt; # ℹ 1 more variable: geom &lt;MULTIPOLYGON [°]&gt;</span></span></code></pre></div>
+<p>The indicator is represented as a nested-list column in our <code>sf</code>-object that is named alike the requested indicator. For our single asset, this column contains a tibble with 6 rows and four columns. Let’s have a closer look at this object</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a>aoi<span class="op">$</span>population_count</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 6 × 4</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true"></a><span class="co">#&gt;   datetime   variable       unit  value</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true"></a><span class="co">#&gt;   &lt;date&gt;     &lt;chr&gt;          &lt;chr&gt; &lt;dbl&gt;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true"></a><span class="co">#&gt; 1 2010-01-01 population_sum count 4063.</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true"></a><span class="co">#&gt; 2 2011-01-01 population_sum count 4015.</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true"></a><span class="co">#&gt; 3 2012-01-01 population_sum count 4063.</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true"></a><span class="co">#&gt; 4 2013-01-01 population_sum count 3962.</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true"></a><span class="co">#&gt; 5 2014-01-01 population_sum count 3991.</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true"></a><span class="co">#&gt; 6 2015-01-01 population_sum count 4213.</span></span></code></pre></div>
+<p>The tibble follows a standard output format, which is the same for all indicators. Each indicator is represented as a tibble with the four columns <code>datetime</code>, <code>variable</code>, <code>unit</code>, and <code>value</code>. In case of the population indicator, the variable is the sum of the population, its unit is a count and the value column gives the actual number.</p>
+<p>Let’s quickly visualize the results:</p>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>If you wish to change the layout of an portfolio, you can use <code>portfolio_long()</code> and <code>portfolio_wide()</code> (see the respective <a href="https://mapme-initiative.github.io/mapme.biodiversity/articles/output-wide.html">online tutorial</a>). Especially for large portfolios, it is usually a good idea to keep the geometry information in a separated variable to keep the size of the data object relatively small.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a>geoms &lt;-<span class="st"> </span><span class="kw">st_geometry</span>(aoi)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a><span class="kw">portfolio_long</span>(aoi, <span class="dt">drop_geoms =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 6 × 10</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true"></a><span class="co">#&gt;   WDPAID NAME  DESIG_ENG ISO3  assetid indicator datetime   variable unit  value</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;int&gt; &lt;chr&gt;     &lt;date&gt;     &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true"></a><span class="co">#&gt; 1 478140 Sier… National… DOM         1 populati… 2010-01-01 populat… count 4063.</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true"></a><span class="co">#&gt; 2 478140 Sier… National… DOM         1 populati… 2011-01-01 populat… count 4015.</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true"></a><span class="co">#&gt; 3 478140 Sier… National… DOM         1 populati… 2012-01-01 populat… count 4063.</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true"></a><span class="co">#&gt; 4 478140 Sier… National… DOM         1 populati… 2013-01-01 populat… count 3962.</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true"></a><span class="co">#&gt; 5 478140 Sier… National… DOM         1 populati… 2014-01-01 populat… count 3991.</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true"></a><span class="co">#&gt; 6 478140 Sier… National… DOM         1 populati… 2015-01-01 populat… count 4213.</span></span></code></pre></div>
 </div>
 <div id="enabling-parallel-computing" class="section level1">
 <h1>Enabling parallel computing</h1>
-<p><code>{mapme.biodiversity}</code> follows the parallelization
-paradigm of the <a href="https://cran.r-project.org/package=future"><code>{future}</code></a>
-package. That means that you as a user are in the control if and how you
-would like to set up parallel processing. Currently,
-<code>{mapme.biodiversity}</code> supports parallel processing on the
-asset level of the <code>calc_indicators()</code> function only. We also
-currently assume that parallel processing is done on the cores of a
-single machine. In future developments, we would like to support
-distributed processing. If you are working on a distributed use-cases,
-please contact the developers, e.g. via the <a href="https://github.com/mapme-initiative/mapme.biodiversity/discussions">discussion
-board</a> or mail.</p>
-<p>To process e.g. 6 assets in parallel and report a progress bar you
-will have to set up the following in your code:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">library</span>(future)</span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="fu">library</span>(progressr)</span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="fu">plan</span>(multisession, <span class="at">workers =</span> <span class="dv">6</span>) <span class="co"># set up parallel plan with 6 concurrent threads</span></span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="fu">with_progress</span>({</span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>  aoi_gridded <span class="ot">&lt;-</span> <span class="fu">calc_indicators</span>(</span>
-<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>    aoi_gridded,</span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>    <span class="fu">calc_population_count</span>(</span>
-<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>      <span class="at">engine =</span> <span class="st">&quot;zonal&quot;</span>,</span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>      <span class="at">stats =</span> <span class="st">&quot;sum&quot;</span></span>
-<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>    )</span>
-<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>  )</span>
-<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>})</span>
-<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a></span>
-<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="fu">plan</span>(sequential) <span class="co"># close child processes</span></span></code></pre></div>
-<p>Note, that the above code uses <code>future::multisession()</code> as
-the parallel backend. This backend will resolve the calculation in
-multiple background R sessions. You should use that backend if you are
-operating on Windows, using R Studio or otherwise are not sure about
-which backend to use. In case you are operating on a system that allows
-process forking and are <em>not</em> using R Studio, consider using
-<code>future::multicore()</code> for more efficient parallel
-processing.</p>
+<p><code>{mapme.biodiversity}</code> follows the parallel computing paradigm of the <a href="https://cran.r-project.org/package=future"><code>{future}</code></a> package. That means that you as a user are in the control if and how you would like to set up parallel processing. Since <code>{mapme.biodiversity} v0.7</code> supports parallel processing on a nested-level. The outer level applies parallel processing to the assets in a portfolio, the inner level to potential chunks for polygons that are larger than the specified chunks size or the single components of assets of type <code>MULTIPOLYGON</code>.</p>
+<p>The maximum chunk size is specified in hectares via <code>mapme_options()</code> and defaults to 100,000 ha. Polygons larger than this threshold will be split into chunks of roughly the same size.</p>
+<p>Fine-control of parallel processing is given by using future topologies (find more information <a href="https://cran.r-project.org/package=future/vignettes/future-3-topologies.html">here</a>). To process all assets sequentially, but allow to spawn up to 4 workers to process chunks in parallel you might specify:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="kw">library</span>(future)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a><span class="kw">plan</span>(<span class="kw">list</span>(sequential, <span class="kw">tweak</span>(cluster, <span class="dt">workers =</span> <span class="dv">6</span>)))</span></code></pre></div>
+<p>As another example, with the code below one would apply parallel processing of 2 assets, with each having 4 workers available to process chunks, thus requiring a total of 8 available cores on the host machine. Be sure to not request more workers than available on your machine.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="kw">library</span>(progressr)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a><span class="kw">plan</span>(<span class="kw">list</span>(<span class="kw">tweak</span>(cluster, <span class="dt">workers =</span> <span class="dv">2</span>), <span class="kw">tweak</span>(cluster, <span class="dt">workers =</span> <span class="dv">4</span>)))</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a><span class="kw">with_progress</span>({</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true"></a>  aoi &lt;-<span class="st"> </span><span class="kw">calc_indicators</span>(</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true"></a>    aoi,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true"></a>    <span class="kw">calc_treecover_area_and_emissions</span>(</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true"></a>      <span class="dt">min_size =</span> <span class="dv">1</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true"></a>      <span class="dt">min_cover =</span> <span class="dv">30</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true"></a>    )</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true"></a>  )</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true"></a>})</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true"></a></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true"></a><span class="kw">plan</span>(sequential) <span class="co"># close child processes</span></span></code></pre></div>
 </div>
 <div id="exporting-an-portfolio-object" class="section level1">
 <h1>Exporting an portfolio object</h1>
-<p>You can use the <code>write_portfolio()</code> function to save a
-processed portfolio object to disk as a GeoPackage. This allows sharing
-your data with others who might not be using R, but any other geospatial
-software. Simply point towards a non-existing file on your local disk to
-write the portfolio. The function will create an individual table for
-all processed indicators. Via the <code>read_portfolio()</code>
-function, a portfolio which has been written to disk in such a way can
-be read back into R. However, users should note that the portfolio-wide
-arguments that were set with <code>mapme_options()</code> are
-<strong>not</strong> reconstructed. Thus if you wish to continue to use
-<code>{mapme.biodiversity}</code> functionality on such a portfolio
-object, make sure to re-run init_portfolio()` on it.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>tmp_output <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">&quot;.gpkg&quot;</span>)</span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="fu">write_portfolio</span>(</span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="at">x =</span> aoi_gridded,</span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>  <span class="at">dsn =</span> tmp_output</span>
-<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>)</span>
-<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>(portfolio_from_disk <span class="ot">&lt;-</span> <span class="fu">read_portfolio</span>(tmp_output))</span></code></pre></div>
+<p>You can use the <code>write_portfolio()</code> function to save a processed portfolio object to disk as a <code>GeoPackage</code> or any other spatial format supported by GDAL. This allows sharing your data with contributors who might not be using R, but any other geospatial software. Simply point towards a non-existing file on your local disk to write the portfolio. You can chose between serializing in the long or wide data layout.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a>dsn &lt;-<span class="st"> </span><span class="kw">tempfile</span>(<span class="dt">fileext =</span> <span class="st">&quot;.gpkg&quot;</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true"></a><span class="kw">write_portfolio</span>(<span class="dt">x =</span> aoi, <span class="dt">dsn =</span> dsn, <span class="dt">format =</span> <span class="st">&quot;long&quot;</span>, <span class="dt">quiet =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true"></a>from_disk &lt;-<span class="st"> </span><span class="kw">st_read</span>(dsn, <span class="dt">quiet =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true"></a>from_disk</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true"></a><span class="co">#&gt; Simple feature collection with 6 features and 10 fields</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true"></a><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true"></a><span class="co">#&gt; Bounding box:  xmin: -71.80731 ymin: 18.57734 xmax: -71.33268 ymax: 18.69799</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true"></a><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true"></a><span class="co">#&gt;   WDPAID            NAME     DESIG_ENG ISO3 assetid        indicator   datetime</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true"></a><span class="co">#&gt; 1 478140 Sierra de Neiba National Park  DOM       1 population_count 2010-01-01</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true"></a><span class="co">#&gt; 2 478140 Sierra de Neiba National Park  DOM       1 population_count 2011-01-01</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true"></a><span class="co">#&gt; 3 478140 Sierra de Neiba National Park  DOM       1 population_count 2012-01-01</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true"></a><span class="co">#&gt; 4 478140 Sierra de Neiba National Park  DOM       1 population_count 2013-01-01</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true"></a><span class="co">#&gt; 5 478140 Sierra de Neiba National Park  DOM       1 population_count 2014-01-01</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true"></a><span class="co">#&gt; 6 478140 Sierra de Neiba National Park  DOM       1 population_count 2015-01-01</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true"></a><span class="co">#&gt;         variable  unit    value                           geom</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true"></a><span class="co">#&gt; 1 population_sum count 4063.447 MULTIPOLYGON (((-71.76202 1...</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true"></a><span class="co">#&gt; 2 population_sum count 4015.088 MULTIPOLYGON (((-71.76202 1...</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true"></a><span class="co">#&gt; 3 population_sum count 4063.247 MULTIPOLYGON (((-71.76202 1...</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true"></a><span class="co">#&gt; 4 population_sum count 3961.917 MULTIPOLYGON (((-71.76202 1...</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true"></a><span class="co">#&gt; 5 population_sum count 3991.399 MULTIPOLYGON (((-71.76202 1...</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true"></a><span class="co">#&gt; 6 population_sum count 4212.674 MULTIPOLYGON (((-71.76202 1...</span></span></code></pre></div>
+<pre><code>#&gt; [1] TRUE</code></pre>
 </div>
 
 

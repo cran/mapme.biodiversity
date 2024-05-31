@@ -40,15 +40,15 @@
 #' ) %>%
 #'   read_sf() %>%
 #'   get_resources(
-#'     get_gfw_treecover(version = "GFC-2022-v1.10"),
-#'     get_gfw_lossyear(version = "GFC-2022-v1.10")
+#'     get_gfw_treecover(version = "GFC-2023-v1.11"),
+#'     get_gfw_lossyear(version = "GFC-2023-v1.11")
 #'   ) %>%
 #'   calc_indicators(calc_treecover_area(years = 2016:2017, min_size = 1, min_cover = 30)) %>%
-#'   tidyr::unnest(treecover_area)
+#'   portfolio_long()
 #'
 #' aoi
 #' }
-calc_treecover_area <- function(years = 2000:2020,
+calc_treecover_area <- function(years = 2000:2023,
                                 min_size = 10,
                                 min_cover = 35) {
   check_namespace("exactextractr")
@@ -61,26 +61,40 @@ calc_treecover_area <- function(years = 2000:2020,
            gfw_lossyear = NULL,
            name = "treecover_area",
            mode = "asset",
+           aggregation = "sum",
            verbose = mapme_options()[["verbose"]]) {
+    treecover <- NULL
     # handling of return value if resources are missing, e.g. no overlap
     if (any(is.null(gfw_treecover), is.null(gfw_lossyear))) {
-      return(NA)
+      return(NULL)
     }
     # mask gfw
     gfw_treecover <- terra::mask(gfw_treecover, x)
     # check if gfw_treecover only contains 0s, e.g. on the ocean
     if (.gfw_empty_raster(gfw_treecover, min_cover)) {
-      return(tibble::tibble(years = years, treecover = 0))
+      return(NULL)
     }
     # prepare gfw rasters
     gfw <- .gfw_prep_rasters(x, gfw_treecover, gfw_lossyear, cover = min_cover)
+
+    # retrieves maximum lossyear value from layer name
+    max_year <- as.numeric(
+      gsub(
+        ".*GFC-([0-9]+)-.*", "\\1",
+        names(gfw_lossyear)
+      )
+    )
+
+    if (max_year < min(years)) {
+      return(NULL)
+    }
 
     # apply extraction routine
     gfw_stats <- exactextractr::exact_extract(
       gfw, x, function(data, min_size) {
         # retain only forest pixels and set area to ha
         data <- .prep_gfw_data(data, min_size)
-        losses <- .sum_gfw(data, "coverage_area")
+        losses <- .sum_gfw(data, "coverage_area", max_year)
         names(losses)[2] <- "loss"
         org_coverage <- sum(data[["coverage_area"]])
 
@@ -106,9 +120,15 @@ calc_treecover_area <- function(years = 2000:2020,
       min_size = min_size, coverage_area = TRUE, summarize_df = TRUE
     )
 
-    rm(gfw)
-    gc()
-    tibble::as_tibble(gfw_stats)
+    gfw_stats %>%
+      dplyr::mutate(
+        datetime = as.Date(paste0(years, "-01-01")),
+        variable = "treecover",
+        unit = "ha",
+        value = treecover
+      ) %>%
+      dplyr::select(datetime, variable, unit, value) %>%
+      tibble::as_tibble()
   }
 }
 
@@ -127,9 +147,9 @@ calc_treecover_area <- function(years = 2000:2020,
 }
 
 
-.sum_gfw <- function(data, what = "coverage_area") {
+.sum_gfw <- function(data, what = "coverage_area", max_year = 2023) {
   # calculate loss area by year
-  df <- data.frame(years = 2000:2022, var = 0)
+  df <- data.frame(years = 2000:max_year, var = 0)
   names(df)[2] <- what
   my_sum <- by(data[[what]], data[["lossyear"]], sum, na.rm = TRUE)
   sum_years <- as.numeric(names(my_sum))

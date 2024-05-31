@@ -91,7 +91,7 @@
 #'       precision_time = 1
 #'     )
 #'   ) %>%
-#'   tidyr::unnest(fatalities)
+#'   portfolio_long()
 #'
 #' aoi
 #' }
@@ -112,9 +112,10 @@ calc_fatalities <- function(years = 1989:2023,
            ucdp_ged = NULL,
            name = "fatalities",
            mode = "asset",
+           aggregation = "sum",
            verbose = mapme_options()[["verbose"]]) {
     date_prec <- where_prec <- date_start <- type_of_violence <- NULL
-    year <- month <- deaths_a <- deaths_b <- event_count <- NULL
+    year <- month <- deaths_a <- deaths_b <- event_count <- type_of_death <- NULL
 
     ucdp_ged <- ucdp_ged[[1]]
     if (length(ucdp_ged) == 0) {
@@ -149,7 +150,7 @@ calc_fatalities <- function(years = 1989:2023,
       dplyr::filter(year %in% years) %>%
       dplyr::summarise(
         dplyr::across(
-          tidyselect::starts_with("deaths_"),
+          dplyr::starts_with("deaths_"),
           ~ sum(as.numeric(.x))
         ),
         event_count = dplyr::n(),
@@ -157,22 +158,30 @@ calc_fatalities <- function(years = 1989:2023,
       ) %>%
       dplyr::right_join(months_tibble, by = c("year", "month", "type_of_violence")) %>%
       dplyr::mutate(dplyr::across(
-        tidyselect::starts_with(c("deaths_", "event_")),
+        dplyr::starts_with(c("deaths_", "event_")),
         ~ tidyr::replace_na(.x, 0)
       )) %>%
       dplyr::mutate(
-        deaths_total = rowSums(dplyr::across(tidyselect::starts_with("deaths_")))
+        deaths_total = rowSums(dplyr::across(dplyr::starts_with("deaths_")))
       ) %>%
       dplyr::mutate(month = as.Date(paste0(year, "-", month, "-01"))) %>%
       dplyr::select(-year, -deaths_a, -deaths_b) %>%
-      dplyr::relocate(event_count, .after = tidyselect::last_col()) %>%
+      dplyr::relocate(event_count, .after = dplyr::last_col()) %>%
       dplyr::arrange(month, type_of_violence) %>%
       dplyr::mutate(type_of_violence = dplyr::case_when(
-        type_of_violence == 1 ~ "state-based conflict",
-        type_of_violence == 2 ~ "non-state conflict",
-        type_of_violence == 3 ~ "one-sided violence"
+        type_of_violence == 1 ~ "state_based_conflict",
+        type_of_violence == 2 ~ "non_state_conflict",
+        type_of_violence == 3 ~ "one_sided_violence"
       )) %>%
-      tibble::as_tibble()
+      tibble::as_tibble() %>%
+      tidyr::pivot_longer(cols = tidyr::starts_with("death"), names_to = "type_of_death") %>%
+      dplyr::mutate(
+        datetime = month,
+        variable = paste0(type_of_violence, "_", type_of_death),
+        unit = "count",
+        value = value
+      ) %>%
+      dplyr::select(datetime, variable, unit, value)
   }
 }
 
