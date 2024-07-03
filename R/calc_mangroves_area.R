@@ -11,8 +11,8 @@
 #' @name mangroves_area
 #' @docType data
 #' @keywords indicator
-#' @returns A function that returns a tibble with a column for area of mangrove
-#'   (in ha) and corresponding year.
+#' @returns A function that returns an indicator tibble with mangroves as variable
+#'   and corresponding areas (in ha) as value.
 #' @include register.R
 #' @export
 #' @examples
@@ -55,10 +55,10 @@ calc_mangroves_area <- function() {
     results <- purrr::map(1:length(gmw), function(j) {
       intersected <- suppressWarnings(st_intersection(gmw[[j]], x))
       area <- sum(as.numeric(st_area(intersected)), na.rm = TRUE) / 10000
-      year <- strsplit(names(gmw[j]), "_|.gpkg")[[1]][2]
+      year <- strsplit(names(gmw[j]), "_|.gpkg")[[1]][3]
 
       tibble::tibble(
-        datetime = as.Date(paste0(year, "-01-01")),
+        datetime = as.POSIXct(paste0(year, "-01-01T00:00:00Z")),
         variable = "mangroves",
         unit = "ha",
         value = area

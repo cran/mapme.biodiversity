@@ -17,8 +17,8 @@
 #'    either one or multiple inputs as character "min", "max", "sum", "mean", "median"
 #'    "sd" or "var".
 #' @keywords indicator
-#' @returns A function that returns tibble with a column for population count
-#'   statistics.
+#' @returns A function that returns an indicator tibble with the specified
+#'   populations statistics as variable and the corresponding values as value.
 #' @include register.R
 #' @export
 #' @examples
@@ -41,7 +41,7 @@
 #'   package = "mapme.biodiversity"
 #' ) %>%
 #'   read_sf() %>%
-#'   get_resources(get_worldpop(years = 2000:2010)) %>%
+#'   get_resources(get_worldpop(years = 2010:2020)) %>%
 #'   calc_indicators(
 #'     calc_population_count(engine = "extract", stats = c("sum", "median"))
 #'   ) %>%
@@ -81,7 +81,7 @@ calc_population_count <- function(engine = "extract", stats = "sum") {
     )
 
     years <- unlist(lapply(names(worldpop), function(x) strsplit(x, "_")[[1]][2]))
-    results[["datetime"]] <- as.Date(paste0(years, "-01-01"))
+    results[["datetime"]] <- as.POSIXct(paste0(years, "-01-01T00:00:00Z"))
     results[["unit"]] <- "count"
     results %>%
       tidyr::pivot_longer(-c(datetime, unit), names_to = "variable", values_to = "value") %>%

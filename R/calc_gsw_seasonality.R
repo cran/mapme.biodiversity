@@ -12,9 +12,8 @@
 #'
 #' @name gsw_seasonality
 #' @keywords indicator
-#' @returns A function that returns a tibble with one column \code{months}
-#'   and one column \code{area}, representing the area covered by each class in
-#'   ha.
+#' @returns A function that returns an indicator tibble with seasonality
+#'   categories as variables and corresponding areas (in ha) as value.
 #' @include register.R
 #' @export
 #' @examples
@@ -94,7 +93,7 @@ calc_gsw_seasonality <- function() {
     result %>%
       dplyr::mutate(
         variable = paste0("gsw_seasonality_", sprintf("%02d", variable)),
-        datetime = as.Date("2021-01-01"),
+        datetime = as.POSIXct("2021-01-01T00:00:00Z"),
         unit = "ha"
       ) %>%
       dplyr::select(datetime, variable, unit, value) %>%

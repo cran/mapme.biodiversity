@@ -16,8 +16,8 @@ single or multiple inputs as character. Supported statistics are: "mean",
 "median", "sd", "min", "max", "sum" "var".}
 }
 \value{
-A function that returns a tibble with a column for accessibility
-statistics (in minutes).
+A function that returns an indicator tibble with city ranges and
+statisics as variable and corresponding values (in minutes) as value.
 }
 \description{
 Accessibility is the ease with which larger cities can be reached from a
@@ -51,9 +51,7 @@ aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
   package = "mapme.biodiversity"
 ) \%>\%
   read_sf() \%>\%
-  get_resources(get_nelson_et_al(
-    ranges = c("5k_10k", "100k_200k", "500k_1mio", "1mio_5mio")
-  )) \%>\%
+  get_resources(get_nelson_et_al(ranges = "100k_200k")) \%>\%
   calc_indicators(
     calc_traveltime(engine = "extract", stats = c("min", "max"))
   ) \%>\%

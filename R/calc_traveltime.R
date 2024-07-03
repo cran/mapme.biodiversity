@@ -15,8 +15,8 @@
 #'   single or multiple inputs as character. Supported statistics are: "mean",
 #'   "median", "sd", "min", "max", "sum" "var".
 #' @keywords indicator
-#' @returns A function that returns a tibble with a column for accessibility
-#'   statistics (in minutes).
+#' @returns A function that returns an indicator tibble with city ranges and
+#'   statisics as variable and corresponding values (in minutes) as value.
 #' @include register.R
 #' @export
 #' @examples
@@ -39,9 +39,7 @@
 #'   package = "mapme.biodiversity"
 #' ) %>%
 #'   read_sf() %>%
-#'   get_resources(get_nelson_et_al(
-#'     ranges = c("5k_10k", "100k_200k", "500k_1mio", "1mio_5mio")
-#'   )) %>%
+#'   get_resources(get_nelson_et_al(ranges = "100k_200k")) %>%
 #'   calc_indicators(
 #'     calc_traveltime(engine = "extract", stats = c("min", "max"))
 #'   ) %>%
@@ -84,7 +82,7 @@ calc_traveltime <- function(engine = "extract", stats = "mean") {
       dplyr::mutate(distances = distances) %>%
       tidyr::pivot_longer(-distances, names_to = "variable") %>%
       dplyr::mutate(
-        datetime = as.Date("2015-01-01"),
+        datetime = as.POSIXct("2015-01-01T00:00:00Z"),
         variable = paste0(distances, "_", variable),
         unit = "minutes"
       ) %>%

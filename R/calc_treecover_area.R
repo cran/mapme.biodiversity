@@ -15,8 +15,8 @@
 #' @param min_size The minimum size of a forest patch to be considered as forest in ha.
 #' @param min_cover The minimum cover percentage per pixel to be considered as forest.
 #' @keywords indicator
-#' @returns A function that returns a tibble with a column for years and
-#'   treecover (in ha).
+#' @returns A function that returns an indicator tibble with variable treecover
+#'   and corresponding area (in ha) as value.
 #' @include register.R
 #' @export
 #' @examples
@@ -122,7 +122,7 @@ calc_treecover_area <- function(years = 2000:2023,
 
     gfw_stats %>%
       dplyr::mutate(
-        datetime = as.Date(paste0(years, "-01-01")),
+        datetime = as.POSIXct(paste0(years, "-01-01T00:00:00Z")),
         variable = "treecover",
         unit = "ha",
         value = treecover

@@ -13,7 +13,8 @@
 #' @param engine The preferred processing functions from either one of "zonal",
 #'   "extract" or "exactextract" as character.
 #' @keywords indicator
-#' @returns A function that returns a tibble with precipitation sums.
+#' @returns A function that returns an indicator tibble with variable
+#'   precipitation and sum of precipitation (in mm) as value.
 #' @include register.R
 #' @export
 #' @examples
@@ -78,7 +79,8 @@ calc_precipitation_chirps <- function(years = 1981:2020,
 
     layer_years <- as.numeric(substr(src_names, 13, 17))
     target_chirps <- chirps[[which(layer_years %in% years)]]
-    datetime <- as.Date(paste0(substr(names(target_chirps), 13, 19), ".01"), "%Y.%m.%d")
+    dates <- as.Date(paste0(substr(names(target_chirps), 13, 19), ".01"), "%Y.%m.%d")
+    datetime <- as.POSIXct(paste0(dates, "T00:00:00Z"))
 
     # extract zonal statistics
     results <- select_engine(

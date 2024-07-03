@@ -24,8 +24,8 @@
 #'
 #' @name gsw_transitions
 #' @keywords indicator
-#' @returns A function that returns a tibble with a column for name of the
-#'   transition classes and corresponding area (in ha).
+#' @returns A function that returns an indicator tibble with transition classes
+#'   as variable and corresponding areas (in ha) as value.
 #' @include register.R
 #' @export
 #' @examples
@@ -84,7 +84,7 @@ calc_gsw_transitions <- function() {
     }) %>%
       dplyr::mutate(
         variable = paste0("gsw_", variable),
-        datetime = as.Date("2021-01-01"),
+        datetime = as.POSIXct("2021-01-01T00:00:00Z"),
         unit = "ha"
       ) %>%
       tibble::as_tibble() %>%

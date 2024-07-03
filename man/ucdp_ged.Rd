@@ -15,7 +15,7 @@ get_ucdp_ged(version = "latest")
 the version to download. Defaults to "latest".}
 }
 \value{
-A function that returns a character of file paths.
+A function that returns an \code{sf} footprint object.
 }
 \description{
 This resource distributed by the Uppsala Conflict Data Program (UCDP) constitutes
@@ -26,7 +26,7 @@ Older versions of the data set can be downloaded, but users are recommended
 to download the latest data set.
 }
 \details{
-The following versions are available
+The following versions are available:
 \itemize{
 \item 5.0
 \item 17.1
@@ -36,6 +36,8 @@ The following versions are available
 \item 20.1
 \item 21.1
 \item 22.1
+\item 23.1
+\item 24.1
 \item latest
 }
 }

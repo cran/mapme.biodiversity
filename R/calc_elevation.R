@@ -13,7 +13,8 @@
 #' @param stats Function to be applied to compute statistics for polygons either
 #'   one or multiple inputs as character "mean", "median" or "sd".
 #' @keywords indicator
-#' @returns A function that returns a tibble with a column for each statistics.
+#' @returns A function that returns an indicator tibble with specified elevation
+#'   statistics as variable and corresponding values (in meters) as value.
 #' @include register.R
 #' @export
 #' @examples
@@ -71,7 +72,7 @@ calc_elevation <- function(engine = "extract",
     result %>%
       tidyr::pivot_longer(cols = dplyr::everything(), names_to = "variable") %>%
       dplyr::mutate(
-        datetime = as.Date("2000-02-01"),
+        datetime = as.POSIXct("2000-02-01T00:00:00Z"),
         unit = "m"
       ) %>%
       dplyr::select(datetime, variable, unit, value)

@@ -20,8 +20,8 @@
 #' @param stats Aggregation function with which the data are combined.
 #' Default: "mean".
 #' @keywords indicator
-#' @returns A function that returns a tibble with a column for the aggregated
-#'   GSW change indicator.
+#' @returns A function that returns an indicator tibble with change intensity
+#'   as variable and corresponding (unitless) values as value.
 #' @include register.R
 #' @export
 #' @examples
@@ -85,7 +85,7 @@ calc_gsw_change <- function(engine = "extract", stats = "mean") {
     results %>%
       tidyr::pivot_longer(cols = dplyr::everything(), names_to = "variable") %>%
       dplyr::mutate(
-        datetime = as.Date("2021-01-01"),
+        datetime = as.POSIXct("2021-01-01T00:00:00Z"),
         unit = "unitless"
       ) %>%
       dplyr::select(datetime, variable, unit, value)

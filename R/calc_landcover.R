@@ -12,8 +12,8 @@
 #'
 #' @name landcover
 #' @keywords indicator
-#' @returns A function that returns tibble with a column for area (in ha) and
-#'   the percentage covered per landcover class.
+#' @returns A function that returns an indicator tibble with landcover classes
+#'   as variables and corresponding areas (in ha) as value.
 #' @include register.R
 #' @export
 #' @examples
@@ -68,7 +68,7 @@ calc_landcover <- function() {
         dplyr::left_join(.esa_landcover_classes, by = "code") %>%
         dplyr::mutate(
           datetime = regmatches(datetime, regexpr("\\d{4}", datetime)),
-          datetime = as.Date(paste0(datetime, "-01-01")),
+          datetime = as.POSIXct(paste0(datetime, "-01-01T00:00:00Z")),
           variable = variable,
           unit = "ha"
         ) %>%

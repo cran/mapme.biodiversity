@@ -16,8 +16,8 @@ either one or multiple inputs as character "min", "max", "sum", "mean", "median"
 "sd" or "var".}
 }
 \value{
-A function that returns tibble with a column for population count
-statistics.
+A function that returns an indicator tibble with the specified
+populations statistics as variable and the corresponding values as value.
 }
 \description{
 WorldPop, which was initiated in 2013, offers easy access to spatial demographic
@@ -53,7 +53,7 @@ aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
   package = "mapme.biodiversity"
 ) \%>\%
   read_sf() \%>\%
-  get_resources(get_worldpop(years = 2000:2010)) \%>\%
+  get_resources(get_worldpop(years = 2010:2020)) \%>\%
   calc_indicators(
     calc_population_count(engine = "extract", stats = c("sum", "median"))
   ) \%>\%

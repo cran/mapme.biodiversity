@@ -1,3 +1,36 @@
+# mapme.biodiversity 0.8.0
+
+## General
+
+- updates `gfw_lossyear` resource to `v20240402` which entails emission data
+  between 2000 - 2023
+- removes the `nasa_firms` resource and associated `active_fire_counts` indicator
+- adds `mcd64a1` resource and `burned_area` indicator
+- `mapme.biodiveristy` now leverages GDAL for data I/O meaning that all GDAL
+  readable source data sets and writable destinations are now supported
+- `README.md` now includes a section on how to set up cloud-storages to use
+  as a destination for resource data
+- The quickstart vignette now uses GFW data as example data
+- chunking is now applied based on the area of an assets bounding box instead
+  of its own area
+- `write_portfolio()` now again serializes to a two-table GeoPackage and
+  re-introduces `read_portfolio()` (#294)
+- `datetime` column values are now encoded as `POSIXct`
+
+## Internal
+
+- exports `make_footprints()` to ease the process of creating footprints
+  for resource functions
+- exports `spds_exists()` for resource function to check if a data source
+  is exists
+- `get_*()` functions are now required to return footprint objects indicating 
+  the spatial extent of each elements and pointing towards a GDAL readable
+  data source in the `source` column
+- in case a user-specified destination is found, the package now uses 
+  `gdal_translate` to write data from source to destination
+- tests for long-running examples and tests are skipped on GA and CRAN
+- fixes a bug in checking if a portfolio inherits from `tbl_df`
+
 # mapme.biodiversity 0.7.0
 
 ## Bug fixes

@@ -14,8 +14,8 @@
 #'   single or multiple inputs as character. Supported statistics are: "mean",
 #'   "median", "sd", "min", "max", "sum" "var".
 #' @keywords indicator
-#' @returns A function that returns a tibble with a column for minimum
-#'   temperature statistics (in °C).
+#' @returns A function that returns an indicator tibble with minimum temperature
+#'   statistics as variables and corresponding values as value.
 #' @include register.R
 #' @export
 #' @examples
@@ -113,7 +113,7 @@ register_indicator(
 
   layer <- paste0("worldclim_", strsplit(names(worldclim), "_")[[1]][3])
   datetime <- unlist(lapply(names(worldclim), function(x) strsplit(x, "_")[[1]][4]))
-  datetime <- as.Date(paste0(tools::file_path_sans_ext(datetime), "-01"))
+  datetime <- as.POSIXct(paste0(datetime, "-01T00:00:00Z"))
 
   results <- select_engine(
     x = x,

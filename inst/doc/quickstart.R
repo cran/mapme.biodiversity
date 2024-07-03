@@ -10,7 +10,7 @@ library(sf)
 library(dplyr)
 library(tidyr)
 
-aoi_path <- system.file("extdata", "sierra_de_neiba_478140.gpkg", package = "mapme.biodiversity")
+aoi_path <- system.file("extdata", "gfw_sample.gpkg", package = "mapme.biodiversity")
 aoi <- st_read(aoi_path, quiet = TRUE)
 aoi
 
@@ -32,46 +32,48 @@ mapme_options(
 
 ## ----query-indicator----------------------------------------------------------
 available_indicators()
-available_indicators("population_count")
+available_indicators("treecover_area")
 
 ## ----help-indicator, eval = FALSE---------------------------------------------
-#  ?population_count
-#  help(population_count)
+#  ?treecover_area
+#  help(treecover_area)
 
 ## ----query-resources----------------------------------------------------------
 available_resources()
-available_resources("worldpop")
+available_resources("gfw_treecover")
 
 ## ----help-resource, eval = FALSE----------------------------------------------
-#  ?worldpop
-#  help(worldpop)
+#  ?gfw_treecover
+#  help(gfw_treecover)
+#  ?gfw_lossyear
+#  help(gfw_lossyear)
 
-## ----get-worldpop-------------------------------------------------------------
-aoi <- get_resources(x = aoi, get_worldpop(years = 2010:2015))
-
-## ----get-multi-resources, eval = FALSE----------------------------------------
-#  aoi <- get_resources(
-#    x = aoi,
-#    get_worldpop(years = 2010:2015),
-#    get_gfw_treecover(version = "GFC-2021-v1.9")
-#  )
+## ----get-gfw------------------------------------------------------------------
+aoi <- get_resources(
+  x = aoi,
+  get_gfw_treecover(version = "GFC-2023-v1.11"),
+  get_gfw_lossyear(version = "GFC-2023-v1.11")
+)
 
 ## ----calc-indicator-----------------------------------------------------------
-aoi <- calc_indicators(aoi, calc_population_count(engine = "zonal", stats = "sum"))
+aoi <- calc_indicators(
+  aoi,
+  calc_treecover_area(years = 2000:2023, min_size = 1, min_cover = 30)
+)
 
 ## ----print-aoi----------------------------------------------------------------
 aoi
 
 ## ----print-indicator----------------------------------------------------------
-aoi$population_count
+aoi$treecover_area
 
-## ----plot-popcount, echo = FALSE, warning=FALSE-------------------------------
+## ----plot-treecover, echo = FALSE, warning=FALSE------------------------------
 mapme_options(verbose = FALSE)
 data <- portfolio_long(aoi)
 
 plot(value ~ datetime, data,
-  main = "Population totals over time",
-  xlab = "Year", ylab = "Persons",
+  main = "Treecover over time",
+  xlab = "Year", ylab = "ha",
   pch = 16, col = "steelblue"
 )
 
@@ -91,7 +93,7 @@ portfolio_long(aoi, drop_geoms = TRUE)
 #  with_progress({
 #    aoi <- calc_indicators(
 #      aoi,
-#      calc_treecover_area_and_emissions(
+#      calc_treecover_area(
 #        min_size = 1,
 #        min_cover = 30
 #      )
@@ -102,8 +104,8 @@ portfolio_long(aoi, drop_geoms = TRUE)
 
 ## ----write-portfolio----------------------------------------------------------
 dsn <- tempfile(fileext = ".gpkg")
-write_portfolio(x = aoi, dsn = dsn, format = "long", quiet = TRUE)
-from_disk <- st_read(dsn, quiet = TRUE)
+write_portfolio(x = aoi, dsn = dsn, quiet = TRUE)
+from_disk <- read_portfolio(dsn, quiet = TRUE)
 from_disk
 
 ## ----delete-dsn, echo=FALSE---------------------------------------------------

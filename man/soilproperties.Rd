@@ -16,9 +16,8 @@ single or multiple inputs as character. Supported statistics are: "mean",
 "median", "sd", "min", "max", "sum" "var".}
 }
 \value{
-A tibble with a column for the SoilGrid layer, the depth and the model
-output statistic as well as additional columns for all zonal statistics
-specified via \code{stats_soil}
+A function that returns an indicator tibble with soilgrid layers and
+statistics as variables and the corresponding statistics as value.
 }
 \description{
 This indicator allows the extraction of zonal statistics for resource layers
@@ -34,38 +33,32 @@ The required resource for this indicator is:
 }
 }
 \examples{
-\dontshow{
-mapme.biodiversity:::.copy_resource_dir(file.path(tempdir(), "mapme-data"))
-}
-\dontrun{
-library(sf)
-library(mapme.biodiversity)
+if (FALSE) {
+  library(sf)
+  library(mapme.biodiversity)
 
-outdir <- file.path(tempdir(), "mapme-data")
-dir.create(outdir, showWarnings = FALSE)
+  mapme_options(
+    outdir = NULL,
+    verbose = FALSE
+  )
 
-mapme_options(
-  outdir = outdir,
-  verbose = FALSE
-)
-
-aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
-  package = "mapme.biodiversity"
-) \%>\%
-  read_sf() \%>\%
-  get_resources(
-    get_soilgrids(
-      layers = c("clay", "silt"),
-      depths = c("0-5cm", "5-15cm"),
-      stats = "mean"
-    )
+  aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
+    package = "mapme.biodiversity"
   ) \%>\%
-  calc_indicators(
-    calc_soilproperties(engine = "extract", stats = c("mean", "median"))
-  ) \%>\%
-  portfolio_long()
+    read_sf() \%>\%
+    get_resources(
+      get_soilgrids(
+        layers = "clay",
+        depths = "0-5cm",
+        stats = "mean"
+      )
+    ) \%>\%
+    calc_indicators(
+      calc_soilproperties(engine = "extract", stats = c("mean", "median"))
+    ) \%>\%
+    portfolio_long()
 
-aoi
+  aoi
 }
 }
 \keyword{indicator}

@@ -18,8 +18,8 @@
 #' @param min_cover The minimum threshold of stand density for a pixel to be
 #'   considered forest in the year 2000.
 #' @keywords indicator
-#' @returns A function that returns tibble with a column for years, treecover
-#'   (in ha), and emissions (in Mg CO2).
+#' @returns A function that returns an indicator tibble with variables treecover
+#'   and emissions ind corresponding values (in ha and Mg) as value.
 #' @include register.R
 #' @export
 #' @examples
@@ -133,7 +133,7 @@ calc_treecover_area_and_emissions <- function(years = 2000:2023,
     gfw_stats %>%
       tidyr::pivot_longer(-years, names_to = "variable") %>%
       dplyr::mutate(
-        datetime = as.Date(paste0(years, "-01-01")),
+        datetime = as.POSIXct(paste0(years, "-01-01T00:00:00Z")),
         unit = ifelse(variable == "treecover", "ha", "Mg")
       ) %>%
       dplyr::select(datetime, variable, unit, value)

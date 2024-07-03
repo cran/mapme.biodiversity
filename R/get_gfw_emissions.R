@@ -4,7 +4,7 @@
 #' "Global maps of twenty-first century forest carbon fluxes.". It
 #' represents "the greenhouse gas
 #' emissions arising from stand-replacing forest disturbances that occurred in
-#' each modelled year (megagrams CO2 emissions/ha, between 2001 and 2021).
+#' each modelled year (megagrams CO2 emissions/ha, between 2001 and 2023).
 #' Emissions include all relevant ecosystem carbon pools (aboveground biomass,
 #' belowground biomass, dead wood, litter, soil) and greenhouse gases (CO2, CH4,
 #' N2O)." The area unit that is downloaded here corresponds to the
@@ -19,7 +19,7 @@
 #'
 #' @name gfw_emissions
 #' @keywords resource
-#' @returns A function that returns a character of file paths.
+#' @returns A function that returns an `sf` footprint object.
 #' @references Harris, N.L., Gibbs, D.A., Baccini, A. et al. Global maps of
 #' twenty-first century forest carbon fluxes. Nat. Clim. Chang. 11, 234–240
 #' (2021). https://doi.org/10.1038/s41558-020-00976-6
@@ -31,22 +31,23 @@ get_gfw_emissions <- function() {
            name = "gfw_emissions",
            type = "raster",
            outdir = mapme_options()[["outdir"]],
-           verbose = mapme_options()[["verbose"]],
-           testing = mapme_options()[["testing"]]) {
+           verbose = mapme_options()[["verbose"]]) {
     index_file <- system.file("extdata", "greenhouse_index.geosjon", package = "mapme.biodiversity")
     spatialindex <- st_read(index_file, quiet = TRUE)
+
     row_ids <- unique(unlist(st_intersects(x, spatialindex)))
-    tile_ids <- spatialindex$tile_id[row_ids]
+    tile_str <- spatialindex$tile_id[row_ids]
+
     urls <- as.character(spatialindex$Mg_CO2e_px_download[row_ids])
-    filenames <- file.path(
-      outdir,
-      sprintf("gfw_forest_carbon_gross_emissions_Mg_CO2e_px_%s.tif", tile_ids)
+    urls <- paste0("/vsicurl/", urls)
+    filenames <- sprintf("gfw_forest_carbon_gross_emissions_Mg_CO2e_px_%s.tif", tile_str)
+
+    fps <- spatialindex[row_ids, "geometry"]
+    fps[["source"]] <- urls
+    make_footprints(fps, filenames,
+      what = "raster",
+      co = c("-co", "INTERLEAVE=BAND", "-co", "COMPRESS=DEFLATE")
     )
-    if (mapme_options()[["testing"]]) {
-      return(basename(filenames))
-    }
-    filenames <- download_or_skip(urls, filenames, check_existence = FALSE)
-    filenames
   }
 }
 

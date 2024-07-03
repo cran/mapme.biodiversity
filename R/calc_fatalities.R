@@ -56,9 +56,8 @@
 #' @param precision_time A numeric indicating the precision value of the
 #'   temporal coding up to which events are included. Defaults to 1.
 #' @keywords indicator
-#' @returns A function that returns a tibble with a column for the date
-#'   (year and month), the type of violence an counts of civilian fatalities,
-#'   unknown fatalities and the total sum of fatalities.
+#' @returns A function that returns an indicator tibble with the type of
+#'   violence as variable and counts of civilian fatalities as value.
 #' @references Sundberg, Ralph, and Erik Melander, 2013, “Introducing the UCDP
 #'   Georeferenced Event Dataset”, Journal of Peace Research, vol.50, no.4, 523-532
 #' @include register.R
@@ -76,7 +75,8 @@
 #'
 #' mapme_options(
 #'   outdir = outdir,
-#'   verbose = FALSE
+#'   verbose = FALSE,
+#'   chunk_size = 1e8
 #' )
 #'
 #' aoi <- system.file("extdata", "burundi.gpkg",
@@ -117,10 +117,10 @@ calc_fatalities <- function(years = 1989:2023,
     date_prec <- where_prec <- date_start <- type_of_violence <- NULL
     year <- month <- deaths_a <- deaths_b <- event_count <- type_of_death <- NULL
 
-    ucdp_ged <- ucdp_ged[[1]]
-    if (length(ucdp_ged) == 0) {
-      return(NA)
+    if (is.null(ucdp_ged)) {
+      return(NULL)
     }
+    ucdp_ged <- ucdp_ged[[1]]
 
     months_tibble <- tidyr::expand_grid(
       year = as.character(years),
@@ -176,7 +176,7 @@ calc_fatalities <- function(years = 1989:2023,
       tibble::as_tibble() %>%
       tidyr::pivot_longer(cols = tidyr::starts_with("death"), names_to = "type_of_death") %>%
       dplyr::mutate(
-        datetime = month,
+        datetime = as.POSIXct(paste0(month, "T00:00:00Z")),
         variable = paste0(type_of_violence, "_", type_of_death),
         unit = "count",
         value = value
