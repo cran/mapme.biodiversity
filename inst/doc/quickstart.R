@@ -83,17 +83,17 @@ portfolio_long(aoi, drop_geoms = TRUE)
 
 ## ----parallel-1, eval = FALSE-------------------------------------------------
 #  library(future)
-#  plan(list(sequential, tweak(cluster, workers = 6)))
+#  plan(cluster, workers = 6)
 
 ## ----parallel, eval = FALSE---------------------------------------------------
 #  library(progressr)
 #  
-#  plan(list(tweak(cluster, workers = 2), tweak(cluster, workers = 4)))
+#  plan(cluster, workers = 2)
 #  
 #  with_progress({
 #    aoi <- calc_indicators(
 #      aoi,
-#      calc_treecover_area(
+#      calc_treecover_area_and_emissions(
 #        min_size = 1,
 #        min_cover = 30
 #      )

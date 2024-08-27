@@ -9,12 +9,31 @@
   dir.create(outdir, showWarnings = FALSE)
   mapme_options(
     outdir = outdir,
-    chunk_size = 10000,
+    chunk_size = 100000,
     retries = 3,
     log_dir = NULL,
     verbose = TRUE
   )
   invisible()
+}
+
+.probe_dsn <- function(dsn) {
+  if (is.null(dsn)) {
+    return()
+  }
+  dst <- file.path(dsn, "mapme-probe.tif")
+  r <- terra::rast(resolution = c(180, 180))
+  r[] <- 1L:2L
+
+  status <- try(
+    writeRaster(r, dst, datatype = "INT1U", overwrite = TRUE),
+    silent = TRUE
+  )
+
+  if (inherits(status, "try-error")) {
+    msg <- sprintf("Destination '%s' is not writeable via GDAL.", dsn)
+    stop(msg)
+  }
 }
 
 #' Portfolio methods for mapme.biodiversity
@@ -52,15 +71,16 @@
 mapme_options <- function(..., outdir, chunk_size, retries, verbose, log_dir) {
   if (!missing(outdir)) {
     stopifnot(is.null(outdir) | (is.character(outdir) && length(outdir) == 1))
+    .probe_dsn(outdir)
     .pkgenv$outdir <- outdir
   }
 
   if (!missing(chunk_size)) {
-    stopifnot(length(chunk_size) == 1 && is.numeric(chunk_size))
+    stopifnot(is.null(chunk_size) | (length(chunk_size) == 1 && is.numeric(chunk_size)))
     .pkgenv$chunk_size <- chunk_size
   }
 
-  if(!missing(retries)){
+  if (!missing(retries)) {
     stopifnot(length(retries) == 1 && is.numeric(retries))
     .pkgenv$retries <- retries
   }
@@ -70,7 +90,7 @@ mapme_options <- function(..., outdir, chunk_size, retries, verbose, log_dir) {
     .pkgenv$verbose <- verbose
   }
 
-  if (!missing(log_dir)){
+  if (!missing(log_dir)) {
     stopifnot(is.null(log_dir) | (is.character(log_dir) && length(log_dir) == 1))
     .pkgenv$log_dir <- log_dir
   }

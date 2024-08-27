@@ -1,0 +1,17 @@
+test_that("get_hfp works", {
+  .clear_resources()
+  outdir <- file.path(tempdir(), "mapme.data")
+  .copy_resource_dir(outdir)
+  mapme_options(outdir = NULL)
+  expect_warning(get_humanfootprint(years = 2010), "outdir")
+  mapme_options(outdir = outdir)
+  expect_message(get_humanfootprint(years = 1999:2000), "target years")
+
+  skip_on_cran()
+  skip_if_not(Sys.getenv("USER") == "darius")
+  ghfp <- get_humanfootprint(years = 2010)
+  fps <- ghfp(outdir = file.path(outdir, "humanfootprint"))
+  expect_silent(.check_footprints(fps))
+  expect_equal(nrow(fps), 1)
+  expect_equal(fps$filename, "hfp2010.tif")
+})

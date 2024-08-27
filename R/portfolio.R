@@ -38,10 +38,15 @@ write_portfolio <- function(x,
   data <- st_drop_geometry(dplyr::select(x, assetid, dplyr::all_of(names(inds_cols))))
   purrr::walk(names(inds_cols), function(ind) {
     tmp <- dplyr::select(data, assetid, dplyr::all_of(ind))
-    tmp <- tidyr::unnest(tmp, dplyr::all_of(ind), keep_empty = TRUE)
+    tmp <- tidyr::unnest(tmp, dplyr::all_of(ind), keep_empty = FALSE)
     tmp[["indicator"]] <- ind
-    tmp <- tmp[, c("assetid", "indicator", "datetime", "variable", "unit", "value")]
-    write_sf(tmp, dsn, "indicators", append = TRUE, ...)
+    vars <- c("assetid", "indicator", "datetime", "variable", "unit", "value")
+    if (!all(vars %in% names(tmp))) {
+      msg <- sprintf("Indicator '%s' contained no valid values. Dropping it from the output.", ind)
+      warning(msg)
+      return()
+    }
+    write_sf(tmp[, vars], dsn, "indicators", append = TRUE, ...)
   })
 
   return(invisible(dsn))
@@ -208,14 +213,17 @@ portfolio_wide <- function(x, indicators = NULL, drop_geoms = FALSE) {
   if (!inherits(x, "tbl_df")) {
     x <- st_as_sf(tibble::as_tibble(x))
   }
-  if ("assetid" %in% names(x) && verbose) {
-    msg <- paste("Found a column named 'assetid'.",
-      "Overwritting its values with a unique identifier.",
+  has_assetid <- "assetid" %in% names(x)
+  if (!has_assetid) x[["assetid"]] <- 1:nrow(x)
+  is_unique <- length(unique(x[["assetid"]])) == nrow(x)
+  if (!is_unique) {
+    msg <- paste("Found a column named 'assetid' with non-unique identifiers.",
+      "Overwritting its values.",
       sep = " "
     )
     message(msg)
+    x[["assetid"]] <- 1:nrow(x)
   }
-  x[["assetid"]] <- 1:nrow(x)
   x
 }
 

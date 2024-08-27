@@ -65,6 +65,16 @@ test_that("portoflio I/O works as expected", {
   expect_true(!is.null(data[["biome2"]][[1]]))
   expect_true(is.null(data[["biome"]][[2]]))
   expect_true(is.null(data[["biome2"]][[2]]))
+
+  file.remove(dsn)
+
+  x$biome2 <- list(c(NULL, NULL))
+  expect_warning(write_portfolio(x, dsn), "Dropping")
+  data <- read_portfolio(dsn)
+  expect_true(!"biome2" %in% names(data))
+  suppressWarnings(inds <- read_sf(dsn, "indicators"))
+  # check NULL was not writte
+  expect_equal(nrow(inds), 1)
 })
 
 test_that(".check_portfolio works as expected", {
@@ -89,7 +99,12 @@ test_that(".check_portfolio works as expected", {
     "CRS of x is not EPSG:4326. Attempting to transform."
   )
   mapme_options(verbose = TRUE)
-  expect_message(.check_portfolio(x), "Found a column named 'assetid'.")
+  expect_silent(.check_portfolio(x))
+  x$assetid <- NULL
+  expect_silent(x <- .check_portfolio(x))
+  expect_true("assetid" %in% names(x))
+  x <- do.call(rbind, lapply(1:2, function(y) x))
+  expect_message(.check_portfolio(x), "Found a column named 'assetid' with non-unique identifiers")
 })
 
 test_that("portfolio helpers work as expected", {

@@ -73,28 +73,29 @@ check_available_years <- function(target_years,
 #' @keywords utils
 #' @export
 check_namespace <- function(pkg, error = TRUE) {
+  verb <- ifelse(error, "required", "recommended")
   if (!requireNamespace(pkg, quietly = TRUE)) {
-    msg <- paste("R package '%s' required.\n",
+    msg <- paste("R package '%s' %s.\n",
       "Please install via `install.packages('%s')`",
       sep = ""
     )
-    msg <- sprintf(msg, pkg, pkg)
+    msg <- sprintf(msg, pkg, verb, pkg)
     if (error) {
       stop(msg, .call = FALSE)
     } else {
-      warning(msg, .call = FALSE)
+      message(msg, .call = FALSE)
       return(invisible(FALSE))
     }
   }
   invisible(TRUE)
 }
 
-#' @importFrom httr http_error
 .has_internet <- function() {
   if (Sys.getenv("mapme_check_connection", unset = "TRUE") == "FALSE") {
     return(TRUE)
   }
-  has_internet <- !httr::http_error("www.google.com")
+  rsp <- httr2::req_perform(httr2::request("www.google.com"))
+  has_internet <- !httr2::resp_is_error(rsp)
   if (!has_internet) {
     message("There seems to be no internet connection. Cannot download resources.")
   }
