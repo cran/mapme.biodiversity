@@ -425,7 +425,7 @@ potential errors or warnings.</p>
 <p>You can check which indicators are available via the
 <code>available_indicators()</code> function:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">available_indicators</span>()</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 37 × 3</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 38 × 3</span></span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt;    name                          description                           resources</span></span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                         &lt;chr&gt;                                 &lt;list&gt;   </span></span>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt;  1 biodiversity_intactness_index Averaged biodiversity intactness ind… &lt;tibble&gt; </span></span>
@@ -438,7 +438,7 @@ potential errors or warnings.</p>
 <span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt;  8 exposed_population            Number of people exposed to conflict… &lt;tibble&gt; </span></span>
 <span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt;  9 fatalities                    Number of fatalities by group of con… &lt;tibble&gt; </span></span>
 <span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 10 gsw_change                    Statistics of the surface water chan… &lt;tibble&gt; </span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; # ℹ 27 more rows</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; # ℹ 28 more rows</span></span>
 <span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="fu">available_indicators</span>(<span class="st">&quot;treecover_area&quot;</span>)</span>
 <span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
 <span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt;   name           description                  resources       </span></span>
@@ -461,20 +461,20 @@ considered as forested.</p>
 resource. We can learn about all available resources using the
 <code>available_resources()</code> function:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">available_resources</span>()</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 33 × 5</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt;    name                            description              licence source type </span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                           &lt;chr&gt;                    &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;</span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt;  1 biodiversity_intactness_index   Biodiversity Intactness… CC-BY-… https… rast…</span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt;  2 chelsa                          Climatologies at High r… Unknow… https… rast…</span></span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt;  3 chirps                          Climate Hazards Group I… CC - u… https… rast…</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt;  4 esalandcover                    Copernicus Land Monitor… CC-BY … https… rast…</span></span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt;  5 fritz_et_al                     Drivers of deforestatio… CC-BY … https… rast…</span></span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;  6 gfw_emissions                   Global Forest Watch - C… CC-BY … https… rast…</span></span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt;  7 gfw_lossyear                    Global Forest Watch - Y… CC-BY … https… rast…</span></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt;  8 gfw_treecover                   Global Forest Watch - P… CC-BY … https… rast…</span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt;  9 global_surface_water_change     Global Surface Water - … https:… https… rast…</span></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; 10 global_surface_water_occurrence Global Surface Water - … https:… https… rast…</span></span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; # ℹ 23 more rows</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 34 × 5</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt;    name                          description                licence source type </span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                         &lt;chr&gt;                      &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt;  1 accessibility_2000            Accessibility data for th… See JR… https… rast…</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt;  2 biodiversity_intactness_index Biodiversity Intactness I… CC-BY-… https… rast…</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt;  3 chelsa                        Climatologies at High res… Unknow… https… rast…</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt;  4 chirps                        Climate Hazards Group Inf… CC - u… https… rast…</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt;  5 esalandcover                  Copernicus Land Monitorin… CC-BY … https… rast…</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;  6 fritz_et_al                   Drivers of deforestation … CC-BY … https… rast…</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt;  7 gfw_emissions                 Global Forest Watch - CO2… CC-BY … https… rast…</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt;  8 gfw_lossyear                  Global Forest Watch - Yea… CC-BY … https… rast…</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt;  9 gfw_treecover                 Global Forest Watch - Per… CC-BY … https… rast…</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; 10 global_surface_water_change   Global Surface Water - Ch… https:… https… rast…</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; # ℹ 24 more rows</span></span>
 <span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="fu">available_resources</span>(<span class="st">&quot;gfw_treecover&quot;</span>)</span>
 <span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 5</span></span>
 <span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt;   name          description                                 licence source type </span></span>

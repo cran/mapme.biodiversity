@@ -1,3 +1,15 @@
+# mapme.biodiversity 0.9.1
+
+## General
+- new resources: 
+  - `get_accessibility_2000()` (#365, @fBedecarrats)
+- new indicators:
+  - `calc_traveltime_2000()` (#365, @fBedecarrats)
+  
+## Internal 
+- adjusts test for `get_gsw_timseries()` and `calc_gsw_timeseries()` to write
+  to temporal directory of the R session to fix CRAN errors (#370, @karpfen)
+
 # mapme.biodiversity 0.9.0
 
 ## General

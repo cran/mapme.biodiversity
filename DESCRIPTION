@@ -1,6 +1,6 @@
 Package: mapme.biodiversity
 Title: Efficient Monitoring of Global Biodiversity Portfolios
-Version: 0.9.0
+Version: 0.9.1
 Authors@R: c(person(given = "Darius A.", 
                     family = "G\u00F6rgen", 
                     email =  "info@dariusgoergen.com", 
@@ -54,24 +54,24 @@ Collate: 'register.R' 'calc_biodiversity_intactness_index.R'
         'calc_precipitation_chirps.R' 'calc_precipitation_wc.R'
         'calc_slope.R' 'calc_soilproperties.R'
         'calc_temperature_max_wc.R' 'calc_temperature_min_wc.R'
-        'calc_traveltime.R' 'calc_treecover_area.R'
-        'calc_treecover_area_and_emissions.R'
+        'calc_traveltime.R' 'calc_traveltime_2000.R'
+        'calc_treecover_area.R' 'calc_treecover_area_and_emissions.R'
         'calc_treecoverloss_emissions.R' 'calc_tri.R' 'chunking.R'
-        'engines.R' 'get_biodiversity_intactness_index.R'
-        'get_carbon.R' 'get_chelsa.R' 'get_chirps.R'
-        'get_esalandcover.R' 'get_fritz_et_al.R' 'get_gfw_emissions.R'
-        'get_gfw_lossyear.R' 'get_gfw_treecover.R' 'get_gmw.R'
-        'get_gsw.R' 'get_gsw_time_series.R' 'get_hfp.R'
-        'get_ipbes_biomes.R' 'get_iucn.R'
-        'get_key_biodiversity_areas.R' 'get_mcd64A1.R'
+        'engines.R' 'get_accessibility_2000.R'
+        'get_biodiversity_intactness_index.R' 'get_carbon.R'
+        'get_chelsa.R' 'get_chirps.R' 'get_esalandcover.R'
+        'get_fritz_et_al.R' 'get_gfw_emissions.R' 'get_gfw_lossyear.R'
+        'get_gfw_treecover.R' 'get_gmw.R' 'get_gsw.R'
+        'get_gsw_time_series.R' 'get_hfp.R' 'get_ipbes_biomes.R'
+        'get_iucn.R' 'get_key_biodiversity_areas.R' 'get_mcd64A1.R'
         'get_nasa_grace.R' 'get_nasa_srtm.R' 'get_nelson_et_al.R'
         'get_soilgrids.R' 'get_teow.R' 'get_ucdp_ged.R'
         'get_worldclim.R' 'get_worldpop.R' 'mapme.biodiversity-pkg.R'
         'portfolio.R' 'spatial-utils.R' 'utils.R'
 NeedsCompilation: no
-Packaged: 2024-08-27 09:58:01 UTC; rstudio
+Packaged: 2024-09-02 07:12:24 UTC; rstudio
 Author: Darius A. Görgen [aut, cre] (<https://orcid.org/0009-0008-5503-7704>),
   Om Prakash Bhandari [aut]
 Maintainer: Darius A. Görgen <info@dariusgoergen.com>
 Repository: CRAN
-Date/Publication: 2024-08-27 10:50:06 UTC
+Date/Publication: 2024-09-02 09:20:01 UTC
