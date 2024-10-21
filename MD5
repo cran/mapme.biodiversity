@@ -1,6 +1,6 @@
-9fd3e73e5503c1d67e715b53642a66cc *DESCRIPTION
+c12dfa684504cfd01beea6adfa711801 *DESCRIPTION
 a91f228b90904e8002d69530622c71bd *NAMESPACE
-bf47d5f326c0f347664b417ad7c9253d *NEWS.md
+75b328786bc694a9f81613672d7f7704 *NEWS.md
 aa1c079d91880fe94d7940d918736ebd *R/calc_biodiversity_intactness_index.R
 ea0713b18940a2328885639c5ee0a5e5 *R/calc_biome.R
 70e86277753e6a4e4f8152f93c04234b *R/calc_burned_area.R
@@ -62,7 +62,7 @@ f9ccac82775f50997adc233e1d510dc4 *R/get_gsw_time_series.R
 8d61ab33c54696e295f75ce9b3c459bb *R/get_key_biodiversity_areas.R
 070581c93a26d001ec6d9fadbf6a9e95 *R/get_mcd64A1.R
 7bf82a7e6e6088a41f34d964807a874c *R/get_nasa_grace.R
-91629c213fbf99b692363a9ff00e83b6 *R/get_nasa_srtm.R
+de647639bd7cd5a9cdc7945f4f6f4c08 *R/get_nasa_srtm.R
 0f6fd2a36bfffd22582052942aa809ab *R/get_nelson_et_al.R
 06ebc0e7ae9ce9694a13909ba902dd2c *R/get_resources.R
 6dcc16ab36e00604474ff58cfd609648 *R/get_soilgrids.R
@@ -377,7 +377,7 @@ dd3adc59898333c7762fad44e706c654 *tests/testthat/test-calc_fatalities_acled.R
 7e92bbb17ecb2696e9517acbad919463 *tests/testthat/test-calc_gsw_time_series.R
 7f92e79f0362581a635c363610513883 *tests/testthat/test-calc_gsw_transitions.R
 c7a601930724eadd58091f5230b8609d *tests/testthat/test-calc_hfp.R
-72ca59eb353c329386f9133d8be5dd42 *tests/testthat/test-calc_indicator.R
+96c6f16afcb3ddee0ab76c2721c8abb2 *tests/testthat/test-calc_indicator.R
 19ddd747cbf1ca730a57537b842cb04f *tests/testthat/test-calc_iucn.R
 f2a9fd11e5eadd4ac6e9dd3264ae8091 *tests/testthat/test-calc_key_biodiversity_areas.R
 e350f73e1d45f90a12f26bb4a99209b7 *tests/testthat/test-calc_landcover.R
