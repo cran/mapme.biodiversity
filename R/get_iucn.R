@@ -16,12 +16,11 @@
 #' @returns A function that returns an `sf` footprint object.
 #' @references IUCN (2024). The IUCN Red List of Threatened Species.
 #'   \url{https://www.iucnredlist.org}
-#'   \doi{https://doi.org/10.1038/s41597-022-01284-8}
 #' @source \url{https://www.iucnredlist.org/resources/other-spatial-downloads}
 #' @include register.R
 #' @export
 get_iucn <- function(paths = NULL) {
-  if (is.null(paths) || !all(file.exists(paths)) || !all(endsWith(paths, ".tif"))) {
+  if (is.null(paths) || !all(endsWith(paths, ".tif")) || !all(sapply(paths, spds_exists, what = "raster"))) {
     stop("Expecting paths to point towards existing GTiff files.")
   }
 

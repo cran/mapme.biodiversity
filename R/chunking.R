@@ -3,19 +3,24 @@
   metadata <- st_drop_geometry(x)
   x <- x[, "assetid"]
   x[["chunked"]] <- FALSE
-  st_geometry(x) <- "geometry"
+  geom_org <- attr(x, "sf_column")
 
   x <- .split_dateline(x)
   if (!is.null(chunk_size)) {
     x <- .split_multipolygons(x, chunk_size)
     x <- .chunk_geoms(x, chunk_size)
   }
-  .finalize_assets(x, metadata)
+  names(x)[names(x) == attr(x, "sf_column")] <- geom_org
+  st_geometry(x) <- geom_org
+
+  .finalize_assets(x, metadata, geom_org)
 }
 
-.finalize_assets <- function(x, meta) {
+.finalize_assets <- function(x, meta, geom_org) {
   stopifnot("assetid" %in% names(x) && "assetid" %in% names(meta))
-  x <- st_sf(tibble::as_tibble(dplyr::left_join(meta, x, by = "assetid")))
+  x <- st_sf(tibble::as_tibble(dplyr::left_join(meta, x, by = "assetid")),
+    sf_column_name = geom_org
+  )
   x$chunked <- NULL
   .geom_last(x)
 }
@@ -46,32 +51,6 @@
   casted <- suppressWarnings(st_cast(geom[!is_poly, ], "POLYGON"))
   polys <- st_sf(rbind(polys, casted))
   .try_make_valid(polys)
-}
-
-.try_make_valid <- function(geom) {
-  stopifnot(inherits(geom, "sf"))
-  is_invalid <- !st_is_valid(geom)
-
-  if (!all(!is_invalid)) {
-    geom[is_invalid, ] <- st_make_valid(geom[is_invalid, ])
-    still_invalid <- !st_is_valid(geom[is_invalid, ])
-    still_invalid <- which(is_invalid)[still_invalid]
-
-    if (length(still_invalid) > 0) {
-      geom <- geom[-still_invalid, ]
-    }
-  }
-
-  types <- st_geometry_type(geom)
-  if (any(types == "GEOMETRYCOLLECTION")) {
-    cols <- geom[types == "GEOMETRYCOLLECTION", ]
-    cols <- suppressWarnings(st_cast(cols))
-    types2 <- st_geometry_type(cols)
-    cols <- cols[types2 %in% c("POLYGON", "MULTIPOLYGON"), ]
-    geom <- rbind(geom[types != "GEOMETRYCOLLECTION", ], cols)
-  }
-
-  geom
 }
 
 .split_multipolygons <- function(x, chunk_size) {
@@ -125,7 +104,8 @@
   n <- ceiling(sqrt(.calc_bbox_areas(geom) / chunk_size))
   geom_grid <- st_make_grid(geom, n = n)
   geom_grid <- st_intersection(geom_grid, geom)
-  geom_grid <- st_sf(geometry = geom_grid, assetid = geom[["assetid"]], chunked = TRUE)
+  geom_grid <- st_sf(geom_grid, assetid = geom[["assetid"]], chunked = TRUE)
+  st_geometry(geom_grid) <- attr(geom, "sf_col")
   .try_make_valid(geom_grid)
 }
 
@@ -134,14 +114,14 @@
   stopifnot(agg %in% available_stats)
 
   switch(agg,
-         sum = sum,
-         mean = mean,
-         median = median,
-         sd = sd,
-         min = min,
-         max = max,
-         sum = sum,
-         var = var
+    sum = sum,
+    mean = mean,
+    median = median,
+    sd = sd,
+    min = min,
+    max = max,
+    sum = sum,
+    var = var
   )
 }
 

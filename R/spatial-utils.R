@@ -34,6 +34,13 @@
 #'
 spds_exists <- function(path, oo = character(0), what = c("vector", "raster")) {
   what <- match.arg(what)
+  # path <- normalizePath(path, mustWork = FALSE)
+  # On Windows this would add drive letter ('C:\\', etc.) at the beginning of the path,
+  # which is wrong for remote paths like '/vsicurl/https://...'
+  norm_path <- try(normalizePath(path, mustWork = TRUE), silent = TRUE)
+  if (!inherits(norm_path, "try-error")) {
+    path <- norm_path
+  }
   util <- switch(what,
     vector = "ogrinfo",
     raster = "gdalinfo"
@@ -74,7 +81,7 @@ spds_exists <- function(path, oo = character(0), what = c("vector", "raster")) {
 #'  or raster sources, then internal footprint functions are called, or an
 #'  sf object which will be appended for filenames and potential options.
 #' @param filenames A character vector indicating the filenames of the source
-#'   data sets if they were written to a destionation. Defaults to `basename(srcs)`
+#'   data sets if they were written to a destination. Defaults to `basename(srcs)`
 #'   in case of character type or `basename(srcs[["source"]])` in case of
 #'   an sf object.
 #' @param what A character vector indicating if the files are vector or raster
@@ -138,6 +145,7 @@ make_footprints <- function(srcs = NULL,
 
   if (inherits(srcs, "character")) {
     what <- match.arg(what)
+    srcs <- normalizePath(srcs, mustWork = FALSE)
     srcs <- switch(what,
       vector = purrr::map2(srcs, oo, function(src, opt) .vector_footprint(src, opt)),
       raster = purrr::map2(srcs, oo, function(src, opt) .raster_footprint(src, opt)),
@@ -210,8 +218,7 @@ prep_resources <- function(x, avail_resources = NULL, resources = NULL, mode = c
   }
 
   bboxs <- purrr::map_vec(layers_info, .vector_bbox)
-  bbox <- st_as_sf(st_union(bboxs))
-  st_geometry(bbox) <- "geometry"
+  bbox <- st_sf(geometry = st_as_sfc(st_bbox(st_union(bboxs)))) # ordered for S2
   bbox["source"] <- src
   bbox
 }
@@ -310,26 +317,14 @@ prep_resources <- function(x, avail_resources = NULL, resources = NULL, mode = c
 
 .raster_bbox <- function(info) {
   crs <- st_crs(info[["coordinateSystem"]][["wkt"]])
-
-  bbox <- try(
-    {
-      poly <- jsonlite::toJSON(info[["wgs84Extent"]], auto_unbox = TRUE)
-      bbox <- st_read(poly, quiet = TRUE)
-      st_transform(bbox, crs)
-    },
-    silent = TRUE
-  )
-
-  if (inherits(bbox, "try-error") || st_is_empty(bbox)) {
-    coords <- info[["cornerCoordinates"]]
-    bbox <- st_bbox(c(
-      xmin = coords$lowerLeft[[1]],
-      xmax = coords$upperRight[[1]],
-      ymin = coords$lowerLeft[[2]],
-      ymax = coords$upperLeft[[2]]
-    ), crs = crs)
-    bbox <- st_as_sf(st_as_sfc(bbox))
-  }
+  coords <- info[["cornerCoordinates"]]
+  bbox <- st_bbox(c(
+    xmin = coords$lowerLeft[[1]],
+    xmax = coords$upperRight[[1]],
+    ymin = coords$lowerLeft[[2]],
+    ymax = coords$upperLeft[[2]]
+  ), crs = crs)
+  bbox <- st_sf(geometry = st_as_sfc(st_bbox(bbox))) # ordered for S2
   bbox
 }
 
@@ -403,7 +398,9 @@ prep_resources <- function(x, avail_resources = NULL, resources = NULL, mode = c
                       what = c("vector", "raster")) {
   what <- match.arg(what)
   stopifnot(is.character(source) && length(source) == 1)
+  source <- normalizePath(source, mustWork = FALSE)
   stopifnot(is.character(destination) && length(destination) == 1)
+  destination <- normalizePath(destination, mustWork = FALSE)
   stopifnot(is.null(opts) || is.character(opts))
   if (is.null(opts)) opts <- character(0)
 
@@ -429,8 +426,34 @@ prep_resources <- function(x, avail_resources = NULL, resources = NULL, mode = c
 .get_intersection <- function(x, tindex) {
   # https://github.com/r-spatial/sf/issues/2441
   org <- getOption("s2_oriented")
-  options(s2_oriented=TRUE)
-  on.exit(options(s2_oriented=org))
+  options(s2_oriented = TRUE)
+  on.exit(options(s2_oriented = org))
   suppressMessages(targets <- st_intersects(x, tindex, sparse = FALSE))
   tindex[which(colSums(targets) > 0), ]
+}
+
+.try_make_valid <- function(geom) {
+  stopifnot(inherits(geom, "sf"))
+  is_invalid <- !st_is_valid(geom)
+
+  if (!all(!is_invalid)) {
+    geom[is_invalid, ] <- st_make_valid(geom[is_invalid, ])
+    still_invalid <- !st_is_valid(geom[is_invalid, ])
+    still_invalid <- which(is_invalid)[still_invalid]
+
+    if (length(still_invalid) > 0) {
+      geom <- geom[-still_invalid, ]
+    }
+  }
+
+  types <- st_geometry_type(geom)
+  if (any(types == "GEOMETRYCOLLECTION")) {
+    cols <- geom[types == "GEOMETRYCOLLECTION", ]
+    cols <- suppressWarnings(st_cast(cols))
+    types2 <- st_geometry_type(cols)
+    cols <- cols[types2 %in% c("POLYGON", "MULTIPOLYGON"), ]
+    geom <- rbind(geom[types != "GEOMETRYCOLLECTION", ], cols)
+  }
+
+  geom
 }

@@ -1,6 +1,6 @@
 #' Biodiversity Intactness Index
 #'
-#' The variable is the modeled average abundance of originally-present species,
+#' The variable is the modelled average abundance of originally-present species,
 #' relative to their abundance in an intact ecosystem. Please refer to
 #' Newbold et al. (2016) for all details, and please cite it when using these
 #' data.
@@ -20,11 +20,8 @@
 #' @include register.R
 #' @export
 get_biodiversity_intactness_index <- function(path = NULL) {
-  if (is.null(path) || !file.exists(path)) {
-    stop("Expecting path to point towards an existing file.")
-  }
-  if (!endsWith(path, ".asc")) {
-    stop("Unexpected file extension: path must point towards a '.asc' file.")
+  if (is.null(path) || !endsWith(path, ".asc") || !spds_exists(path, what = "raster")) {
+    stop("Expecting path to point towards an existing '.asc' file.")
   }
 
   function(
