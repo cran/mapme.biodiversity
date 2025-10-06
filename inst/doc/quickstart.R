@@ -35,18 +35,18 @@ available_indicators()
 available_indicators("treecover_area")
 
 ## ----help-indicator, eval = FALSE---------------------------------------------
-#  ?treecover_area
-#  help(treecover_area)
+# ?treecover_area
+# help(treecover_area)
 
 ## ----query-resources----------------------------------------------------------
 available_resources()
 available_resources("gfw_treecover")
 
 ## ----help-resource, eval = FALSE----------------------------------------------
-#  ?gfw_treecover
-#  help(gfw_treecover)
-#  ?gfw_lossyear
-#  help(gfw_lossyear)
+# ?gfw_treecover
+# help(gfw_treecover)
+# ?gfw_lossyear
+# help(gfw_lossyear)
 
 ## ----get-gfw------------------------------------------------------------------
 aoi <- get_resources(
@@ -82,25 +82,25 @@ geoms <- st_geometry(aoi)
 portfolio_long(aoi, drop_geoms = TRUE)
 
 ## ----parallel-1, eval = FALSE-------------------------------------------------
-#  library(future)
-#  plan(cluster, workers = 6)
+# library(future)
+# plan(cluster, workers = 6)
 
 ## ----parallel, eval = FALSE---------------------------------------------------
-#  library(progressr)
-#  
-#  plan(cluster, workers = 2)
-#  
-#  with_progress({
-#    aoi <- calc_indicators(
-#      aoi,
-#      calc_treecover_area_and_emissions(
-#        min_size = 1,
-#        min_cover = 30
-#      )
-#    )
-#  })
-#  
-#  plan(sequential) # close child processes
+# library(progressr)
+# 
+# plan(cluster, workers = 2)
+# 
+# with_progress({
+#   aoi <- calc_indicators(
+#     aoi,
+#     calc_treecover_area_and_emissions(
+#       min_size = 1,
+#       min_cover = 30
+#     )
+#   )
+# })
+# 
+# plan(sequential) # close child processes
 
 ## ----write-portfolio----------------------------------------------------------
 dsn <- tempfile(fileext = ".gpkg")

@@ -24,7 +24,7 @@ test_that("calc_indicator works", {
   expect_equal(names(stat), c("datetime", "variable", "unit", "value"))
   expect_equal(format(stat$datetime, "%Y"), as.character(2000:2005))
   expect_equal(stat$value,
-    c(1996.577, 1996.064, 1994.376, 1960.769, 1951.388, 1947.187),
+    c(1997.659, 1997.145, 1995.457, 1961.845, 1952.464, 1948.261),
     tolerance = 1e-3
   )
 })
@@ -97,7 +97,7 @@ test_that("Parallelization works", {
 
   expect_equal(
     stat,
-    c(2610.735, 2607.605, 2603.340, 2564.097, 2547.076, 2539.395),
+    c(2612.269, 2609.14, 2604.875, 2565.622, 2548.602, 2540.92),
     tolerance = 1e-3
   )
 })

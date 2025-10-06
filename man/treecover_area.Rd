@@ -5,7 +5,7 @@
 \alias{calc_treecover_area}
 \title{Calculate treecover statistics}
 \usage{
-calc_treecover_area(years = 2000:2023, min_size = 10, min_cover = 35)
+calc_treecover_area(years = 2000:2024, min_size = 10, min_cover = 35)
 }
 \arguments{
 \item{years}{A numeric vector with the years for which to calculate treecover
@@ -18,6 +18,12 @@ area.}
 \value{
 A function that returns an indicator tibble with variable treecover
 and corresponding area (in ha) as value.
+
+If the \link{gfw_treecover} resource for an asset contains only zeros (no trees at all,
+e.g. big water body like an ocean or a sea),
+the \code{NULL} value is returned instead of the indicator tibble.
+If it doesn't contain any pixels with value >=  \code{min_cover}, indicator tibble
+reports area of zero hectares.
 }
 \description{
 This functions allows to efficiently calculate treecover statistics for
@@ -53,8 +59,8 @@ aoi <- system.file("extdata", "sierra_de_neiba_478140_2.gpkg",
 ) \%>\%
   read_sf() \%>\%
   get_resources(
-    get_gfw_treecover(version = "GFC-2023-v1.11"),
-    get_gfw_lossyear(version = "GFC-2023-v1.11")
+    get_gfw_treecover(version = "GFC-2024-v1.12"),
+    get_gfw_lossyear(version = "GFC-2024-v1.12")
   ) \%>\%
   calc_indicators(calc_treecover_area(years = 2016:2017, min_size = 1, min_cover = 30)) \%>\%
   portfolio_long()

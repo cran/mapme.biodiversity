@@ -1,6 +1,6 @@
 Package: mapme.biodiversity
 Title: Efficient Monitoring of Global Biodiversity Portfolios
-Version: 0.9.4
+Version: 0.9.5
 Authors@R: c(person(given = "Darius A.", 
                     family = "G\u00F6rgen", 
                     role = "aut",
@@ -43,8 +43,8 @@ URL: https://mapme-initiative.github.io/mapme.biodiversity/,
 BugReports: https://github.com/mapme-initiative/mapme.biodiversity/issues
 Depends: R (>= 3.5.0)
 SystemRequirements: GDAL (>= 3.7.0), PROJ (>= 4.8.0)
-Imports: dplyr, furrr, httr2, jsonlite, magrittr, purrr, sf, terra,
-        tibble, tidyr
+Imports: curl, dplyr, furrr, httr2, jsonlite, magrittr, purrr, sf,
+        terra, tibble, tidyr
 Suggests: exactextractr, future, knitr, landscapemetrics, progressr,
         rmarkdown, rstac, rvest, testthat (>= 3.0.0)
 VignetteBuilder: knitr
@@ -85,13 +85,14 @@ Collate: 'register.R' 'calc_biodiversity_intactness_index.R'
         'get_worldclim.R' 'get_worldpop.R' 'mapme.biodiversity-pkg.R'
         'portfolio.R' 'spatial-utils.R' 'utils.R'
 NeedsCompilation: no
-Packaged: 2025-04-10 08:31:40 UTC; svenb
-Author: Darius A. Görgen [aut] (<https://orcid.org/0009-0008-5503-7704>),
+Packaged: 2025-10-02 15:13:57 UTC; rstudio
+Author: Darius A. Görgen [aut] (ORCID: <https://orcid.org/0009-0008-5503-7704>),
   Om Prakash Bhandari [aut],
-  Andreas Petutschnig [ctb] (<https://orcid.org/0000-0001-5029-2425>),
+  Andreas Petutschnig [ctb] (ORCID:
+    <https://orcid.org/0000-0001-5029-2425>),
   Sven Bergtold [ctb, cre],
-  Zivan Karaman [ctb] (<https://orcid.org/0000-0002-8933-4589>),
+  Zivan Karaman [ctb] (ORCID: <https://orcid.org/0000-0002-8933-4589>),
   MAPME-Initiative [cph, fnd]
 Maintainer: Sven Bergtold <sven.bergtold@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-04-28 13:00:08 UTC
+Date/Publication: 2025-10-06 07:00:02 UTC
