@@ -89,7 +89,7 @@ calc_fatalities_acled <- function(
     stratum = c("event_type", "sub_event_type", "disorder_type"),
     precision_location = 1,
     precision_time = 1) {
-  years <- check_available_years(years, c(1997:2024), "acled")
+  years <- check_available_years(years, c(1997:as.integer(format(Sys.Date(), "%Y"))), "acled")
   stratum <- match.arg(stratum)
 
   if (!precision_location %in% 1:3) {

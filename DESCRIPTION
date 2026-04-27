@@ -1,6 +1,6 @@
 Package: mapme.biodiversity
 Title: Efficient Monitoring of Global Biodiversity Portfolios
-Version: 0.9.5
+Version: 0.9.6
 Authors@R: c(person(given = "Darius A.", 
                     family = "G\u00F6rgen", 
                     role = "aut",
@@ -13,12 +13,12 @@ Authors@R: c(person(given = "Darius A.",
                     role = "ctb",
                     comment = c(ORCID = "0000-0001-5029-2425")),
              person(given = "Sven", 
-                    family = "Bergtold", 
-                    email =  "sven.bergtold@gmail.com",
-                    role = c("ctb", "cre")),
+                    family = "Bergtold",
+                    role = "ctb"),
              person(given = "Zivan", 
-                    family = "Karaman", 
-                    role = "ctb",
+                    family = "Karaman",
+                    email =  "zivan.karaman@gmail.com",
+                    role = c("ctb", "cre"),
                     comment = c(ORCID = "0000-0002-8933-4589")),
              person(given = "MAPME-Initiative",
                     email = "contact@mapme-initiative.org",
@@ -44,7 +44,7 @@ BugReports: https://github.com/mapme-initiative/mapme.biodiversity/issues
 Depends: R (>= 3.5.0)
 SystemRequirements: GDAL (>= 3.7.0), PROJ (>= 4.8.0)
 Imports: curl, dplyr, furrr, httr2, jsonlite, magrittr, purrr, sf,
-        terra, tibble, tidyr
+        terra, tibble, tidyr, utils
 Suggests: exactextractr, future, knitr, landscapemetrics, progressr,
         rmarkdown, rstac, rvest, testthat (>= 3.0.0)
 VignetteBuilder: knitr
@@ -52,7 +52,7 @@ Config/Needs/website: DiagrammeR
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-GB
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Collate: 'register.R' 'calc_biodiversity_intactness_index.R'
         'calc_biome.R' 'calc_burned_area.R' 'calc_carbon.R'
         'calc_deforestation_drivers.R' 'calc_drought_indicator.R'
@@ -85,14 +85,15 @@ Collate: 'register.R' 'calc_biodiversity_intactness_index.R'
         'get_worldclim.R' 'get_worldpop.R' 'mapme.biodiversity-pkg.R'
         'portfolio.R' 'spatial-utils.R' 'utils.R'
 NeedsCompilation: no
-Packaged: 2025-10-02 15:13:57 UTC; rstudio
+Packaged: 2026-04-27 07:13:17 UTC; zivankaraman
 Author: Darius A. Görgen [aut] (ORCID: <https://orcid.org/0009-0008-5503-7704>),
   Om Prakash Bhandari [aut],
   Andreas Petutschnig [ctb] (ORCID:
     <https://orcid.org/0000-0001-5029-2425>),
-  Sven Bergtold [ctb, cre],
-  Zivan Karaman [ctb] (ORCID: <https://orcid.org/0000-0002-8933-4589>),
+  Sven Bergtold [ctb],
+  Zivan Karaman [ctb, cre] (ORCID:
+    <https://orcid.org/0000-0002-8933-4589>),
   MAPME-Initiative [cph, fnd]
-Maintainer: Sven Bergtold <sven.bergtold@gmail.com>
+Maintainer: Zivan Karaman <zivan.karaman@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-10-06 07:00:02 UTC
+Date/Publication: 2026-04-27 09:20:12 UTC

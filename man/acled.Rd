@@ -9,19 +9,19 @@ Armed Conflict Location & Event Data Project (ACLED).
 }
 \usage{
 get_acled(
-  years = 2000,
-  key = Sys.getenv("ACLED_ACCESS_KEY"),
-  email = Sys.getenv("ACLED_ACCESS_EMAIL"),
+  years = 1997,
+  email = Sys.getenv("ACLED_EMAIL"),
+  password = Sys.getenv("ACLED_PASSWORD"),
   accept_terms = FALSE
 )
 }
 \arguments{
 \item{years}{A numeric vector specifying the years for which to make
-ACLED data available (between 1997 and today). Defaults to 2000.}
-
-\item{key}{ACLED API key obtained by registering with ACLED (see Details).}
+ACLED data available (between 1997 and today).}
 
 \item{email}{Email addressed used to register with ACLED (see Details).}
+
+\item{password}{Password used to register with ACLED (see Details).}
 
 \item{accept_terms}{A logical indicating if you agree to abide by ACLED's terms
 of use. Defaults to FALSE, thus must be manually set to TRUE.}
@@ -39,8 +39,12 @@ test conflict scenarios, and makes both data and analysis open for free use
 by the public.}
 }
 \details{
-In order to access data from the ACLED API, you first must register an
-an account. Note, that the ACLED API used here provides a \emph{living database}
+In order to access data from the ACLED API, you first must register
+an account. Make sure you register with your institutional domain
+(e.g., organization, university, or company) email address rather than
+your personal email address, in order to be able to use the API,
+as explained \href{https://acleddata.com/myacled-faqs}{here}.
+Note that the ACLED API provides a \emph{living database}
 with single events being altered or removed altogether over time.
 }
 \references{

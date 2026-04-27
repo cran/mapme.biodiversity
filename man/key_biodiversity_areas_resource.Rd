@@ -5,7 +5,7 @@
 \alias{get_key_biodiversity_areas}
 \title{Key Biodiversity Areas}
 \source{
-\url{https://www.keybiodiversityareas.org/kba-data}
+\url{https://www.keybiodiversityareas.org/request-gis-data}
 }
 \usage{
 get_key_biodiversity_areas(path = NULL)

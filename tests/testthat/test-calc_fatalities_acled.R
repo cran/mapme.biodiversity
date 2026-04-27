@@ -11,8 +11,8 @@ test_that("calc_fatalitites_acled works", {
 
   get_resources(x, get_acled(
     years = 2000,
-    key = "my-key",
     email = "myemail@com",
+    password = "mypassword",
     accept_terms = TRUE
   ))
 

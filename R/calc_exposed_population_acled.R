@@ -145,7 +145,7 @@
 #'       get_worldpop(years = 2000)
 #'     ) %>%
 #'     calc_indicators(
-#'       conflict_exposure_acled(
+#'       calc_exposed_population_acled(
 #'         distance = 5000,
 #'         years = 2000,
 #'         precision_location = 1,
@@ -207,7 +207,7 @@ calc_exposed_population_acled <- function(
     }
   }
 
-  years <- check_available_years(years, c(1997:2024), "exposed_population_acled")
+  years <- check_available_years(years, c(1997:as.integer(format(Sys.Date(), "%Y"))), "exposed_population_acled")
 
   function(x,
            acled = NULL,

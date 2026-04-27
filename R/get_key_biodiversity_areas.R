@@ -20,7 +20,7 @@
 #'   Rainforest Trust, Royal Society for the Protection of Birds, Wildlife
 #'   Conservation Society and World Wildlife Fund. Available at
 #'   www.keybiodiversityareas.org.
-#' @source \url{https://www.keybiodiversityareas.org/kba-data}
+#' @source \url{https://www.keybiodiversityareas.org/request-gis-data}
 #' @include register.R
 #' @export
 get_key_biodiversity_areas <- function(path = NULL) {

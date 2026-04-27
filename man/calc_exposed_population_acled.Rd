@@ -173,7 +173,7 @@ if (FALSE) {
       get_worldpop(years = 2000)
     ) \%>\%
     calc_indicators(
-      conflict_exposure_acled(
+      calc_exposed_population_acled(
         distance = 5000,
         years = 2000,
         precision_location = 1,
